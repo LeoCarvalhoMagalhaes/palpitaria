@@ -56,8 +56,20 @@ test('Refrão Cruzado: começa e toca a pista', async ({ page }) => {
   await closeHelp(page)
   await page.getByRole('button', { name: 'Começar' }).click()
   await expect(page.getByRole('grid', { name: 'Cruzadinha' })).toBeVisible()
-  await page.getByRole('button', { name: 'Tocar o trecho desta pista' }).click()
-  await page.waitForTimeout(3000)
+  // Botão de cada linha: toca, vira "Pausar" e pausa ao clicar de novo.
+  const playRow = page.getByRole('button', { name: /^Tocar o trecho da pista \d+ (horizontal|vertical)$/ }).nth(1)
+  const rowName = (await playRow.getAttribute('aria-label'))!.replace('Tocar', 'Pausar')
+  await playRow.click()
+  const pauseRow = page.getByRole('button', { name: rowName })
+  await expect(pauseRow).toHaveAttribute('aria-pressed', 'true', { timeout: 15000 })
+  await pauseRow.click()
+  await expect(page.getByRole('button', { name: rowName.replace('Pausar', 'Tocar') })).toBeVisible()
+  // Tocar outra pista e deixar o trecho terminar sozinho (8 s): o botão volta para "Tocar".
+  const other = page.getByRole('button', { name: /^Tocar o trecho da pista \d+ (horizontal|vertical)$/ }).first()
+  const otherName = (await other.getAttribute('aria-label'))!
+  await other.click()
+  await expect(page.getByRole('button', { name: otherName.replace('Tocar', 'Pausar') })).toHaveAttribute('aria-pressed', 'true', { timeout: 15000 })
+  await expect(page.getByRole('button', { name: otherName })).toBeVisible({ timeout: 15000 })
   expect(errors).toEqual([])
   expect(consoleErrors.filter((e) => !/favicon/.test(e))).toEqual([])
 })

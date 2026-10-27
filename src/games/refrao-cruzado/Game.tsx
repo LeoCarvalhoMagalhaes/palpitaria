@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { Eye, Headphones, ListChecks, Play as PlayIcon } from 'lucide-react'
+import { Eye, Headphones, ListChecks, Loader2, Pause, Play as PlayIcon } from 'lucide-react'
 import { GameShell, type GameContext } from '@/components/GameShell'
 import { ShareButton } from '@/components/ShareButton'
 import { VirtualKeyboard } from '@/components/VirtualKeyboard'
@@ -41,7 +41,7 @@ interface State {
 
 const HELP = (
   <>
-    <p>É uma cruzadinha, mas toda palavra tem a ver com música! Cada pista tem um <strong>trecho de áudio</strong>: aperte <Headphones className="inline size-4" /> ou ESPAÇO para ouvir de novo quantas vezes quiser.</p>
+    <p>É uma cruzadinha, mas toda palavra tem a ver com música! Cada pista tem um <strong>trecho de áudio</strong>: aperte o ▶ ao lado de qualquer pista (ou <Headphones className="inline size-4" /> / ESPAÇO na pista atual) para tocar e pausar quantas vezes quiser.</p>
     <p>As respostas são nomes de artistas ou de músicas, sem acentos e sem espaços.</p>
     <ul className="list-disc pl-5">
       <li>TAB ou ENTER: próxima palavra</li>
@@ -134,13 +134,37 @@ function Board({
     return () => p.stop(false)
   }, [])
 
-  const playClue = useCallback(
-    (w: PlacedWord = word) => {
+  // Qual pista está tocando (índice em `words`) e qual está carregando.
+  const [playingIdx, setPlayingIdx] = useState<number | null>(null)
+  const [loadingIdx, setLoadingIdx] = useState<number | null>(null)
+
+  /** Toca o trecho da pista; se ela já estiver tocando, pausa. */
+  const toggleClue = useCallback(
+    (i: number) => {
+      if (playingIdx === i || loadingIdx === i) {
+        player.current.stop(false)
+        setPlayingIdx(null)
+        setLoadingIdx(null)
+        return
+      }
       unlockAudio()
-      player.current.play(Number(w.trackId), CLUE_START_MS, CLUE_DURATION_MS, settings.volume).catch((e: Error) => toast(e.message))
+      setPlayingIdx(null)
+      setLoadingIdx(i)
+      player.current
+        .play(Number(words[i].trackId), CLUE_START_MS, CLUE_DURATION_MS, settings.volume, () => setPlayingIdx((p) => (p === i ? null : p)))
+        .then(() => {
+          setLoadingIdx((l) => (l === i ? null : l))
+          setPlayingIdx(i)
+        })
+        .catch((e: Error) => {
+          setLoadingIdx(null)
+          toast(e.message)
+        })
     },
-    [word, settings.volume],
+    [playingIdx, loadingIdx, words, settings.volume],
   )
+
+  const playClue = useCallback((w: PlacedWord = word) => toggleClue(words.indexOf(w)), [toggleClue, word, words])
 
   const checkDone = (letters: Record<string, string>, helps: number) => {
     if (!isComplete(words, letters)) return
@@ -251,24 +275,43 @@ function Board({
   const activeKeys = new Set(wordCells.map(([x, y]) => `${x},${y}`))
   const share = shareText(game.shareName, number, formatDateLong(date).replace(/ de \d{4}$/, ''), state.elapsed, state.helps, ctx.isArchive)
 
-  const ClueItem = ({ w, i }: { w: PlacedWord; i: number }) => (
-    <li>
-      <button
-        type="button"
-        onClick={() => {
-          setActive(i)
-          setCursor(0)
-        }}
-        className={`flex w-full items-center gap-2 rounded-lg px-2 py-1 text-left text-sm ${i === active ? 'bg-accent font-semibold' : 'hover:bg-muted'}`}
-      >
-        <span className="size-3 shrink-0 rounded-full" style={{ background: w.color }} aria-hidden />
-        <strong className="w-5 shrink-0">{w.number}</strong>
-        <span className="flex-1">
-          {w.clue} <span className="text-muted-foreground">({w.answer.length})</span>
-        </span>
-      </button>
-    </li>
-  )
+  const clueItem = (w: PlacedWord, i: number) => {
+    const isPlaying = playingIdx === i
+    const isLoading = loadingIdx === i
+    return (
+      <li key={i} className={`flex items-center gap-1 rounded-lg ${i === active ? 'bg-accent' : 'hover:bg-muted'}`}>
+        <button
+          type="button"
+          onClick={() => toggleClue(i)}
+          aria-label={`${isPlaying || isLoading ? 'Pausar' : 'Tocar'} o trecho da pista ${w.number} ${w.direction === 'across' ? 'horizontal' : 'vertical'}`}
+          aria-pressed={isPlaying}
+          className="grid size-8 shrink-0 place-items-center rounded-full text-white transition-transform active:scale-90"
+          style={{ background: w.color }}
+        >
+          {isLoading ? (
+            <Loader2 className="size-4 animate-spin text-[#1e1b2e]" aria-hidden />
+          ) : isPlaying ? (
+            <Pause className="size-4 text-[#1e1b2e]" aria-hidden />
+          ) : (
+            <PlayIcon className="size-4 translate-x-px text-[#1e1b2e]" aria-hidden />
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setActive(i)
+            setCursor(0)
+          }}
+          className={`flex min-w-0 flex-1 items-center gap-2 px-1 py-1 text-left text-sm ${i === active ? 'font-semibold' : ''}`}
+        >
+          <strong className="w-5 shrink-0">{w.number}</strong>
+          <span className="flex-1">
+            {w.clue} <span className="text-muted-foreground">({w.answer.length})</span>
+          </span>
+        </button>
+      </li>
+    )
+  }
 
   return (
     <GameShell
@@ -343,8 +386,14 @@ function Board({
           </div>
 
           <div className="flex items-center gap-2 rounded-2xl p-3 text-ink" style={{ background: word.color }}>
-            <Button variant="secondary" size="icon-lg" onClick={() => playClue()} aria-label="Tocar o trecho desta pista" className="shrink-0 rounded-full">
-              <Headphones />
+            <Button
+              variant="secondary"
+              size="icon-lg"
+              onClick={() => playClue()}
+              aria-label={playingIdx === active || loadingIdx === active ? 'Pausar o trecho desta pista' : 'Tocar o trecho desta pista'}
+              className="shrink-0 rounded-full"
+            >
+              {loadingIdx === active ? <Loader2 className="animate-spin" /> : playingIdx === active ? <Pause /> : <Headphones />}
             </Button>
             <p className="font-heading text-lg leading-tight font-semibold text-[#1e1b2e]">
               {word.number} {word.direction === 'across' ? '→' : '↓'} {word.clue} ({word.answer.length})
@@ -399,13 +448,13 @@ function Board({
             <section>
               <h3 className="mb-1 font-heading font-semibold">Horizontais →</h3>
               <ol className="space-y-0.5">
-                {words.map((w, i) => (w.direction === 'across' ? <ClueItem key={i} w={w} i={i} /> : null))}
+                {words.map((w, i) => (w.direction === 'across' ? clueItem(w, i) : null))}
               </ol>
             </section>
             <section>
               <h3 className="mb-1 font-heading font-semibold">Verticais ↓</h3>
               <ol className="space-y-0.5">
-                {words.map((w, i) => (w.direction === 'down' ? <ClueItem key={i} w={w} i={i} /> : null))}
+                {words.map((w, i) => (w.direction === 'down' ? clueItem(w, i) : null))}
               </ol>
             </section>
           </div>
