@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button'
 import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { songLabel, type Song } from '@/config/music'
 import { fetchData, useData } from '@/core/data'
-import { SnippetPlayer, embedUrl, trackUrl } from '@/core/spotify'
+import { embedUrl, trackUrl } from '@/core/spotify'
+import { HiddenSpotifyPlayer, type SnippetControls } from '@/components/HiddenSpotifyPlayer'
 
 /**
  * Página interna: confere a base de músicas do Toca Aí e do Refrão Cruzado (top 1.000 do Spotify).
@@ -15,13 +16,10 @@ export default function AudioCheck() {
   const data = useData(() => fetchData<{ songs: Song[]; obtido_em: string }>('musicas/songs.json'))
   const [seed, setSeed] = useState(0)
   const [status, setStatus] = useState<Record<string, string>>({})
-  const playerRef = useRef<SnippetPlayer | null>(null)
+  const playerRef = useRef<SnippetControls>(null)
 
   useEffect(() => {
     document.title = 'Verificar áudio · Palpitaria'
-    const p = new SnippetPlayer()
-    playerRef.current = p
-    return () => p.destroy()
   }, [])
 
   const sample = useMemo(() => {
@@ -38,7 +36,7 @@ export default function AudioCheck() {
   const test = async (s: Song) => {
     setStatus((st) => ({ ...st, [s.id]: 'tocando 5 s…' }))
     try {
-      await playerRef.current!.play(s.id, 0, 5000, () => setStatus((st) => ({ ...st, [s.id]: '✓ tocou' })))
+      await playerRef.current!.play(s.id, 5000, () => setStatus((st) => ({ ...st, [s.id]: '✓ parou após o trecho (se você ouviu, está funcionando)' })))
     } catch (e) {
       setStatus((st) => ({ ...st, [s.id]: `✗ ${(e as Error).message}` }))
     }
@@ -63,6 +61,9 @@ export default function AudioCheck() {
       <p className="mb-4 text-sm text-muted-foreground">
         "Testar trecho" usa o player oculto dos jogos. O embed abaixo de cada música é o player visível do Spotify.
       </p>
+      <div className="mb-4">
+        <HiddenSpotifyPlayer ref={playerRef} label="Player oculto dos jogos" />
+      </div>
       <ul className="space-y-3">
         {sample.map((s) => (
           <li key={s.id} className="rounded-xl border-2 border-ink/10 bg-card p-3 text-sm">

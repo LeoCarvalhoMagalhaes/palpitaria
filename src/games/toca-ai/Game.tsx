@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { Pause, Play as PlayIcon, SkipForward } from 'lucide-react'
@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button'
 import { MUSIC_CATEGORIES, songLabel, type Song } from '@/config/music'
 import { fetchData, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
-import { SnippetPlayer, embedUrl, trackUrl } from '@/core/spotify'
+import { embedUrl, trackUrl } from '@/core/spotify'
+import { HiddenSpotifyPlayer, type SnippetControls } from '@/components/HiddenSpotifyPlayer'
 import {
   MAX_TRIES,
   SNIPPETS_MS,
@@ -50,17 +51,7 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
   const [active, setActive] = useState(() => categories.find((c) => !isFinished(state[c.id] ?? emptyCategory()))?.id ?? categories[0].id)
   const [playing, setPlaying] = useState(false)
   const [playerError, setPlayerError] = useState<string | null>(null)
-  const [playerReady, setPlayerReady] = useState(false)
-  const playerRef = useRef<SnippetPlayer | null>(null)
-
-  useEffect(() => {
-    const p = new SnippetPlayer()
-    playerRef.current = p
-    p.whenReady()
-      .then(() => setPlayerReady(true))
-      .catch((e: Error) => setPlayerError(e.message))
-    return () => p.destroy()
-  }, [])
+  const playerRef = useRef<SnippetControls>(null)
 
   const cat = state[active] ?? emptyCategory()
   const catDone = isFinished(cat)
@@ -76,8 +67,9 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
       return
     }
     setPlaying(true)
+    setPlayerError(null)
     try {
-      await p.play(answer.id, 0, catDone ? 30000 : snippetFor(cat), () => setPlaying(false))
+      await p.play(answer.id, catDone ? 30000 : snippetFor(cat), () => setPlaying(false))
     } catch (e) {
       setPlaying(false)
       setPlayerError((e as Error).message)
@@ -174,9 +166,11 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
         })}
       </nav>
 
-      {playerError && <ErrorBox message={playerError} onRetry={() => window.location.reload()} />}
+      {playerError && <p className="mb-3 rounded-xl bg-destructive/10 px-3 py-2 text-center text-sm text-destructive" role="alert">{playerError}</p>}
 
       <div className="mx-auto w-full max-w-lg space-y-4">
+        <HiddenSpotifyPlayer ref={playerRef} label={catDone ? 'Player do Spotify' : 'A música está escondida aqui 🤫'} />
+
         <div className="flex h-4 overflow-hidden rounded-full border-2 border-ink/20 bg-muted" aria-label={`Trecho liberado: ${formatSeconds(unlocked)}`}>
           {SNIPPETS_MS.map((ms, i) => {
             const prev = i === 0 ? 0 : SNIPPETS_MS[i - 1]
@@ -190,13 +184,10 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
             type="button"
             whileTap={{ scale: 0.92 }}
             onClick={() => void play()}
-            disabled={!playerReady}
             className="grid size-24 place-items-center rounded-full bg-primary text-primary-foreground sticker sticker-press disabled:opacity-60"
             aria-label={playing ? 'Parar' : `Ouvir ${formatSeconds(catDone ? 30000 : snippetFor(cat))}`}
           >
-            {!playerReady ? (
-              <span className="size-8 animate-spin rounded-full border-4 border-white/40 border-t-white" aria-hidden />
-            ) : playing ? (
+            {playing ? (
               <Pause className="size-10" />
             ) : (
               <PlayIcon className="size-10 translate-x-0.5" />
@@ -209,9 +200,7 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
           )}
         </div>
         <p className="text-center text-sm text-muted-foreground">
-          {!playerReady
-            ? 'Carregando o player do Spotify…'
-            : catDone
+          {catDone
               ? 'Toque para ouvir mais da música.'
               : `Tentativa ${cat.attempts.length + 1} de ${MAX_TRIES} · trecho de ${formatSeconds(snippetFor(cat))}`}
         </p>

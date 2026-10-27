@@ -11,10 +11,9 @@ import { type Song } from '@/config/music'
 import { fetchData, useData } from '@/core/data'
 import { formatDateLong, seededShuffle } from '@/core/daily'
 import { useDailyGame } from '@/core/hooks'
-import { SnippetPlayer } from '@/core/spotify'
+import { HiddenSpotifyPlayer, type SnippetControls } from '@/components/HiddenSpotifyPlayer'
 import {
   CLUE_DURATION_MS,
-  CLUE_START_MS,
   HEIGHT,
   WIDTH,
   buildCandidates,
@@ -105,12 +104,7 @@ function Board({
   const [active, setActive] = useState(0)
   const [cursor, setCursor] = useState(0)
   const [wrong, setWrong] = useState<Set<string>>(new Set())
-  const playerRef = useRef<SnippetPlayer | null>(null)
-  useEffect(() => {
-    const p = new SnippetPlayer()
-    playerRef.current = p
-    return () => p.destroy()
-  }, [])
+  const playerRef = useRef<SnippetControls>(null)
   const finished = status === 'won' || status === 'lost'
 
   const word = words[active]
@@ -128,7 +122,7 @@ function Board({
 
   const playClue = useCallback(
     (w: PlacedWord = word) => {
-      playerRef.current?.play(w.trackId, CLUE_START_MS, CLUE_DURATION_MS).catch(() => toast('O player do Spotify não respondeu.'))
+      playerRef.current?.play(w.trackId, CLUE_DURATION_MS).catch(() => toast('O player do Spotify não respondeu.'))
     },
     [word],
   )
@@ -331,6 +325,8 @@ function Board({
               </div>
             )}
           </div>
+
+          <HiddenSpotifyPlayer ref={playerRef} label="Trecho da pista (escondido)" />
 
           <div className="flex items-center gap-2 rounded-2xl p-3 text-ink" style={{ background: word.color }}>
             <Button variant="secondary" size="icon-lg" onClick={() => playClue()} aria-label="Tocar o trecho desta pista" className="shrink-0 rounded-full">
