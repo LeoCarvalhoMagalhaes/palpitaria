@@ -27,17 +27,33 @@ export function categoryOf(genre) {
   return null
 }
 
+/** Mesma regra do build.mjs: título e artista batendo, sem karaokê, cover ou tributo. */
+function bestMatch(results, song) {
+  const wantTitle = cleanTitle(song.title)
+  const mainArtist = fold(song.artist.split(/,| & | x | feat\.? /i)[0])
+  const scored = (results || [])
+    .filter((r) => r.kind === 'song' && r.previewUrl)
+    .map((r) => {
+      const t = cleanTitle(r.trackName || '')
+      const a = fold(r.artistName || '')
+      let score = 0
+      if (t === wantTitle) score += 3
+      else if (t.startsWith(wantTitle) || wantTitle.startsWith(t)) score += 2
+      if (a.includes(mainArtist) || mainArtist.includes(a)) score += 3
+      if (/karaoke|tribute|cover|instrumental|in the style of/i.test(`${r.artistName} ${r.trackName} ${r.collectionName}`)) score -= 5
+      return { r, score }
+    })
+    .sort((x, y) => y.score - x.score)
+  return scored[0] && scored[0].score >= 5 ? scored[0].r : null
+}
+
 async function appleFor(rank, song) {
   try {
     const json = JSON.parse(await fs.readFile(path.join(CACHE, `itunes-${String(rank).padStart(4, '0')}.json`), 'utf8'))
-    const want = cleanTitle(song.title)
-    const artist = fold(song.artist.split(/,| & /)[0])
-    const hit = (json.results || []).find((r) => {
-      const t = cleanTitle(r.trackName || '')
-      const a = fold(r.artistName || '')
-      return (t === want || t.startsWith(want) || want.startsWith(t)) && (a.includes(artist) || artist.includes(a))
-    })
-    return hit ? { genre: hit.primaryGenreName, year: Number(String(hit.releaseDate || '').slice(0, 4)) || null } : null
+    const hit = bestMatch(json.results, song)
+    return hit
+      ? { appleId: hit.trackId, genre: hit.primaryGenreName, year: Number(String(hit.releaseDate || '').slice(0, 4)) || null }
+      : null
   } catch {
     return null
   }
@@ -54,6 +70,7 @@ async function main() {
       artist: s.artist,
       title: s.title,
       streams: s.streams,
+      appleId: apple?.appleId ?? null,
       genre: apple?.genre ?? null,
       year: apple?.year ?? null,
       cat: categoryOf(apple?.genre),
@@ -63,7 +80,7 @@ async function main() {
   await fs.writeFile(
     OUT,
     JSON.stringify({
-      fonte: 'Ranking e IDs: kworb.net (músicas mais tocadas da história no Spotify e páginas de artista). Gênero e ano: catálogo da Apple (iTunes Search API), quando encontrado.',
+      fonte: 'Ranking e IDs do Spotify: kworb.net (músicas mais tocadas da história no Spotify). Prévia de áudio, gênero e ano: catálogo da Apple (iTunes), quando encontrado.',
       obtido_em: new Date().toISOString().slice(0, 10),
       songs,
     }),

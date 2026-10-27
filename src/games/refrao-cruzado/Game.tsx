@@ -11,9 +11,11 @@ import { type Song } from '@/config/music'
 import { fetchData, useData } from '@/core/data'
 import { formatDateLong, seededShuffle } from '@/core/daily'
 import { useDailyGame } from '@/core/hooks'
-import { HiddenSpotifyPlayer, type SnippetControls } from '@/components/HiddenSpotifyPlayer'
+import { ClipPlayer, loadClip, unlockAudio } from '@/core/preview'
+import { useSettings } from '@/core/settings'
 import {
   CLUE_DURATION_MS,
+  CLUE_START_MS,
   HEIGHT,
   WIDTH,
   buildCandidates,
@@ -47,7 +49,7 @@ const HELP = (
       <li>Setas: andar pela grade</li>
     </ul>
     <p>Travou? Use <strong>Revelar</strong> ou <strong>Conferir</strong>. A cruzadinha confere sozinha quando você completa tudo. O cronômetro começa no botão Começar.</p>
-    <p className="text-muted-foreground">As músicas são as mais tocadas da história do Spotify, tocadas pelo player oficial do Spotify (prévia de 30 s sem login).</p>
+    <p className="text-muted-foreground">As músicas são as mais tocadas da história do Spotify. Prévias cedidas pela Apple Music.</p>
   </>
 )
 
@@ -60,7 +62,7 @@ export default function RefraoCruzadoGame(ctx: GameContext) {
   const data = useData(() => fetchData<{ songs: Song[] }>('musicas/songs.json'))
   const daily = useDailyGame<State>({
     slug: game.slug,
-    version: 2,
+    version: 3,
     date,
     isArchive: ctx.isArchive,
     init: () => ({ started: false, elapsed: 0, letters: {}, revealed: [], helps: 0, words: null }),
@@ -68,8 +70,9 @@ export default function RefraoCruzadoGame(ctx: GameContext) {
   const { state, setState } = daily
   const generated = useMemo(() => {
     if (data.status !== 'ready' || state.words) return null
-    const pool = seededShuffle(data.data.songs, `refrao:${date}:pool`).slice(0, DAILY_POOL)
-    return generateCrossword(buildCandidates(pool.map((s) => ({ artist: s.artist, song: s.title, trackId: s.id }))), `refrao:${date}`)
+    const withPreview = data.data.songs.filter((s) => s.appleId !== null)
+    const pool = seededShuffle(withPreview, `refrao:${date}:pool`).slice(0, DAILY_POOL)
+    return generateCrossword(buildCandidates(pool.map((s) => ({ artist: s.artist, song: s.title, trackId: String(s.appleId) }))), `refrao:${date}`)
   }, [data, state.words, date])
 
   useEffect(() => {
@@ -104,7 +107,8 @@ function Board({
   const [active, setActive] = useState(0)
   const [cursor, setCursor] = useState(0)
   const [wrong, setWrong] = useState<Set<string>>(new Set())
-  const playerRef = useRef<SnippetControls>(null)
+  const { settings } = useSettings()
+  const player = useRef(new ClipPlayer())
   const finished = status === 'won' || status === 'lost'
 
   const word = words[active]
@@ -120,11 +124,22 @@ function Board({
     return () => window.clearInterval(id)
   }, [state.started, finished, setState])
 
+  // Pré-carrega o trecho da pista ativa para tocar sem espera.
+  useEffect(() => {
+    loadClip(Number(word.trackId)).catch(() => {})
+  }, [word.trackId])
+
+  useEffect(() => {
+    const p = player.current
+    return () => p.stop(false)
+  }, [])
+
   const playClue = useCallback(
     (w: PlacedWord = word) => {
-      playerRef.current?.play(w.trackId, CLUE_DURATION_MS).catch(() => toast('O player do Spotify não respondeu.'))
+      unlockAudio()
+      player.current.play(Number(w.trackId), CLUE_START_MS, CLUE_DURATION_MS, settings.volume).catch((e: Error) => toast(e.message))
     },
-    [word],
+    [word, settings.volume],
   )
 
   const checkDone = (letters: Record<string, string>, helps: number) => {
@@ -284,6 +299,7 @@ function Board({
             className="w-full"
             onClick={() => {
               setState({ ...state, started: true })
+              unlockAudio()
               window.setTimeout(() => playClue(words[0]), 300)
             }}
           >
@@ -325,8 +341,6 @@ function Board({
               </div>
             )}
           </div>
-
-          <HiddenSpotifyPlayer ref={playerRef} label="Trecho da pista (escondido)" />
 
           <div className="flex items-center gap-2 rounded-2xl p-3 text-ink" style={{ background: word.color }}>
             <Button variant="secondary" size="icon-lg" onClick={() => playClue()} aria-label="Tocar o trecho desta pista" className="shrink-0 rounded-full">
@@ -395,7 +409,7 @@ function Board({
               </ol>
             </section>
           </div>
-          <p className="text-center text-xs text-muted-foreground">Áudio pelo player oficial do Spotify · tema {categoryName}</p>
+          <p className="text-center text-xs text-muted-foreground">Prévias cedidas pela Apple Music · tema {categoryName}</p>
         </div>
       )}
     </GameShell>

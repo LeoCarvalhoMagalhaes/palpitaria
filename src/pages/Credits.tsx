@@ -97,12 +97,9 @@ export default function Credits() {
           <a className="underline" href="https://kworb.net/spotify/songs.html" target="_blank" rel="noreferrer">
             Kworb
           </a>
-          . O áudio toca pelo{' '}
-          <a className="underline" href="https://developer.spotify.com/documentation/embeds" target="_blank" rel="noreferrer">
-            player oficial do Spotify
-          </a>{' '}
-          (prévia de 30 s sem login). Gênero e ano vêm do catálogo da Apple. Nada é baixado ou hospedado por nós; os direitos das músicas
-          pertencem aos titulares. Projeto sem vínculo com Spotify, Kworb ou Apple.
+          . O áudio são as prévias oficiais de 30 s cedidas pela Apple Music (catálogo do iTunes), tocadas direto do servidor da Apple,
+          como fazem os jogos de referência; cada resultado tem link para a faixa. Nada é baixado para o nosso servidor; os direitos das
+          músicas pertencem aos titulares. Projeto sem vínculo com Spotify, Kworb ou Apple.
         </p>
       </section>
       <section className="mb-5">

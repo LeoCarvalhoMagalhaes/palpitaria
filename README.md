@@ -38,7 +38,9 @@ Cada push no `main` roda `.github/workflows/pages.yml`: testes unitários, `npm 
 
 ## Páginas internas
 
-- `/verificar-audio`: mostra a base de músicas, sorteia faixas e testa o trecho pelo player do Spotify.
+- `/verificar-audio`: sorteia músicas da base e mede a duração real de cada trecho.
+
+Teste com áudio real (faz poucas requisições à Apple): `AUDIO_REAL=1 npx playwright test e2e/audio-real.spec.ts --project=desktop`.
 - `/revisao-junto`: aprovar ou rejeitar os quebra-cabeças do Juntô e exportar o JSON revisado para `public/data/junto/puzzles.json`.
 
 ## Dados
@@ -59,7 +61,7 @@ npm run data:musicas        # top 1.000 do Spotify (Kworb) + IDs + gênero/ano d
 
 ```
 src/config/        nomes, descrições, cores e datas dos jogos; categorias de música
-src/core/          dia/semente, armazenamento, estatísticas, compartilhar, player do Spotify, voz
+src/core/          dia/semente, armazenamento, estatísticas, compartilhar, áudio (prévias via Web Audio), voz
 src/components/    GameShell, teclado virtual, autocomplete, painéis
 src/games/<jogo>/  logic.ts (regras puras + testes) e Game.tsx (interface)
 public/data/       conteúdo de cada jogo

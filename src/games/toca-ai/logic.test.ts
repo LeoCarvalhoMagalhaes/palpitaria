@@ -19,6 +19,7 @@ const songs: Song[] = Array.from({ length: 60 }, (_, i) => ({
   artist: `Artista ${i}`,
   title: `Música ${i}`,
   streams: 1000 - i,
+  appleId: i === 59 ? null : 1000 + i,
   genre: null,
   year: null,
   cat: i < 40 ? 'pop' : 'rock',
@@ -44,6 +45,11 @@ describe('Toca Aí', () => {
 
   it('categorias com poucas músicas ficam de fora', () => {
     expect(availableCategories(cats, songs).map((c) => c.id)).toEqual(['todas', 'pop'])
+  })
+
+  it('só músicas com prévia podem ser a resposta', () => {
+    const ids = new Set(Array.from({ length: 200 }, (_, i) => dailySong(cats[2], songs, i + 1).id))
+    expect(ids.has('id59')).toBe(false)
   })
 
   it('música do dia é da categoria e não repete por um ciclo', () => {

@@ -13,8 +13,9 @@ export interface CategoryState {
 
 export const emptyCategory = (): CategoryState => ({ attempts: [] })
 
+/** Músicas que podem ser a resposta: precisam ter prévia de áudio. */
 export function songsFor(category: MusicCategory, songs: Song[]): Song[] {
-  return category.cat ? songs.filter((s) => s.cat === category.cat) : songs
+  return songs.filter((s) => s.appleId !== null && (!category.cat || s.cat === category.cat))
 }
 
 /** Categorias com músicas suficientes (as de gênero dependem dos dados da Apple). */

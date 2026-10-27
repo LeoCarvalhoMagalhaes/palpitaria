@@ -19,7 +19,8 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Juntô | Aviso "quase" | Não existe | Observada (ausente no código) |
 | Palavreta | Tamanho | Só 5 letras, 6 palpites, modos Difícil e Às cegas, desafio personalizado por link | Proposta (o original tem seletor; simplificamos) |
 | Toca Aí | Trechos | 0,13 / 0,53 / 2 / 8 / 15 s, 5 tentativas, Pular | Observada |
-| Toca Aí | Base | Top 1.000 do Spotify (Kworb), áudio pelo embed oficial do Spotify (decisão do usuário, ciente da política do Spotify) | Pedido do usuário |
+| Toca Aí | Base | Top 1.000 do Spotify (Kworb); só músicas com prévia da Apple podem ser a resposta (934); todas valem como palpite | Pedido do usuário |
+| Toca Aí | Áudio | Prévia oficial da Apple tocada por Web Audio com início e duração exatos; barra enche em tempo real; no fim, capa e links Apple Music/Spotify | Observada (outro jogo/outro jogo) |
 | Toca Aí | Categorias | Todas, Pop, Hip Hop e Rock (gênero da Apple); categoria com menos de 30 músicas não aparece; vitória com metade ou mais | Proposta |
 | Toca Aí | Início do trecho | Começo da faixa (0 s) | Proposta |
 | Letra por Letra | Voz | Web Speech API pt-BR do aparelho | Proposta (gratuita; o original usa áudio gravado) |
@@ -32,6 +33,6 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Holofote | Integrantes | Formação ativa no fim da banda (ou atual); correções manuais para as bandas mais famosas | Proposta (o original usa a "formação mais icônica", curada à mão) |
 | Holofote | Gêneros | Lista fechada de 13 + MPB, Sertanejo e Funk (nenhum artista brasileiro desses estilos está no top 1.000 global) | Proposta |
 | Holofote | Dica | Após o 6º palpite: primeira letra e número de palavras do nome | Proposta (o original dá um subgênero) |
-| Holofote | Áudio | Nenhum | Padrão do Prompt 4 |
+| Holofote | Áudio | No fim, prévia da música mais ouvida do artista, se ele estiver no top 1.000 (como o outro jogo) | Observada |
 | Refrão Cruzado | Grade | 12×10, 5 a 8 palavras, geradas de 60 músicas do top 1.000 sorteadas pela data | Observado (12×10); geração automática é proposta |
-| Refrão Cruzado | Trecho | 8 s do início da prévia do Spotify; pode ouvir de novo quantas vezes quiser | Proposta (o original define início e duração por palavra) |
+| Refrão Cruzado | Trecho | 8 s do início da prévia da Apple (o original usa 6 s por padrão, com início por palavra); ouvir de novo à vontade | Observada/adaptada |

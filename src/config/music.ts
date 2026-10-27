@@ -22,6 +22,8 @@ export interface Song {
   artist: string
   title: string
   streams: number
+  /** ID da faixa no catálogo da Apple (prévia de áudio). null = sem prévia. */
+  appleId: number | null
   genre: string | null
   year: number | null
   cat: string | null

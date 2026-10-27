@@ -1,7 +1,7 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
-import { ArrowDown, ArrowUp, Lightbulb } from 'lucide-react'
+import { ArrowDown, ArrowUp, Lightbulb, Pause, Play as PlayIcon } from 'lucide-react'
 import { GameShell, type GameContext } from '@/components/GameShell'
 import { ShareButton } from '@/components/ShareButton'
 import { Autocomplete, type Option } from '@/components/Autocomplete'
@@ -9,6 +9,9 @@ import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
 import { fetchData, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
+import { useSettings } from '@/core/settings'
+import { ClipPlayer, getPreview, unlockAudio, type PreviewInfo } from '@/core/preview'
+import type { Song } from '@/config/music'
 import { HINT_AFTER, MAX_GUESSES, compare, dailyArtist, flagEmoji, hintFor, shareText, type Artist, type Match } from './logic'
 
 interface State {
@@ -43,6 +46,77 @@ function Cell({ label, value, match, arrow, delay }: { label: string; value: str
         {arrow === 'down' && <ArrowDown className="size-4 shrink-0" aria-hidden />}
       </span>
     </motion.div>
+  )
+}
+
+const foldName = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+
+/** Como no outro jogo: no fim, toca a prévia da música mais ouvida do artista (se ele estiver no top 1.000). */
+function ArtistHit({ artist }: { artist: string }) {
+  const { settings } = useSettings()
+  const [song, setSong] = useState<Song | null>(null)
+  const [info, setInfo] = useState<PreviewInfo | null>(null)
+  const [playing, setPlaying] = useState(false)
+  const player = useRef(new ClipPlayer())
+
+  useEffect(() => {
+    let alive = true
+    fetchData<{ songs: Song[] }>('musicas/songs.json')
+      .then(({ songs }) => {
+        const hit = songs.find((s) => s.appleId && foldName(s.artist) === foldName(artist))
+        if (!alive || !hit) return
+        setSong(hit)
+        return getPreview(hit.appleId!).then((i) => alive && setInfo(i))
+      })
+      .catch(() => {})
+    const p = player.current
+    return () => {
+      alive = false
+      p.stop(false)
+    }
+  }, [artist])
+
+  if (!song) return null
+  return (
+    <div className="flex items-center gap-3 rounded-2xl bg-card p-3 text-left sticker">
+      {info?.artworkUrl && <img src={info.artworkUrl} alt="" className="size-14 rounded-lg" />}
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-semibold">{song.title}</p>
+        <p className="text-xs text-muted-foreground">
+          Prévia cedida pela Apple Music
+          {info && (
+            <>
+              {' · '}
+              <a className="underline" href={info.trackViewUrl} target="_blank" rel="noopener noreferrer">
+                ouvir completa
+              </a>
+            </>
+          )}
+        </p>
+      </div>
+      <Button
+        variant="pop"
+        size="icon-lg"
+        aria-label={playing ? 'Parar' : `Ouvir ${song.title}`}
+        onClick={() => {
+          if (playing) {
+            player.current.stop()
+            return
+          }
+          unlockAudio()
+          setPlaying(true)
+          player.current.play(song.appleId!, 0, 30000, settings.volume, () => setPlaying(false)).catch(() => setPlaying(false))
+        }}
+      >
+        {playing ? <Pause /> : <PlayIcon />}
+      </Button>
+    </div>
   )
 }
 
@@ -141,6 +215,7 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
       {finished && (
         <div className="mx-auto mb-4 w-full max-w-sm space-y-2 text-center">
           <p className="font-heading text-xl">{won ? `Acertou! Era ${answer.name} 🎤` : `Era ${answer.name}. Amanhã tem mais!`}</p>
+          <ArtistHit artist={answer.name} />
           <ShareButton text={share} />
         </div>
       )}
