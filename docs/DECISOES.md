@@ -19,7 +19,8 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Juntô | Aviso "quase" | Não existe | Observada (ausente no código) |
 | Palavreta | Tamanho | Só 5 letras, 6 palpites, modos Difícil e Às cegas, desafio personalizado por link | Proposta (o original tem seletor; simplificamos) |
 | Toca Aí | Trechos | 0,13 / 0,53 / 2 / 8 / 15 s, 5 tentativas, Pular | Observada |
-| Toca Aí | Categorias | Sertanejo, Funk, Rock nacional, MPB; vitória do dia com 2 ou mais acertos | Proposta |
+| Toca Aí | Base | Top 1.000 do Spotify (Kworb), áudio pelo embed oficial do Spotify (decisão do usuário, ciente da política do Spotify) | Pedido do usuário |
+| Toca Aí | Categorias | Todas, Pop, Hip Hop e Rock (gênero da Apple); categoria com menos de 30 músicas não aparece; vitória com metade ou mais | Proposta |
 | Toca Aí | Início do trecho | Começo da faixa (0 s) | Proposta |
 | Letra por Letra | Voz | Web Speech API pt-BR do aparelho | Proposta (gratuita; o original usa áudio gravado) |
 | Letra por Letra | Grafia | Acentos, cedilha e hífen contam; 1 tentativa por rodada; vitória com 3+ | Proposta (1 tentativa observada) |
@@ -31,5 +32,5 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Holofote | Gêneros | Lista fechada de 13 + MPB, Sertanejo e Funk (nenhum artista brasileiro desses estilos está no top 1.000 global) | Proposta |
 | Holofote | Dica | Após o 6º palpite: primeira letra e número de palavras do nome | Proposta (o original dá um subgênero) |
 | Holofote | Áudio | Nenhum | Padrão do Prompt 4 |
-| Refrão Cruzado | Grade | 12×10, 5 a 8 palavras, gerada pela playlist do dia | Observado (12×10); geração automática é proposta |
-| Refrão Cruzado | Trecho | 8 s a partir de 0:30; pode ouvir de novo quantas vezes quiser | Proposta (o original define início e duração por palavra) |
+| Refrão Cruzado | Grade | 12×10, 5 a 8 palavras, geradas de 60 músicas do top 1.000 sorteadas pela data | Observado (12×10); geração automática é proposta |
+| Refrão Cruzado | Trecho | 8 s do início da prévia do Spotify; pode ouvir de novo quantas vezes quiser | Proposta (o original define início e duração por palavra) |

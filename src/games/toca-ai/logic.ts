@@ -1,30 +1,31 @@
 import { pickDaily } from '@/core/daily'
-import type { AudioCategory } from '@/config/soundcloud-sources'
+import { MIN_SONGS_PER_CATEGORY, type MusicCategory, type Song } from '@/config/music'
 
 /** Duração do trecho liberado a cada tentativa (ms) — valores observados no original. */
 export const SNIPPETS_MS = [130, 530, 2000, 8000, 15000]
 export const MAX_TRIES = SNIPPETS_MS.length
-/** Categorias acertadas para o dia contar como vitória. */
-export const WIN_CATEGORIES = 2
 
-export type Attempt = { kind: 'guess'; id: number; label: string; correct: boolean } | { kind: 'skip' }
+export type Attempt = { kind: 'guess'; id: string; label: string; correct: boolean } | { kind: 'skip' }
 
 export interface CategoryState {
   attempts: Attempt[]
-  answer: { id: number; label: string; url: string } | null
-  done: boolean
 }
 
-/** Ordem de playlists a tentar para a categoria no dia (a primeira é a do dia; as outras são reserva). */
-export function playlistOrder(category: AudioCategory, number: number): string[] {
-  const first = pickDaily(category.playlists, number, `toca-ai:${category.id}:playlist`)
-  return [first.url, ...category.playlists.filter((p) => p.url !== first.url).map((p) => p.url)]
+export const emptyCategory = (): CategoryState => ({ attempts: [] })
+
+export function songsFor(category: MusicCategory, songs: Song[]): Song[] {
+  return category.cat ? songs.filter((s) => s.cat === category.cat) : songs
 }
 
-/** Faixa do dia entre as faixas com título, determinística por data e playlist. */
-export function dailyTrackIndex(titledCount: number, number: number, playlistUrl: string): number {
-  const idx = Array.from({ length: titledCount }, (_, i) => i)
-  return pickDaily(idx, number, `toca-ai:${playlistUrl}`)
+/** Categorias com músicas suficientes (as de gênero dependem dos dados da Apple). */
+export function availableCategories(categories: MusicCategory[], songs: Song[]): MusicCategory[] {
+  return categories.filter((c) => songsFor(c, songs).length >= MIN_SONGS_PER_CATEGORY)
+}
+
+/** Música do dia da categoria: sem repetir até esgotar a lista. */
+export function dailySong(category: MusicCategory, songs: Song[], number: number): Song {
+  const pool = [...songsFor(category, songs)].sort((a, b) => a.rank - b.rank)
+  return pickDaily(pool, number, `toca-ai:${category.id}`)
 }
 
 export function isSolved(s: CategoryState): boolean {
@@ -48,8 +49,13 @@ export function emojiRow(s: CategoryState): string {
   }).join('')
 }
 
-export function shareText(name: string, number: number, categories: AudioCategory[], states: Record<string, CategoryState>): string {
-  const lines = categories.map((c) => `${emojiRow(states[c.id] ?? { attempts: [], answer: null, done: false })} ${c.name}`)
+/** Vitória do dia: acertar pelo menos metade das categorias (arredondando para cima). */
+export function winThreshold(categoryCount: number): number {
+  return Math.ceil(categoryCount / 2)
+}
+
+export function shareText(name: string, number: number, categories: MusicCategory[], states: Record<string, CategoryState>): string {
+  const lines = categories.map((c) => `${emojiRow(states[c.id] ?? emptyCategory())} ${c.name}`)
   const solved = categories.filter((c) => states[c.id] && isSolved(states[c.id])).length
   return `${name} #${number} 🎧 ${solved}/${categories.length}\n${lines.join('\n')}`
 }

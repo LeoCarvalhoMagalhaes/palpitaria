@@ -1,42 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router'
-import { ArrowLeft, Play } from 'lucide-react'
+import { ArrowLeft, Play, Shuffle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { AUDIO_CATEGORIES } from '@/config/soundcloud-sources'
-import { loadPlaylist, playSnippet, soundLabel, type LoadedPlaylist } from '@/core/soundcloud'
-
-type Result = { status: 'carregando' } | { status: 'ok'; total: number; titled: number; sample: string[]; pl: LoadedPlaylist } | { status: 'erro'; message: string }
+import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
+import { songLabel, type Song } from '@/config/music'
+import { fetchData, useData } from '@/core/data'
+import { SnippetPlayer, embedUrl, trackUrl } from '@/core/spotify'
 
 /**
- * Página interna: carrega cada playlist configurada pelo widget oficial do SoundCloud e mostra se ela
- * responde e quantas faixas trouxe com título. Use antes de publicar e sempre que trocar playlists.
+ * Página interna: confere a base de músicas do Toca Aí e do Refrão Cruzado (top 1.000 do Spotify).
+ * Sorteia algumas faixas para tocar pelo player oculto e mostra o embed visível de cada uma.
  */
 export default function AudioCheck() {
-  const [results, setResults] = useState<Record<string, Result>>({})
-  const [running, setRunning] = useState(false)
+  const data = useData(() => fetchData<{ songs: Song[]; obtido_em: string }>('musicas/songs.json'))
+  const [seed, setSeed] = useState(0)
+  const [status, setStatus] = useState<Record<string, string>>({})
+  const playerRef = useRef<SnippetPlayer | null>(null)
 
   useEffect(() => {
     document.title = 'Verificar áudio · Palpitaria'
+    const p = new SnippetPlayer()
+    playerRef.current = p
+    return () => p.destroy()
   }, [])
 
-  const run = async () => {
-    setRunning(true)
-    for (const cat of AUDIO_CATEGORIES) {
-      for (const p of cat.playlists) {
-        setResults((r) => ({ ...r, [p.url]: { status: 'carregando' } }))
-        try {
-          const pl = await loadPlaylist(p.url)
-          const titled = pl.sounds.filter((s) => s.title)
-          setResults((r) => ({
-            ...r,
-            [p.url]: { status: 'ok', total: pl.sounds.length, titled: titled.length, sample: titled.slice(0, 5).map(soundLabel), pl },
-          }))
-        } catch (err) {
-          setResults((r) => ({ ...r, [p.url]: { status: 'erro', message: (err as Error).message } }))
-        }
-      }
+  const sample = useMemo(() => {
+    if (data.status !== 'ready') return []
+    const songs = data.data.songs
+    return Array.from({ length: 6 }, (_, i) => songs[Math.floor(Math.abs(Math.sin(seed * 97 + i * 13)) * songs.length)])
+  }, [data, seed])
+
+  if (data.status === 'loading') return <LoadingScreen />
+  if (data.status === 'error') return <ErrorBox message={data.error} onRetry={data.retry} />
+  const songs = data.data.songs
+  const cats = songs.reduce<Record<string, number>>((acc, s) => ({ ...acc, [s.cat ?? 'sem gênero']: (acc[s.cat ?? 'sem gênero'] ?? 0) + 1 }), {})
+
+  const test = async (s: Song) => {
+    setStatus((st) => ({ ...st, [s.id]: 'tocando 5 s…' }))
+    try {
+      await playerRef.current!.play(s.id, 0, 5000, () => setStatus((st) => ({ ...st, [s.id]: '✓ tocou' })))
+    } catch (e) {
+      setStatus((st) => ({ ...st, [s.id]: `✗ ${(e as Error).message}` }))
     }
-    setRunning(false)
   }
 
   return (
@@ -48,50 +53,37 @@ export default function AudioCheck() {
           </Link>
         </Button>
         <h1 className="flex-1 font-heading text-2xl font-bold">Verificar áudio</h1>
-        <Button variant="pop" onClick={run} disabled={running}>
-          {running ? 'Verificando…' : 'Verificar playlists'}
+        <Button variant="pop" onClick={() => setSeed((n) => n + 1)}>
+          <Shuffle aria-hidden /> Sortear outras
         </Button>
       </header>
-      <p className="mb-4 text-sm text-muted-foreground">
-        Carrega cada playlist do SoundCloud usada pelo Toca Aí e pelo Refrão Cruzado. Uma playlist precisa de pelo menos 5 faixas com título.
-        Para trocar playlists, edite <code>src/config/soundcloud-sources.ts</code>.
+      <p className="mb-2 text-sm text-muted-foreground">
+        Base: {songs.length} músicas (dados de {data.data.obtido_em}). Categorias: {Object.entries(cats).map(([k, v]) => `${k} ${v}`).join(' · ')}.
       </p>
-      {AUDIO_CATEGORIES.map((cat) => (
-        <section key={cat.id} className="mb-6">
-          <h2 className="mb-2 font-heading text-xl font-semibold">{cat.name}</h2>
-          <ul className="space-y-2">
-            {cat.playlists.map((p) => {
-              const r = results[p.url]
-              return (
-                <li key={p.url} className="rounded-xl border-2 border-ink/10 bg-card p-3 text-sm">
-                  <a href={p.url} target="_blank" rel="noreferrer" className="font-semibold break-all underline">
-                    {p.url.replace('https://soundcloud.com/', '')}
-                  </a>
-                  <p className="text-muted-foreground">Curadoria: {p.curator}</p>
-                  {!r && <p>—</p>}
-                  {r?.status === 'carregando' && <p>Carregando…</p>}
-                  {r?.status === 'erro' && <p className="font-semibold text-destructive">✗ {r.message}</p>}
-                  {r?.status === 'ok' && (
-                    <div>
-                      <p className={r.titled >= 5 ? 'font-semibold text-hit' : 'font-semibold text-destructive'}>
-                        {r.titled >= 5 ? '✓' : '✗'} {r.titled} de {r.total} faixas com título
-                      </p>
-                      <ul className="mt-1 list-disc pl-5">
-                        {r.sample.map((s) => (
-                          <li key={s}>{s}</li>
-                        ))}
-                      </ul>
-                      <Button size="sm" variant="outline" className="mt-2" onClick={() => playSnippet(r.pl, 0, 0, 5000, 70)}>
-                        <Play aria-hidden /> Testar 5 s da 1ª faixa
-                      </Button>
-                    </div>
-                  )}
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-      ))}
+      <p className="mb-4 text-sm text-muted-foreground">
+        "Testar trecho" usa o player oculto dos jogos. O embed abaixo de cada música é o player visível do Spotify.
+      </p>
+      <ul className="space-y-3">
+        {sample.map((s) => (
+          <li key={s.id} className="rounded-xl border-2 border-ink/10 bg-card p-3 text-sm">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <span>
+                <strong>#{s.rank}</strong> {songLabel(s)} {s.genre && <span className="text-muted-foreground">· {s.genre}</span>}
+              </span>
+              <span className="flex items-center gap-2">
+                <span>{status[s.id]}</span>
+                <Button size="sm" variant="outline" onClick={() => void test(s)}>
+                  <Play aria-hidden /> Testar trecho
+                </Button>
+              </span>
+            </div>
+            <iframe title={`Spotify: ${songLabel(s)}`} className="h-20 w-full rounded-xl" loading="lazy" allow="encrypted-media" src={embedUrl(s.id)} />
+            <a className="text-xs underline" href={trackUrl(s.id)} target="_blank" rel="noopener noreferrer">
+              open.spotify.com/track/{s.id}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

@@ -7,9 +7,9 @@ import { dailyProduct, type Product } from '../src/games/na-etiqueta/logic'
 import { puzzleFor, type Puzzle } from '../src/games/junto/logic'
 import { closeHelp, readData } from './helpers'
 
-// Os testes nunca acessam o SoundCloud: o robots.txt dele pede que agentes automatizados não leiam o site.
+// Os testes não acessam serviços de música externos (Spotify, Apple): dados reais ficam para o teste manual.
 test.beforeEach(async ({ page }) => {
-  await page.route(/soundcloud\.com|sndcdn\.com/, (route) => route.abort())
+  await page.route(/spotify\.com|scdn\.co|itunes\.apple\.com/, (route) => route.abort())
 })
 
 const today = localDateKey()

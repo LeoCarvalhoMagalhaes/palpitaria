@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Link } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { AUDIO_CATEGORIES } from '@/config/soundcloud-sources'
 
 const DATA = [
   {
@@ -89,22 +88,18 @@ export default function Credits() {
       ))}
       <section className="mb-5">
         <h2 className="mb-2 font-heading text-lg font-semibold">Toca Aí e Refrão Cruzado (áudio)</h2>
-        <p className="mb-2 text-sm">
-          O áudio é tocado pelo <a className="underline" href="https://developers.soundcloud.com/docs/api/html5-widget" target="_blank" rel="noreferrer">player oficial do SoundCloud</a>{' '}
-          a partir das playlists públicas abaixo. Nada é baixado ou hospedado por nós. Os direitos das músicas pertencem aos respectivos titulares.
+        <p className="text-sm">
+          As músicas são as mais tocadas da história do Spotify, segundo o ranking público do{' '}
+          <a className="underline" href="https://kworb.net/spotify/songs.html" target="_blank" rel="noreferrer">
+            Kworb
+          </a>
+          . O áudio toca pelo{' '}
+          <a className="underline" href="https://developer.spotify.com/documentation/embeds" target="_blank" rel="noreferrer">
+            player oficial do Spotify
+          </a>{' '}
+          (prévia de 30 s sem login). Gênero e ano vêm do catálogo da Apple. Nada é baixado ou hospedado por nós; os direitos das músicas
+          pertencem aos titulares. Projeto sem vínculo com Spotify, Kworb ou Apple.
         </p>
-        <ul className="space-y-1 text-sm">
-          {AUDIO_CATEGORIES.flatMap((c) =>
-            c.playlists.map((p) => (
-              <li key={p.url}>
-                {c.name}:{' '}
-                <a className="underline" href={p.url} target="_blank" rel="noreferrer">
-                  playlist de {p.curator}
-                </a>
-              </li>
-            )),
-          )}
-        </ul>
       </section>
       <section className="mb-5">
         <h2 className="mb-2 font-heading text-lg font-semibold">Conteúdo próprio</h2>

@@ -18,7 +18,8 @@
     "data:palavreta": "python -I scripts/data/words/expand_vero.py scripts/.cache/vero scripts/.cache/words && python -I scripts/data/palavreta/build.py .",
     "data:mais-ou-menos": "node scripts/data/mais-ou-menos/build.mjs",
     "data:holofote": "node scripts/data/holofote/build.mjs && node scripts/data/holofote/enrich.mjs",
-    "data:rastro": "node scripts/data/rastro/build.mjs"
+    "data:rastro": "node scripts/data/rastro/build.mjs",
+    "data:musicas": "node scripts/data/musicas/spotify-ids.mjs && node scripts/data/musicas/build.mjs && node scripts/data/musicas/merge.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fredoka": "^5.3.0",

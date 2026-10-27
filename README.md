@@ -11,7 +11,7 @@ Publicado em: https://leocarvalhomagalhaes.github.io/palpitaria/
 | Grauzinho | outro jogo | Quantos graus tem o ângulo? |
 | Juntô | outro jogo | 4 grupos de 4 palavras |
 | Palavreta | outro jogo (outro jogo) | Palavra secreta de 5 letras |
-| Toca Aí | outro jogo (outro jogo) | Reconheça a música pelo trechinho (SoundCloud) |
+| Toca Aí | outro jogo (outro jogo) | Reconheça a música pelo trechinho (top 1.000 do Spotify) |
 | Letra por Letra | outro jogo (outro jogo) | Ouça e soletre |
 | Mais ou Menos | outro jogo (outro jogo) | Qual dos dois tem mais? |
 | Rastro | outro jogo (outro jogo) | Palavra secreta por proximidade de sentido |
@@ -38,7 +38,7 @@ Cada push no `main` roda `.github/workflows/pages.yml`: testes unitários, `npm 
 
 ## Páginas internas
 
-- `/verificar-audio`: carrega cada playlist do SoundCloud e mostra se responde e quantas faixas tem. Use antes de publicar e ao trocar playlists (`src/config/soundcloud-sources.ts`).
+- `/verificar-audio`: mostra a base de músicas, sorteia faixas e testa o trecho pelo player do Spotify.
 - `/revisao-junto`: aprovar ou rejeitar os quebra-cabeças do Juntô e exportar o JSON revisado para `public/data/junto/puzzles.json`.
 
 ## Dados
@@ -52,13 +52,14 @@ npm run data:palavreta      # requer o VERO em scripts/.cache/vero (pt_BR.dic, p
 npm run data:mais-ou-menos  # Natural Earth + IBGE + Wikidata
 npm run data:holofote       # ListenBrainz + MusicBrainz (~40 min, respeita 1 req/s; tem cache)
 npm run data:rastro         # modelo LaBSE local (~10 min na CPU)
+npm run data:musicas        # top 1.000 do Spotify (Kworb) + IDs + gênero/ano da Apple (~1 h, com cache)
 ```
 
 ## Estrutura
 
 ```
-src/config/        nomes, descrições, cores e datas dos jogos; playlists do SoundCloud
-src/core/          dia/semente, armazenamento, estatísticas, compartilhar, SoundCloud, voz
+src/config/        nomes, descrições, cores e datas dos jogos; categorias de música
+src/core/          dia/semente, armazenamento, estatísticas, compartilhar, player do Spotify, voz
 src/components/    GameShell, teclado virtual, autocomplete, painéis
 src/games/<jogo>/  logic.ts (regras puras + testes) e Game.tsx (interface)
 public/data/       conteúdo de cada jogo

@@ -11,7 +11,7 @@ const tracks = [
   ['Engenheiros do Hawaii', 'Infinita Highway'],
   ['Paralamas', 'Lanterna dos Afogados'],
   ['Pitty', 'Admirável Chip Novo'],
-].map(([artist, song], index) => ({ artist, song, index }))
+].map(([artist, song], index) => ({ artist, song, trackId: `t${index}` }))
 
 describe('Refrão Cruzado', () => {
   it('normaliza respostas como numa cruzadinha', () => {

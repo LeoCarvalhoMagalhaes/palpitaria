@@ -4,7 +4,7 @@ export const WIDTH = 12
 export const HEIGHT = 10
 export const MAX_WORDS = 8
 export const MIN_WORDS = 5
-export const CLUE_START_MS = 30000
+export const CLUE_START_MS = 0
 export const CLUE_DURATION_MS = 8000
 
 export type Direction = 'across' | 'down'
@@ -12,8 +12,8 @@ export type Direction = 'across' | 'down'
 export interface Candidate {
   answer: string
   clue: string
-  /** Índice da faixa na playlist (para tocar o trecho). */
-  soundIndex: number
+  /** ID da faixa no Spotify (para tocar o trecho). */
+  trackId: string
 }
 
 export interface PlacedWord extends Candidate {
@@ -36,26 +36,26 @@ export function normalizeAnswer(text: string): string {
 }
 
 /** Monta candidatos a partir de "artista" e "música" de cada faixa. */
-export function buildCandidates(tracks: { artist: string; song: string; index: number }[]): Candidate[] {
+export function buildCandidates(tracks: { artist: string; song: string; trackId: string }[]): Candidate[] {
   const out: Candidate[] = []
   const seen = new Set<string>()
-  const push = (answer: string, clue: string, soundIndex: number) => {
+  const push = (answer: string, clue: string, trackId: string) => {
     if (answer.length < 3 || answer.length > WIDTH - 2 || seen.has(answer)) return
     seen.add(answer)
-    out.push({ answer, clue, soundIndex })
+    out.push({ answer, clue, trackId })
   }
   for (const t of tracks) {
     const artist = normalizeAnswer(t.artist)
     const song = normalizeAnswer(t.song)
-    if (artist) push(artist, 'Quem canta este trecho?', t.index)
-    if (song && song.length <= WIDTH - 2) push(song, 'Qual é o nome desta música?', t.index)
+    if (artist) push(artist, 'Quem canta este trecho?', t.trackId)
+    if (song && song.length <= WIDTH - 2) push(song, 'Qual é o nome desta música?', t.trackId)
     else {
       const word = t.song
         .split(/\s+/)
         .map(normalizeAnswer)
         .filter((w) => w.length >= 5)
         .sort((a, b) => b.length - a.length)[0]
-      if (word) push(word, 'Uma palavra do título desta música', t.index)
+      if (word) push(word, 'Uma palavra do título desta música', t.trackId)
     }
   }
   return out
@@ -115,16 +115,16 @@ export function generateCrossword(candidates: Candidate[], seed: string): Placed
     pool.sort((a, b) => b.answer.length - a.answer.length || 0)
     const grid = emptyGrid()
     const placed: Omit<PlacedWord, 'number' | 'color'>[] = []
-    const usedTracks = new Set<number>()
+    const usedTracks = new Set<string>()
     for (const cand of pool) {
       if (placed.length >= MAX_WORDS) break
-      if (usedTracks.has(cand.soundIndex) && placed.length > 0 && rand() < 0.7) continue
+      if (usedTracks.has(cand.trackId) && placed.length > 0 && rand() < 0.7) continue
       if (placed.length === 0) {
         const x = Math.floor((WIDTH - cand.answer.length) / 2)
         const y = Math.floor(HEIGHT / 2) - 1
         place(grid, cand.answer, x, y, 'across')
         placed.push({ ...cand, x, y, direction: 'across' })
-        usedTracks.add(cand.soundIndex)
+        usedTracks.add(cand.trackId)
         continue
       }
       let best: { x: number; y: number; dir: Direction; score: number } | null = null
@@ -142,7 +142,7 @@ export function generateCrossword(candidates: Candidate[], seed: string): Placed
       if (best) {
         place(grid, cand.answer, best.x, best.y, best.dir)
         placed.push({ ...cand, x: best.x, y: best.y, direction: best.dir })
-        usedTracks.add(cand.soundIndex)
+        usedTracks.add(cand.trackId)
       }
     }
     if (placed.length >= MIN_WORDS) return numberWords(placed)

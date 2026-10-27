@@ -57,10 +57,8 @@ export function GameShell(props: GameShellProps) {
 
   useEffect(() => {
     const seenKey = `${game.slug}:seen-help`
-    if (!readJSON(seenKey, false)) {
-      setOpen('help')
-      writeJSON(seenKey, true)
-    }
+    // Só vira "visto" quando a pessoa fecha a janela (ver closeHelp), não ao abrir.
+    if (!readJSON(seenKey, false)) setOpen('help')
   }, [game.slug])
 
   useEffect(() => {
@@ -131,14 +129,27 @@ export function GameShell(props: GameShellProps) {
 
       <main className="flex flex-1 flex-col">{children}</main>
 
-      <Dialog open={open === 'help'} onOpenChange={(o) => setOpen(o ? 'help' : null)}>
+      <Dialog
+        open={open === 'help'}
+        onOpenChange={(o) => {
+          if (!o) writeJSON(`${game.slug}:seen-help`, true)
+          setOpen(o ? 'help' : null)
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Como jogar {game.name}</DialogTitle>
             <DialogDescription>{game.description}</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 text-sm leading-relaxed">{help}</div>
-          <Button variant="pop" size="xl" onClick={() => setOpen(null)}>
+          <Button
+            variant="pop"
+            size="xl"
+            onClick={() => {
+              writeJSON(`${game.slug}:seen-help`, true)
+              setOpen(null)
+            }}
+          >
             Bora jogar!
           </Button>
         </DialogContent>

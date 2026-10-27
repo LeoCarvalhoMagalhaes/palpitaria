@@ -7,11 +7,11 @@ import { VirtualKeyboard } from '@/components/VirtualKeyboard'
 import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { AUDIO_CATEGORIES } from '@/config/soundcloud-sources'
-import { formatDateLong, pickDaily } from '@/core/daily'
+import { type Song } from '@/config/music'
+import { fetchData, useData } from '@/core/data'
+import { formatDateLong, seededShuffle } from '@/core/daily'
 import { useDailyGame } from '@/core/hooks'
-import { useSettings } from '@/core/settings'
-import { loadPlaylist, playSnippet, splitTitle, type LoadedPlaylist } from '@/core/soundcloud'
+import { SnippetPlayer } from '@/core/spotify'
 import {
   CLUE_DURATION_MS,
   CLUE_START_MS,
@@ -35,7 +35,6 @@ interface State {
   letters: Record<string, string>
   revealed: string[]
   helps: number
-  playlistUrl: string | null
   words: PlacedWord[] | null
 }
 
@@ -49,97 +48,69 @@ const HELP = (
       <li>Setas: andar pela grade</li>
     </ul>
     <p>Travou? Use <strong>Revelar</strong> ou <strong>Conferir</strong>. A cruzadinha confere sozinha quando você completa tudo. O cronômetro começa no botão Começar.</p>
-    <p className="text-muted-foreground">Áudio de playlists públicas do SoundCloud, tocado pelo player oficial.</p>
+    <p className="text-muted-foreground">As músicas são as mais tocadas da história do Spotify, tocadas pelo player oficial do Spotify (prévia de 30 s sem login).</p>
   </>
 )
 
-function categoryFor(number: number) {
-  return pickDaily(AUDIO_CATEGORIES, number, 'refrao-cruzado:categoria')
-}
+const THEME = 'As mais tocadas do Spotify'
+/** Quantas músicas do top entram no sorteio de palavras de cada dia. */
+const DAILY_POOL = 60
 
 export default function RefraoCruzadoGame(ctx: GameContext) {
-  const { game, date, number } = ctx
-  const category = useMemo(() => categoryFor(number), [number])
+  const { game, date } = ctx
+  const data = useData(() => fetchData<{ songs: Song[] }>('musicas/songs.json'))
   const daily = useDailyGame<State>({
     slug: game.slug,
-    version: 1,
+    version: 2,
     date,
     isArchive: ctx.isArchive,
-    init: () => ({ started: false, elapsed: 0, letters: {}, revealed: [], helps: 0, playlistUrl: null, words: null }),
+    init: () => ({ started: false, elapsed: 0, letters: {}, revealed: [], helps: 0, words: null }),
   })
   const { state, setState } = daily
-  const [playlist, setPlaylist] = useState<LoadedPlaylist | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [retry, setRetry] = useState(0)
+  const generated = useMemo(() => {
+    if (data.status !== 'ready' || state.words) return null
+    const pool = seededShuffle(data.data.songs, `refrao:${date}:pool`).slice(0, DAILY_POOL)
+    return generateCrossword(buildCandidates(pool.map((s) => ({ artist: s.artist, song: s.title, trackId: s.id }))), `refrao:${date}`)
+  }, [data, state.words, date])
 
   useEffect(() => {
-    let alive = true
-    let current: LoadedPlaylist | null = null
-    setError(null)
-    ;(async () => {
-      const order = state.playlistUrl
-        ? [state.playlistUrl]
-        : [pickDaily(category.playlists, number, 'refrao-cruzado:playlist').url, ...category.playlists.map((p) => p.url)]
-      for (const url of [...new Set(order)]) {
-        try {
-          const pl = await loadPlaylist(url)
-          current = pl
-          if (!alive) return pl.destroy()
-          if (!state.words) {
-            const tracks = pl.sounds.map((s, index) => ({ ...splitTitle(s), index })).filter((t) => t.song)
-            const words = generateCrossword(buildCandidates(tracks), `refrao:${date}`)
-            if (!words) {
-              pl.destroy()
-              continue
-            }
-            setState((s) => ({ ...s, words, playlistUrl: url }))
-          }
-          setPlaylist(pl)
-          return
-        } catch {
-          // próxima playlist
-        }
-      }
-      if (alive) setError('Não foi possível montar a cruzadinha agora: o SoundCloud não respondeu.')
-    })()
-    return () => {
-      alive = false
-      current?.destroy()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, number, retry])
+    if (generated) setState((s) => ({ ...s, words: generated }))
+  }, [generated, setState])
 
+  const error = data.status === 'error' ? data.error : data.status === 'ready' && !state.words && !generated ? 'Não deu para montar a cruzadinha de hoje.' : null
   if (error || !state.words) {
     return (
       <GameShell {...ctx} status={daily.status} buckets={[]} help={HELP} result={null}>
-        {error ? <ErrorBox message={error} onRetry={() => setRetry((n) => n + 1)} /> : <LoadingScreen label="Montando a cruzadinha…" />}
+        {error ? <ErrorBox message={error} onRetry={data.status === 'error' ? data.retry : undefined} /> : <LoadingScreen label="Montando a cruzadinha…" />}
       </GameShell>
     )
   }
-  return <Board ctx={ctx} daily={daily} words={state.words} playlist={playlist} categoryName={category.name} />
+  return <Board ctx={ctx} daily={daily} words={state.words} categoryName={THEME} />
 }
 
 function Board({
   ctx,
   daily,
   words,
-  playlist,
   categoryName,
 }: {
   ctx: GameContext
   daily: ReturnType<typeof useDailyGame<State>>
   words: PlacedWord[]
-  playlist: LoadedPlaylist | null
   categoryName: string
 }) {
   const { game, number, date } = ctx
   const { state, setState, status, finish } = daily
-  const { settings } = useSettings()
   const solution = useMemo(() => solutionMap(words), [words])
   const [active, setActive] = useState(0)
   const [cursor, setCursor] = useState(0)
   const [wrong, setWrong] = useState<Set<string>>(new Set())
-  const stopRef = useRef<(() => void) | null>(null)
+  const playerRef = useRef<SnippetPlayer | null>(null)
+  useEffect(() => {
+    const p = new SnippetPlayer()
+    playerRef.current = p
+    return () => p.destroy()
+  }, [])
   const finished = status === 'won' || status === 'lost'
 
   const word = words[active]
@@ -157,14 +128,9 @@ function Board({
 
   const playClue = useCallback(
     (w: PlacedWord = word) => {
-      if (!playlist) {
-        toast('O áudio ainda está carregando…')
-        return
-      }
-      stopRef.current?.()
-      stopRef.current = playSnippet(playlist, w.soundIndex, CLUE_START_MS, CLUE_DURATION_MS, settings.volume)
+      playerRef.current?.play(w.trackId, CLUE_START_MS, CLUE_DURATION_MS).catch(() => toast('O player do Spotify não respondeu.'))
     },
-    [playlist, word, settings.volume],
+    [word],
   )
 
   const checkDone = (letters: Record<string, string>, helps: number) => {
@@ -433,7 +399,7 @@ function Board({
               </ol>
             </section>
           </div>
-          <p className="text-center text-xs text-muted-foreground">Áudio via SoundCloud (player oficial) · tema {categoryName}</p>
+          <p className="text-center text-xs text-muted-foreground">Áudio pelo player oficial do Spotify · tema {categoryName}</p>
         </div>
       )}
     </GameShell>

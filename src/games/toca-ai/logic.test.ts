@@ -1,37 +1,64 @@
-import { AUDIO_CATEGORIES } from '@/config/soundcloud-sources'
-import { MAX_TRIES, SNIPPETS_MS, dailyTrackIndex, emojiRow, isFinished, playlistOrder, shareText, snippetFor, type CategoryState } from './logic'
+import type { MusicCategory, Song } from '@/config/music'
+import {
+  MAX_TRIES,
+  SNIPPETS_MS,
+  availableCategories,
+  dailySong,
+  emojiRow,
+  emptyCategory,
+  isFinished,
+  shareText,
+  snippetFor,
+  winThreshold,
+  type CategoryState,
+} from './logic'
 
-const empty: CategoryState = { attempts: [], answer: null, done: false }
+const songs: Song[] = Array.from({ length: 60 }, (_, i) => ({
+  id: `id${i}`,
+  rank: i + 1,
+  artist: `Artista ${i}`,
+  title: `Música ${i}`,
+  streams: 1000 - i,
+  genre: null,
+  year: null,
+  cat: i < 40 ? 'pop' : 'rock',
+}))
+const cats: MusicCategory[] = [
+  { id: 'todas', name: 'Todas', cat: null },
+  { id: 'pop', name: 'Pop', cat: 'pop' },
+  { id: 'rock', name: 'Rock', cat: 'rock' },
+]
 
 describe('Toca Aí', () => {
   it('trechos crescem a cada tentativa', () => {
     expect(SNIPPETS_MS).toEqual([130, 530, 2000, 8000, 15000])
-    expect(snippetFor(empty)).toBe(130)
-    expect(snippetFor({ ...empty, attempts: [{ kind: 'skip' }, { kind: 'skip' }] })).toBe(2000)
+    expect(snippetFor(emptyCategory())).toBe(130)
+    expect(snippetFor({ attempts: [{ kind: 'skip' }, { kind: 'skip' }] })).toBe(2000)
   })
 
   it('termina ao acertar ou após 5 tentativas', () => {
-    expect(isFinished({ ...empty, attempts: [{ kind: 'guess', id: 1, label: 'x', correct: true }] })).toBe(true)
-    expect(isFinished({ ...empty, attempts: Array(MAX_TRIES).fill({ kind: 'skip' }) })).toBe(true)
-    expect(isFinished({ ...empty, attempts: [{ kind: 'skip' }] })).toBe(false)
+    expect(isFinished({ attempts: [{ kind: 'guess', id: 'a', label: 'x', correct: true }] })).toBe(true)
+    expect(isFinished({ attempts: Array(MAX_TRIES).fill({ kind: 'skip' }) })).toBe(true)
+    expect(isFinished({ attempts: [{ kind: 'skip' }] })).toBe(false)
   })
 
-  it('emojis: acerto, erro, pulo e não usada', () => {
+  it('categorias com poucas músicas ficam de fora', () => {
+    expect(availableCategories(cats, songs).map((c) => c.id)).toEqual(['todas', 'pop'])
+  })
+
+  it('música do dia é da categoria e não repete por um ciclo', () => {
+    expect(dailySong(cats[1], songs, 3).cat).toBe('pop')
+    const cycle = new Set(Array.from({ length: 40 }, (_, i) => dailySong(cats[1], songs, i + 1).id))
+    expect(cycle.size).toBe(40)
+  })
+
+  it('emojis e compartilhamento', () => {
     const s: CategoryState = {
-      ...empty,
-      attempts: [{ kind: 'guess', id: 1, label: 'a', correct: false }, { kind: 'skip' }, { kind: 'guess', id: 2, label: 'b', correct: true }],
+      attempts: [{ kind: 'guess', id: 'a', label: 'a', correct: false }, { kind: 'skip' }, { kind: 'guess', id: 'b', label: 'b', correct: true }],
     }
     expect(emojiRow(s)).toBe('🟥⬜🟩⬛⬛')
-    expect(shareText('Toca Aí', 1, AUDIO_CATEGORIES.slice(0, 1), { [AUDIO_CATEGORIES[0].id]: s })).toBe(
-      `Toca Aí #1 🎧 1/1\n🟥⬜🟩⬛⬛ ${AUDIO_CATEGORIES[0].name}`,
-    )
-  })
-
-  it('playlist e faixa do dia são determinísticas', () => {
-    const cat = AUDIO_CATEGORIES[0]
-    expect(playlistOrder(cat, 5)).toEqual(playlistOrder(cat, 5))
-    expect(new Set(playlistOrder(cat, 5)).size).toBe(cat.playlists.length)
-    expect(dailyTrackIndex(30, 4, 'x')).toBe(dailyTrackIndex(30, 4, 'x'))
-    expect(dailyTrackIndex(30, 4, 'x')).toBeLessThan(30)
+    expect(shareText('Toca Aí', 1, cats.slice(0, 1), { todas: s })).toBe('Toca Aí #1 🎧 1/1\n🟥⬜🟩⬛⬛ Todas')
+    expect(winThreshold(3)).toBe(2)
+    expect(winThreshold(1)).toBe(1)
   })
 })
