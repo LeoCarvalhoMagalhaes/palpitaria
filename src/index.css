@@ -1,0 +1,185 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/fredoka";
+@import "@fontsource-variable/nunito";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: 'Fredoka Variable', 'Nunito Variable', sans-serif;
+  --font-sans: 'Nunito Variable', system-ui, sans-serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-ink: var(--ink);
+  --color-brand: var(--brand);
+  --color-brand-2: var(--brand-2);
+  --color-sun: var(--sun);
+  --color-mint: var(--mint);
+  --color-hit: var(--hit);
+  --color-near: var(--near);
+  --color-miss: var(--miss);
+  --color-far: var(--far);
+  --color-on-feedback: var(--on-feedback);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --ease-pop: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Tokens da identidade Palpitaria: jovial, simples, objetiva e levemente divertida. */
+:root {
+  --ink: #1e1b2e;
+  --brand: #c2410c;
+  --brand-2: #6a4cf0;
+  --sun: #ffc93c;
+  --mint: #18a57f;
+
+  /* Cores de feedback dos jogos (separadas das cores da marca). */
+  --hit: #237a45;
+  --near: #8f6a00;
+  --miss: #6f6b80;
+  --far: #c0392f;
+  --on-feedback: #ffffff;
+
+  --background: #fff8ee;
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--brand);
+  --primary-foreground: #ffffff;
+  --secondary: #f3ecff;
+  --secondary-foreground: var(--ink);
+  --muted: #f4eee4;
+  --muted-foreground: #5e5974;
+  --accent: #ffe9d6;
+  --accent-foreground: var(--ink);
+  --destructive: #c62f28;
+  --border: var(--ink);
+  --input: #d9d2c5;
+  --ring: var(--brand-2);
+  --radius: 16px;
+  color-scheme: light;
+}
+
+.dark {
+  --ink: #f4f1fa;
+  --brand: #ff8f5a;
+  --brand-2: #a08cff;
+  --sun: #ffd466;
+  --mint: #3ed9b1;
+
+  --hit: #23804a;
+  --near: #8f6a00;
+  --miss: #5d596c;
+  --far: #c0392f;
+  --on-feedback: #ffffff;
+
+  --background: #16141f;
+  --foreground: var(--ink);
+  --card: #221f2e;
+  --card-foreground: var(--ink);
+  --popover: #221f2e;
+  --popover-foreground: var(--ink);
+  --primary: var(--brand);
+  --primary-foreground: #1e1b2e;
+  --secondary: #2c2840;
+  --secondary-foreground: var(--ink);
+  --muted: #2a2737;
+  --muted-foreground: #b3aec6;
+  --accent: #3a2c27;
+  --accent-foreground: var(--ink);
+  --destructive: #ff6b63;
+  --border: #4a4560;
+  --input: #4a4560;
+  --ring: var(--brand-2);
+  color-scheme: dark;
+}
+
+/* Modo alto contraste / daltônico: laranja, azul e roxo no lugar de verde, amarelo e vermelho. */
+.hc {
+  --hit: #b34700;
+  --near: #2a62b5;
+  --far: #5d3a9b;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    min-height: 100dvh;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading;
+  }
+  :focus-visible {
+    outline: 3px solid var(--brand-2);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Estilo "adesivo": borda grossa e sombra sólida deslocada. */
+  .sticker {
+    border: 2px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    transition: transform 150ms var(--ease-pop), box-shadow 150ms var(--ease-pop);
+  }
+  .dark .sticker {
+    border-color: #4a4560;
+    box-shadow: 4px 4px 0 #0b0a10;
+  }
+  .sticker-press:active:not(:disabled) {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .dark .sticker-press:active:not(:disabled) {
+    box-shadow: 2px 2px 0 #0b0a10;
+  }
+  .tile-hit { background: var(--hit); color: var(--on-feedback); border-color: var(--hit); }
+  .tile-near { background: var(--near); color: var(--on-feedback); border-color: var(--near); }
+  .tile-miss { background: var(--miss); color: var(--on-feedback); border-color: var(--miss); }
+  .tile-far { background: var(--far); color: var(--on-feedback); border-color: var(--far); }
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+.animate-shake { animation: shake 450ms ease-in-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

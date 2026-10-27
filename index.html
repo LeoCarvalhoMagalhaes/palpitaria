@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="Palpitaria: 11 joguinhos diários em português. Um palpite por dia não faz mal a ninguém." />
+    <meta name="theme-color" content="#fff8ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#16141f" media="(prefers-color-scheme: dark)" />
+    <title>Palpitaria · joguinhos diários</title>
+    <script>
+      // Aplica o tema salvo antes do primeiro desenho, evitando o "piscar" de cores.
+      try {
+        var s = JSON.parse(localStorage.getItem('palpitaria:settings') || '{}');
+        var dark = s.theme === 'dark' || ((!s.theme || s.theme === 'system') && matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+        if (s.highContrast) document.documentElement.classList.add('hc');
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
