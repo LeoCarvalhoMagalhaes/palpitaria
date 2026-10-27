@@ -23,6 +23,7 @@ import {
   emptyCategory,
   formatSeconds,
   isFinished,
+  isSameArtist,
   isSolved,
   shareText,
   snippetFor,
@@ -154,8 +155,11 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
   const guess = (opt: Option) => {
     if (catDone) return
     const correct = opt.id === answer.id
-    record({ attempts: [...cat.attempts, { kind: 'guess', id: opt.id, label: opt.label, correct }] })
-    if (!correct) toast('Não é essa! O trecho ficou maior.')
+    const guessed = songsById.get(opt.id)
+    const sameArtist = !correct && !!guessed && isSameArtist(guessed, answer)
+    record({ attempts: [...cat.attempts, { kind: 'guess', id: opt.id, label: opt.label, correct, sameArtist }] })
+    if (sameArtist) toast('Artista certo! Mas não é essa música. 🟨')
+    else if (!correct) toast('Não é essa! O trecho ficou maior.')
   }
 
   const skip = () => {
@@ -163,6 +167,7 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
     record({ attempts: [...cat.attempts, { kind: 'skip' }] })
   }
 
+  const songsById = useMemo(() => new Map(songs.map((s) => [s.id, s])), [songs])
   const options: Option[] = useMemo(() => songs.map((s) => ({ id: s.id, label: songLabel(s), keys: [s.title, s.artist] })), [songs])
   const excluded = useMemo(() => new Set(cat.attempts.flatMap((a) => (a.kind === 'guess' ? [a.id] : []))), [cat.attempts])
   const share = shareText(game.shareName, number, categories, state)
@@ -181,7 +186,7 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
         <>
           <p>Ouça um <strong>trechinho</strong> e adivinhe a música. Errou ou pulou? O trecho aumenta: {SNIPPETS_MS.map(formatSeconds).join(' → ')}.</p>
           <p>As músicas são as <strong>mais tocadas da história do Spotify</strong>. São {categories.length} categorias por dia ({categories.map((c) => c.name).join(', ')}), com {MAX_TRIES} tentativas cada. Acertando {winThreshold(categories.length)} ou mais, o dia conta como vitória.</p>
-          <p>Digite o nome da música ou do artista e escolha na lista.</p>
+          <p>Digite o nome da música ou do artista e escolha na lista. Se errar a música mas acertar o artista, o palpite fica <span className="rounded px-1 tile-near">amarelo</span>.</p>
           <p className="text-muted-foreground">Prévias cedidas pela Apple Music.</p>
         </>
       }
@@ -278,10 +283,11 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
         <ol className="space-y-1.5">
           {Array.from({ length: MAX_TRIES }, (_, i) => {
             const a = cat.attempts[i]
-            const cls = !a ? 'border-dashed border-ink/15' : a.kind === 'skip' ? 'bg-muted border-ink/10' : a.correct ? 'tile-hit' : 'tile-far'
+            const cls = !a ? 'border-dashed border-ink/15' : a.kind === 'skip' ? 'bg-muted border-ink/10' : a.correct ? 'tile-hit' : a.sameArtist ? 'tile-near' : 'tile-far'
             return (
               <li key={i} className={`flex h-11 items-center rounded-xl border-2 px-3 text-sm font-semibold ${cls}`}>
                 {!a ? '' : a.kind === 'skip' ? 'Pulou' : a.label}
+                {a?.kind === 'guess' && a.sameArtist && <span className="ml-auto pl-2 text-xs font-normal">artista certo</span>}
               </li>
             )
           })}

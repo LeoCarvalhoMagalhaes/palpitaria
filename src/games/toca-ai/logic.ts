@@ -5,7 +5,33 @@ import { MIN_SONGS_PER_CATEGORY, type MusicCategory, type Song } from '@/config/
 export const SNIPPETS_MS = [130, 530, 2000, 8000, 15000]
 export const MAX_TRIES = SNIPPETS_MS.length
 
-export type Attempt = { kind: 'guess'; id: string; label: string; correct: boolean } | { kind: 'skip' }
+/** sameArtist: errou a música, mas acertou o artista (fica amarelo). */
+export type Attempt = { kind: 'guess'; id: string; label: string; correct: boolean; sameArtist?: boolean } | { kind: 'skip' }
+
+function foldArtist(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+}
+
+/** Artistas creditados (o principal e quem aparece junto, ex.: "Drake, Wizkid" ou "Shakira & Bizarrap"). */
+export function artistsOf(name: string): string[] {
+  return name
+    .split(/,|&| x | feat\.?| ft\.?| with /i)
+    .map(foldArtist)
+    .filter(Boolean)
+}
+
+/** O palpite é de um artista da resposta? */
+export function isSameArtist(guess: Pick<Song, 'artist'>, answer: Pick<Song, 'artist'>): boolean {
+  const g = artistsOf(guess.artist)
+  const a = new Set(artistsOf(answer.artist))
+  return g.some((x) => a.has(x))
+}
 
 export interface CategoryState {
   attempts: Attempt[]
@@ -46,7 +72,7 @@ export function emojiRow(s: CategoryState): string {
     const a = s.attempts[i]
     if (!a) return '⬛'
     if (a.kind === 'skip') return '⬜'
-    return a.correct ? '🟩' : '🟥'
+    return a.correct ? '🟩' : a.sameArtist ? '🟨' : '🟥'
   }).join('')
 }
 

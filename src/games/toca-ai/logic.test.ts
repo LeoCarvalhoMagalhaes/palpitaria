@@ -7,6 +7,7 @@ import {
   emojiRow,
   emptyCategory,
   isFinished,
+  isSameArtist,
   shareText,
   snippetFor,
   winThreshold,
@@ -56,6 +57,17 @@ describe('Toca Aí', () => {
     expect(dailySong(cats[1], songs, 3).cat).toBe('pop')
     const cycle = new Set(Array.from({ length: 40 }, (_, i) => dailySong(cats[1], songs, i + 1).id))
     expect(cycle.size).toBe(40)
+  })
+
+  it('artista certo com música errada fica amarelo', () => {
+    expect(isSameArtist({ artist: 'Drake' }, { artist: 'Drake' })).toBe(true)
+    expect(isSameArtist({ artist: 'Wizkid' }, { artist: 'Drake, Wizkid' })).toBe(true)
+    expect(isSameArtist({ artist: 'Beyoncé' }, { artist: 'Beyonce' })).toBe(true)
+    expect(isSameArtist({ artist: 'Shakira' }, { artist: 'Shakira & Bizarrap' })).toBe(true)
+    expect(isSameArtist({ artist: 'Ed Sheeran' }, { artist: 'The Weeknd' })).toBe(false)
+    expect(isSameArtist({ artist: 'Drake' }, { artist: 'Drake Bell' })).toBe(false)
+    const s: CategoryState = { attempts: [{ kind: 'guess', id: 'x', label: 'x', correct: false, sameArtist: true }] }
+    expect(emojiRow(s)).toBe('🟨⬛⬛⬛⬛')
   })
 
   it('emojis e compartilhamento', () => {
