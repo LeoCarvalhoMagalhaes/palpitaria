@@ -16,10 +16,12 @@ const lines = async (file) => (await fs.readFile(file, 'utf8')).split(/\r?\n/).f
 const fold = (w) => w.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 async function main() {
-  const lemmas = new Set(await lines(path.join(WORDS, 'forms.txt')))
-  const thes = (await lines(path.join(WORDS, 'thes.txt'))).map((l) => l.split('\t')[0])
+  // Vocabulário: as palavras mais frequentes do português do Brasil (FrequencyWords, OpenSubtitles 2018,
+  // CC BY-SA 4.0) que existem no dicionário VERO (grafia atual, sem nomes próprios).
+  const forms = new Set(await lines(path.join(WORDS, 'forms.txt')))
+  const freq = (await lines(path.join(WORDS, 'freq_pt_br_50k.txt'))).map((l) => l.split(' ')[0])
   const answers = (await lines(path.join(ROOT, 'scripts/data/rastro/answers.txt'))).filter((l) => !l.startsWith('#')).map((l) => l.trim())
-  const vocabSet = new Set(thes.filter((w) => w.length >= 3 && w.length <= 14 && lemmas.has(w)))
+  const vocabSet = new Set(freq.filter((w) => w.length >= 3 && w.length <= 16 && /^[a-záàâãéêíóôõúüç]+$/.test(w) && forms.has(w)))
   for (const a of answers) vocabSet.add(a)
   const vocab = [...vocabSet].sort((a, b) => a.localeCompare(b, 'pt-BR'))
   console.log(`vocabulário: ${vocab.length} palavras, ${answers.length} respostas`)
@@ -68,7 +70,8 @@ async function main() {
   await fs.writeFile(
     path.join(OUT, 'vocab.json'),
     JSON.stringify({
-      fonte: 'Vocabulário: tesauro e dicionário VERO do LibreOffice (LGPLv3/MPL). Proximidade: modelo LaBSE (Apache-2.0).',
+      fonte: 'Vocabulário: FrequencyWords pt_BR (Hermit Dave, OpenSubtitles 2018, CC BY-SA 4.0) filtrado pelo dicionário VERO (LGPLv3/MPL). Proximidade: modelo LaBSE (Apache-2.0).',
+      licenca: 'CC BY-SA 4.0 (lista de palavras derivada)',
       days: days.length,
       words: vocab,
     }),

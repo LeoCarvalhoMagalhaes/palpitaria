@@ -22,6 +22,7 @@ const DATA = [
     items: [
       ['Dicionário e tesauro VERO pt_BR (LibreOffice), por Raimundo Santos Moura e colaboradores', 'LGPLv3 / MPL', 'https://github.com/LibreOffice/dictionaries/tree/master/pt_BR'],
       ['Modelo LaBSE (proximidade de sentido do Rastro), versão ONNX Xenova/LaBSE', 'Apache-2.0', 'https://huggingface.co/sentence-transformers/LaBSE'],
+      ['Vocabulário do Rastro: FrequencyWords pt_BR, de Hermit Dave (OpenSubtitles 2018). A lista derivada é distribuída sob a mesma licença', 'CC BY-SA 4.0', 'https://github.com/hermitdave/FrequencyWords'],
     ],
   },
   {
@@ -34,8 +35,11 @@ const DATA = [
   {
     game: 'Mais ou Menos',
     items: [
+      ['Wikimedia — visualizações de páginas da Wikipédia em português', 'CC0', 'https://wikimedia.org/api/rest_v1/'],
+      ['Kworb — streams no Spotify', 'Dados públicos do Kworb', 'https://kworb.net/spotify/songs.html'],
+      ['Wikidata — notas do Metacritic, altitude de montanhas e comprimento de rios', 'CC0', 'https://www.wikidata.org/'],
+      ['outro jogo — preços (mesma base do Na Etiqueta)', 'MIT', 'https://github.com/KermWasTaken'],
       ['IBGE — estimativas da população dos municípios', 'Dados públicos', 'https://servicodados.ibge.gov.br/api/docs/agregados'],
-      ['Wikidata — altitude de montanhas e comprimento de rios', 'CC0', 'https://www.wikidata.org/'],
     ],
   },
 ]

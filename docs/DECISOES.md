@@ -24,7 +24,8 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Toca Aí | Início do trecho | Começo da faixa (0 s) | Proposta |
 | Letra por Letra | Voz | Web Speech API pt-BR do aparelho | Proposta (gratuita; o original usa áudio gravado) |
 | Letra por Letra | Grafia | Acentos, cedilha e hífen contam; 1 tentativa por rodada; vitória com 3+ | Proposta (1 tentativa observada) |
-| Mais ou Menos | Categorias | População e área de países, cidades brasileiras, montanhas, rios; pares com diferença ≥15% | Proposta (originais dependem de Google/Spotify) |
+| Mais ou Menos | Categorias | As 5 do original, na mesma ordem: Google Searches → visualizações na Wikipédia (12 meses), Spotify Streams → Kworb, Movie Ratings → Metacritic (Wikidata), Prices → outro jogo (US$), Trivia → curiosidades (população, área, cidades, montanhas, rios); pares com diferença ≥15% | Observada (categorias); fontes substitutas propostas |
+| Rastro | Vocabulário | 36,5 mil palavras mais frequentes do português (FrequencyWords, CC BY-SA) que existem no VERO; aceita plurais e conjugações; digitar sem acento vale | Proposta |
 | Rastro | Dica | Custo 7/5/3 por faixas de distância ≥1000/≥160/≥2 | Observada |
 | Rastro | Palavra revelada pela dica | Metade da posição do melhor palpite (ou posição 1000 sem palpites) | Proposta |
 | Holofote | Amarelo | Estreia até 5 anos; popularidade até 50 posições; mesmo continente | Observada |

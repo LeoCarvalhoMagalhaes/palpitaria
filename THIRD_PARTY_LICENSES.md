@@ -34,6 +34,12 @@ Copyright (C) 2006–2013 Raimundo Santos Moura e colaboradores. Licença dupla 
 As listas derivadas em `public/data/palavreta`, `public/data/rastro` e `public/data/letra-por-letra` (validação) são redistribuídas sob a MPL.
 Fonte: https://github.com/LibreOffice/dictionaries/tree/master/pt_BR
 
+### FrequencyWords pt_BR (vocabulário do Rastro)
+
+Copyright Hermit Dave. Conteúdo sob CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), derivado do OpenSubtitles 2018.
+A lista `public/data/rastro/vocab.json` é uma adaptação (filtrada pelo dicionário VERO) e é distribuída sob a mesma licença CC BY-SA 4.0.
+Fonte: https://github.com/hermitdave/FrequencyWords
+
 ### Natural Earth
 
 Domínio público. https://www.naturalearthdata.com/about/terms-of-use/

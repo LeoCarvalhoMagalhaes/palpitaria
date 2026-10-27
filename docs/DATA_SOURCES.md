@@ -19,6 +19,9 @@ Verificação inicial: 27/10/2026. Reconfirme as licenças antes de qualquer uso
 | Mais ou Menos (outro jogo) | Compilação própria (Google, Spotify, filmes) | Bundles do outro jogo | Proprietário | — | Dependem de Google/Spotify | **Substituir** por Natural Earth, IBGE e Wikidata |
 | Mais ou Menos | IBGE: estimativas da população (agregado 6579) | servicodados.ibge.gov.br | Dados públicos | Citar IBGE | — | Usar |
 | Mais ou Menos | Wikidata: altitude (P2044) e comprimento (P2043) | query.wikidata.org | CC0 | Não | — | Usar |
+| Rastro | FrequencyWords pt_BR (OpenSubtitles 2018) | github.com/hermitdave/FrequencyWords | CC BY-SA 4.0 | Sim | Lista derivada sob a mesma licença | **Usar** como vocabulário |
+| Mais ou Menos | Wikimedia Pageviews (top mensal da pt.wikipedia, 12 meses) | wikimedia.org/api/rest_v1 | CC0 | Não | — | **Usar** no lugar das buscas do Google |
+| Mais ou Menos | Notas do Metacritic no Wikidata (P444/P447) | query.wikidata.org | CC0 | Não | — | **Usar** |
 | Rastro (outro jogo) | API própria | Bundles do outro jogo | Proprietário | — | — | **Substituir** por modelo LaBSE (Apache-2.0) rodado localmente |
 | Holofote (outro jogo) | Lista própria do outro jogo; prévia Apple Music no fim | Bundles `/_app/immutable/chunks/*.js` | Proprietário | — | Spotify proíbe jogos | **Substituir** por MusicBrainz + ListenBrainz |
 | Holofote | MusicBrainz (dados centrais) | musicbrainz.org/doc/About/Data_License | CC0 | Não | Limite de 1 req/s | Usar |

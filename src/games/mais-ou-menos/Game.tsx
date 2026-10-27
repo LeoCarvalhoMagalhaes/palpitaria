@@ -19,7 +19,7 @@ export default function MaisOuMenosGame(ctx: GameContext) {
   return <Play ctx={ctx} categories={data.data.categories} />
 }
 
-function CountUp({ value, unit, run }: { value: number; unit: string; run: boolean }) {
+function CountUp({ value, unit, prefix, decimals, run }: { value: number; unit: string; prefix?: string; decimals?: number; run: boolean }) {
   const reduce = useReducedMotion()
   const [shown, setShown] = useState(run && !reduce ? 0 : value)
   useEffect(() => {
@@ -27,10 +27,11 @@ function CountUp({ value, unit, run }: { value: number; unit: string; run: boole
       setShown(value)
       return
     }
-    const controls = animate(0, value, { duration: 0.9, ease: [0.32, 0.72, 0, 1], onUpdate: (v) => setShown(Math.round(v)) })
+    const f = 10 ** (decimals ?? 0)
+    const controls = animate(0, value, { duration: 0.9, ease: [0.32, 0.72, 0, 1], onUpdate: (v) => setShown(Math.round(v * f) / f) })
     return () => controls.stop()
   }, [value, run, reduce])
-  return <span className="tabular-nums">{formatValue(shown, unit)}</span>
+  return <span className="tabular-nums">{formatValue(shown, unit, prefix, decimals)}</span>
 }
 
 function ItemCard({
@@ -59,13 +60,13 @@ function ItemCard({
       className={`flex min-h-44 flex-1 flex-col items-center justify-center gap-2 rounded-3xl p-4 text-center sticker sticker-press disabled:cursor-default ${
         revealed ? (isBigger ? 'tile-hit' : 'bg-card') : 'bg-card hover:bg-accent'
       } ${revealed && chosen ? 'ring-4 ring-brand-2 ring-offset-2 ring-offset-background' : ''}`}
-      aria-label={revealed ? `${displayName(item.name)}: ${formatValue(item.value, round.category.unit)}` : `Escolher ${displayName(item.name)}`}
+      aria-label={revealed ? `${displayName(item.name)}: ${formatValue(item.value, round.unit, round.category.prefix, round.category.decimals)}` : `Escolher ${displayName(item.name)}`}
     >
       <span className="text-4xl" aria-hidden>{item.emoji}</span>
       <span className="font-heading text-xl leading-tight font-semibold sm:text-2xl">{displayName(item.name)}</span>
       {revealed && (
         <span className="font-heading text-lg">
-          <CountUp value={item.value} unit={round.category.unit} run />
+          <CountUp value={item.value} unit={round.unit} prefix={round.category.prefix} decimals={round.category.decimals} run />
         </span>
       )}
       {revealed && chosen && <span className="text-sm font-semibold">{correct ? 'Sua escolha ✓' : 'Sua escolha ✗'}</span>}
@@ -116,12 +117,12 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
           <ul className="list-disc space-y-1 pl-5">
             {categories.map((c) => (
               <li key={c.id}>
-                <strong>{c.name}:</strong> {c.question.toLowerCase()}
+                <strong>{c.name}:</strong> {c.groups ? 'população, área, cidades, montanhas ou rios' : c.question.toLowerCase()}
               </li>
             ))}
           </ul>
           <p>Acertando 3 ou mais, o dia conta como vitória para a sequência.</p>
-          <p className="text-muted-foreground">Dados: Natural Earth, IBGE e Wikidata. Veja os créditos completos na página inicial.</p>
+          <p className="text-muted-foreground">Dados: Wikipédia, Kworb, Wikidata, outro jogo, Natural Earth e IBGE. Veja os créditos completos.</p>
         </>
       }
       result={
@@ -159,7 +160,7 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
         <p className="text-center text-sm font-semibold text-muted-foreground uppercase">
           Rodada {viewing + 1} de {ROUNDS} · {round.category.name}
         </p>
-        <h2 className="mb-4 text-center font-heading text-2xl font-semibold">{round.category.question}</h2>
+        <h2 className="mb-4 text-center font-heading text-2xl font-semibold">{round.question}</h2>
         <div className="flex flex-col items-stretch gap-3 sm:flex-row">
           <ItemCard item={round.left} round={round} revealed={answered} chosen={choice === 'left'} correct={results[viewing]} onPick={() => pick('left')} />
           <div className="grid place-items-center font-heading text-lg font-bold text-muted-foreground" aria-hidden>

@@ -93,14 +93,23 @@ export class SnippetPlayer {
     loadSpotifyApi().catch(() => {})
   }
 
+  /** Enquanto true, ignora avisos com posição antiga (o seek/loadUri ainda não "pegou"). */
+  private waitingReset = false
+
   private onUpdate = (e: PlaybackUpdate) => {
     const d = e?.data
-    if (!d || !this.active) return
-    // O trecho começa a contar quando o som começa de verdade (não durante o carregamento).
-    if (!d.isPaused && !d.isBuffering && this.stopTimer === null) {
-      log('tocando', d.position)
-      this.stopTimer = window.setTimeout(() => this.stop(), this.durationMs)
+    if (!d || !this.active || this.stopTimer !== null) return
+    if (this.waitingReset) {
+      if (d.position > 1500) return
+      this.waitingReset = false
     }
+    if (d.isPaused || d.isBuffering) return
+    // O aviso diz quanto já tocou desde o começo da faixa: o corte acontece no tempo que falta.
+    const played = Math.max(0, d.position)
+    const remaining = this.durationMs - played
+    log('tocando', { played, remaining })
+    if (remaining <= 0) this.stop()
+    else this.stopTimer = window.setTimeout(() => this.stop(), remaining)
   }
 
   private async ensureController(uri: string): Promise<EmbedController> {
@@ -139,16 +148,21 @@ export class SnippetPlayer {
     this.onEnd = onEnd ?? null
     this.active = true
     this.pendingPlay = true
+    const fresh = !this.controller
     const c = await this.ensureController(uri)
+    this.waitingReset = !fresh
     if (this.currentUri !== uri) {
       log('loadUri', uri)
       this.currentUri = uri
       c.loadUri(uri)
-    } else {
-      // Mesma faixa: volta para o começo.
+      c.play()
+    } else if (!fresh) {
+      // Mesma faixa: volta para o começo antes de tocar.
       c.seek(0)
+      c.play()
+    } else {
+      c.play()
     }
-    c.play()
     // Se o som nunca começar (ex.: bloqueio do navegador), libera o botão.
     this.safetyTimer = window.setTimeout(() => {
       if (this.stopTimer === null) {
