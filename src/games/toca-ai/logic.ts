@@ -87,6 +87,6 @@ export function shareText(name: string, number: number, categories: MusicCategor
   return `${name} #${number} 🎧 ${solved}/${categories.length}\n${lines.join('\n')}`
 }
 
-export function formatSeconds(ms: number): string {
-  return ms < 1000 ? `${(ms / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}s` : `${ms / 1000}s`
+export function formatSeconds(ms: number, lang: 'pt' | 'en' = 'pt'): string {
+  return ms < 1000 ? `${(ms / 1000).toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR', { maximumFractionDigits: 2 })}s` : `${ms / 1000}s`
 }

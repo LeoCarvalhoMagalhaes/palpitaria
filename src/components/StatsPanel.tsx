@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { loadStats, visibleStreak } from '@/core/stats'
+import { useL } from '@/core/settings'
 
 interface StatsPanelProps {
   slug: string
@@ -12,14 +13,15 @@ interface StatsPanelProps {
 }
 
 export function StatsPanel({ slug, today, buckets, bucketLabel, highlight, showAverage }: StatsPanelProps) {
+  const L = useL()
   const stats = loadStats(slug)
   const winPct = stats.played ? Math.round((stats.wins / stats.played) * 100) : 0
   const max = Math.max(1, ...buckets.map((b) => stats.distribution[b] ?? 0))
   const items: [string, string | number][] = [
-    ['Jogados', stats.played],
-    ['% vitórias', winPct],
-    ['Sequência', visibleStreak(stats, today)],
-    ['Recorde', stats.maxStreak],
+    [L('Jogados', 'Played'), stats.played],
+    [L('% vitórias', 'Win %'), winPct],
+    [L('Sequência', 'Streak'), visibleStreak(stats, today)],
+    [L('Recorde', 'Best'), stats.maxStreak],
   ]
   if (showAverage) {
     items.push([showAverage, stats.played ? (stats.scoreSum / stats.played).toFixed(1) : '–'])
@@ -42,7 +44,7 @@ export function StatsPanel({ slug, today, buckets, bucketLabel, highlight, showA
       )}
       {buckets.length > 0 && (
         <div>
-          <h3 className="mb-2 text-sm font-semibold">Distribuição</h3>
+          <h3 className="mb-2 text-sm font-semibold">{L('Distribuição', 'Distribution')}</h3>
           <ol className="space-y-1">
             {buckets.map((b) => {
               const count = stats.distribution[b] ?? 0

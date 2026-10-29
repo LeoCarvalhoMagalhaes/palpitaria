@@ -54,6 +54,20 @@ for (const slug of ['grauzinho', 'na-etiqueta', 'palavreta', 'junto', 'mais-ou-m
   })
 }
 
+test.describe('modo escuro', () => {
+  test.use({ colorScheme: 'dark' })
+  for (const slug of ['', 'holofote', 'mais-ou-menos', 'refrao-cruzado', 'grauzinho']) {
+    test(`acessibilidade no escuro: /${slug} sem violações graves`, async ({ page }) => {
+      await page.goto(`/${slug}`)
+      if (slug) await closeHelp(page)
+      await expect(page.locator('html')).toHaveClass(/dark/)
+      const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze()
+      const serious = results.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')
+      expect(serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).slice(0, 3).join(' | ')}`)).toEqual([])
+    })
+  }
+})
+
 test('tema escuro e alto contraste são aplicados e lembrados', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Configurações' }).click()
@@ -76,7 +90,7 @@ test('arquivo: abre um desafio antigo que não conta na sequência', async ({ pa
   await page.goto('/grauzinho')
   await closeHelp(page)
   await page.getByRole('button', { name: 'Jogos anteriores' }).click()
-  await page.getByRole('dialog').getByRole('button').filter({ hasText: '#1' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: /^#1 / }).click()
   await expect(page.getByText('Você está jogando um desafio antigo')).toBeVisible()
   await expect(page).toHaveURL(/dia=\d{4}-\d{2}-\d{2}/)
 })

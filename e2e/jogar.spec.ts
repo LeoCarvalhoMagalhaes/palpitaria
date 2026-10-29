@@ -28,12 +28,18 @@ test('Grauzinho: vence, compartilha e mantém o resultado ao recarregar', async 
   await page.getByRole('button', { name: 'Chutar!' }).click()
   await expect(page.getByRole('heading', { name: 'Mandou bem! 🎉' })).toBeVisible({ timeout: 10_000 })
   await expect(page.getByLabel('Prévia do compartilhamento').first()).toContainText(`Grauzinho #${num('grauzinho')} 2/4`)
-  await page.keyboard.press('Escape')
-  // Rodada bônus
-  await page.getByRole('button', { name: /Rodada bônus/ }).click()
-  await expect(page.getByRole('heading', { name: `Construa ${answer}°` })).toBeVisible()
+  // Recriar o ângulo do dia direto da janela de resultado
+  await page.getByRole('dialog').getByRole('button', { name: /Recriar o ângulo do dia/ }).click()
+  await expect(page.getByRole('heading', { name: `Recrie ${answer}°` })).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Ângulo original do dia' })).toBeVisible()
+  // Ajuste fino até o ângulo exato e confirma
+  const start = answer > 180 ? 90 : 270
+  const step = answer > start ? 'Abrir 1°' : 'Fechar 1°'
+  for (let i = 0; i < Math.abs(answer - start); i++) await page.getByRole('button', { name: step }).click()
+  await page.getByRole('button', { name: 'É esse!' }).click()
+  await expect(page.getByText(`${answer}° — exato!`)).toBeVisible()
   await page.reload()
-  await expect(page.getByRole('heading', { name: `Construa ${answer}°` })).toBeVisible()
+  await expect(page.getByRole('heading', { name: `Recrie ${answer}°` })).toBeVisible()
   await page.goto('/')
   await expect(page.getByText('1 de 11 feitos hoje')).toBeVisible()
 })
@@ -89,14 +95,16 @@ test('Juntô: erra um grupo, acerta os quatro e compartilha', async ({ page }) =
   await expect(page.getByLabel('Prévia do compartilhamento').first()).toContainText('consegui em 5 tentativas')
 })
 
-test('Mais ou Menos: joga as 5 rodadas', async ({ page }) => {
+test('Mais ou Menos: 5 categorias com 5 duelos cada', async ({ page }) => {
   await page.goto('/mais-ou-menos')
   await closeHelp(page)
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 25; i++) {
+    if (i % 5 === 0) await page.getByRole('button', { name: /Começar/ }).click()
     await page.getByRole('button', { name: /^Escolher / }).first().click()
-    if (i < 4) await page.getByRole('button', { name: 'Próxima rodada' }).click()
+    if (i < 24) await page.getByRole('button', { name: i % 5 === 4 ? 'Próxima categoria →' : 'Próximo duelo' }).click()
   }
-  await expect(page.getByLabel('Prévia do compartilhamento').first()).toContainText('/5', { timeout: 10_000 })
+  await expect(page.getByLabel('Prévia do compartilhamento').first()).toContainText('/25', { timeout: 10_000 })
+  await expect(page.getByLabel('Prévia do compartilhamento').first()).toContainText('🔎')
 })
 
 test('Holofote: palpite mostra as 6 pistas', async ({ page }) => {
@@ -129,4 +137,41 @@ test('Mundaréu: palpite colore o país e mostra a distância', async ({ page })
   await page.getByLabel('Nome do país').fill('Brasil')
   await page.getByLabel('Nome do país').press('Enter')
   await expect(page.locator('ol li').filter({ hasText: 'Brasil' })).toBeVisible({ timeout: 15_000 })
+})
+
+test.describe('em inglês', () => {
+  test.use({ locale: 'en-US' })
+
+  test('Palavreta: usa a lista em inglês', async ({ page }) => {
+    const words = readData<{ answers: string[] }>('palavreta/words-en.json')
+    const answer = fold(dailyAnswer(words.answers, num('palavreta')))
+    await page.goto('/palavreta')
+    await closeHelp(page)
+    await page.keyboard.type('xqzvj')
+    await page.keyboard.press('Enter')
+    await expect(page.getByText('Not in word list')).toBeVisible()
+    for (let i = 0; i < 5; i++) await page.keyboard.press('Backspace')
+    await page.keyboard.type(answer)
+    await page.keyboard.press('Enter')
+    await expect(page.getByRole('heading', { name: 'Nailed it! 🎉' })).toBeVisible({ timeout: 10_000 })
+  })
+
+  test('Juntô: quebra-cabeça em inglês', async ({ page }) => {
+    const { puzzles } = readData<{ puzzles: Puzzle[] }>('junto/puzzles-en.json')
+    const puzzle = puzzleFor(puzzles, num('junto'))
+    await page.goto('/junto')
+    await closeHelp(page)
+    for (const g of puzzle.grupos) {
+      for (const w of g.palavras) await page.getByRole('button', { name: w, exact: true }).click()
+      await page.waitForTimeout(700)
+    }
+    await expect(page.getByRole('heading', { name: 'Nailed it! 🎉' })).toBeVisible({ timeout: 10_000 })
+  })
+
+  test('Home e troca de idioma', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByText('Credits and licenses')).toBeVisible()
+    await page.getByRole('button', { name: 'Mudar para português' }).first().click()
+    await expect(page.getByText('Créditos e licenças')).toBeVisible()
+  })
 })

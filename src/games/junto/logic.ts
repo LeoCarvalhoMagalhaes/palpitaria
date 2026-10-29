@@ -52,12 +52,16 @@ export function nextHint(puzzle: Puzzle, solvedNiveis: number[], currentHint: st
 
 export type Move = { kind: 'guess'; nivel: number | null } | { kind: 'hint' }
 
-export function shareText(siteLabel: string, number: number, moves: Move[]): string {
+export function shareText(siteLabel: string, number: number, moves: Move[], lang: 'pt' | 'en' = 'pt'): string {
   const attempts = moves.filter((m) => m.kind === 'guess').length
   const hints = moves.filter((m) => m.kind === 'hint').length
   const emojis = moves.map((m) => (m.kind === 'hint' ? '💡' : m.nivel ? GROUP_EMOJI[m.nivel] : '❌'))
   const rows: string[] = []
   for (let i = 0; i < emojis.length; i += 10) rows.push(emojis.slice(i, i + 10).join(''))
+  if (lang === 'en') {
+    const hintEn = hints ? ` and ${hints} ${hints === 1 ? 'hint' : 'hints'}` : ''
+    return `I played ${siteLabel} #${number} and got it in ${attempts} tries${hintEn}\n${rows.join('\n')}`
+  }
   const hintText = hints ? ` e ${hints} ${hints === 1 ? 'dica' : 'dicas'}` : ''
   return `Joguei ${siteLabel} #${number} e consegui em ${attempts} tentativas${hintText}\n${rows.join('\n')}`
 }

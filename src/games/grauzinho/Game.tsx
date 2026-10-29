@@ -5,9 +5,11 @@ import { GameShell, type GameContext } from '@/components/GameShell'
 import { ShareButton } from '@/components/ShareButton'
 import { Button } from '@/components/ui/button'
 import { useDailyGame } from '@/core/hooks'
+import { useL, useLang } from '@/core/settings'
 import { readJSON, writeJSON } from '@/core/storage'
 import {
   CONSTRUCT_ATTEMPTS,
+  CONSTRUCT_TOLERANCE,
   MAX_GUESSES,
   dailyAngle,
   evaluateConstruct,
@@ -37,21 +39,57 @@ function AngleDrawing({
   arc,
   ghosts = [],
   truth,
+  onDrag,
+  label,
+  small,
 }: {
   start: number
   sweep: number
   arc: ArcStyle
   ghosts?: number[]
   truth?: number | null
+  /** Se informado, a linha laranja pode ser arrastada: recebe o novo ângulo (1–359). */
+  onDrag?: (sweep: number) => void
+  label: string
+  small?: boolean
 }) {
+  const svgRef = useRef<SVGSVGElement>(null)
+  const dragging = useRef(false)
   const a = point(start)
   const b = point(start + sweep)
   const arcR = 46
   const arcStart = point(start, arcR)
   const arcEnd = point(start + sweep, arcR)
   const largeArc = sweep > 180 ? 1 : 0
+
+  const fromPointer = (e: React.PointerEvent) => {
+    const svg = svgRef.current
+    if (!svg || !onDrag) return
+    const rect = svg.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 300 - CENTER
+    const y = CENTER - ((e.clientY - rect.top) / rect.height) * 300
+    const deg = (Math.atan2(y, x) * 180) / Math.PI
+    const rel = Math.round((((deg - start) % 360) + 360) % 360)
+    onDrag(Math.min(359, Math.max(1, rel)))
+  }
+
   return (
-    <svg viewBox="0 0 300 300" className="mx-auto w-full max-w-[300px]" role="img" aria-label="Ângulo do dia">
+    <svg
+      ref={svgRef}
+      viewBox="0 0 300 300"
+      className={`mx-auto w-full ${small ? 'max-w-[140px]' : 'max-w-[300px]'} ${onDrag ? 'cursor-grab touch-none active:cursor-grabbing' : ''}`}
+      role="img"
+      aria-label={label}
+      onPointerDown={(e) => {
+        if (!onDrag) return
+        dragging.current = true
+        ;(e.target as Element).setPointerCapture?.(e.pointerId)
+        fromPointer(e)
+      }}
+      onPointerMove={(e) => dragging.current && fromPointer(e)}
+      onPointerUp={() => (dragging.current = false)}
+      onPointerCancel={() => (dragging.current = false)}
+    >
       <circle cx={CENTER} cy={CENTER} r={RADIUS + 14} className="fill-card stroke-ink/10" strokeWidth={2} />
       {arc !== 'nenhum' && (
         <path
@@ -68,19 +106,28 @@ function AngleDrawing({
         const p = point(start + g)
         return <line key={i} x1={CENTER} y1={CENTER} x2={p.x} y2={p.y} stroke="var(--miss)" strokeWidth={4} strokeOpacity={0.45} strokeLinecap="round" />
       })}
-      {truth != null && (() => {
-        const p = point(start + truth)
-        return <line x1={CENTER} y1={CENTER} x2={p.x} y2={p.y} stroke="var(--hit)" strokeWidth={6} strokeDasharray="8 6" strokeLinecap="round" />
-      })()}
+      {truth != null &&
+        (() => {
+          const p = point(start + truth)
+          return <line x1={CENTER} y1={CENTER} x2={p.x} y2={p.y} stroke="var(--hit)" strokeWidth={6} strokeDasharray="8 6" strokeLinecap="round" />
+        })()}
       <line x1={CENTER} y1={CENTER} x2={a.x} y2={a.y} stroke="var(--ink)" strokeWidth={8} strokeLinecap="round" />
       <line x1={CENTER} y1={CENTER} x2={b.x} y2={b.y} stroke="var(--brand)" strokeWidth={8} strokeLinecap="round" />
+      {onDrag && <circle cx={b.x} cy={b.y} r={14} fill="var(--brand)" stroke="var(--card)" strokeWidth={4} />}
       <circle cx={CENTER} cy={CENTER} r={9} fill="var(--ink)" />
     </svg>
   )
 }
 
 /** Campo numérico com − e + que aceleram ao segurar. */
-function Stepper({ value, onChange, min, max, disabled, onEnter }: {
+function Stepper({
+  value,
+  onChange,
+  min,
+  max,
+  disabled,
+  onEnter,
+}: {
   value: string
   onChange: (v: string) => void
   min: number
@@ -88,13 +135,17 @@ function Stepper({ value, onChange, min, max, disabled, onEnter }: {
   disabled?: boolean
   onEnter: () => void
 }) {
+  const L = useL()
   const timer = useRef<number | null>(null)
   const valueRef = useRef(value)
-  valueRef.current = value
+  useEffect(() => {
+    valueRef.current = value
+  }, [value])
 
   const step = (dir: 1 | -1) => {
     const current = Number(valueRef.current) || 0
     const next = Math.min(max, Math.max(min, current + dir))
+    valueRef.current = String(next)
     onChange(String(next))
   }
   const stop = () => {
@@ -140,9 +191,9 @@ function Stepper({ value, onChange, min, max, disabled, onEnter }: {
 
   return (
     <div className="flex items-center justify-center gap-2">
-      {btn(-1, 'Diminuir um grau', Minus)}
+      {btn(-1, L('Diminuir um grau', 'One degree less'), Minus)}
       <label className="relative">
-        <span className="sr-only">Seu palpite em graus</span>
+        <span className="sr-only">{L('Seu palpite em graus', 'Your guess in degrees')}</span>
         <input
           type="number"
           inputMode="numeric"
@@ -157,24 +208,27 @@ function Stepper({ value, onChange, min, max, disabled, onEnter }: {
         />
         <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 font-heading text-xl text-muted-foreground">°</span>
       </label>
-      {btn(1, 'Aumentar um grau', Plus)}
+      {btn(1, L('Aumentar um grau', 'One degree more'), Plus)}
     </div>
   )
 }
 
 function GuessRow({ fb }: { fb: GuessFeedback }) {
+  const L = useL()
   const solved = fb.direction === 'solved'
   return (
     <motion.li
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`flex items-center justify-between rounded-xl border-2 px-4 py-2 font-heading text-lg ${
-        solved ? 'tile-hit' : 'border-ink/15 bg-card'
-      }`}
+      className={`flex items-center justify-between rounded-xl border-2 px-4 py-2 font-heading text-lg ${solved ? 'tile-hit' : 'border-ink/15 bg-card'}`}
     >
       <span className="tabular-nums">{fb.value}°</span>
       <span className="text-base">{fb.label}</span>
-      <span aria-label={solved ? 'acertou' : fb.direction === 'up' ? 'o ângulo é maior' : 'o ângulo é menor'}>
+      <span
+        aria-label={
+          solved ? L('acertou', 'correct') : fb.direction === 'up' ? L('o ângulo é maior', 'the angle is bigger') : L('o ângulo é menor', 'the angle is smaller')
+        }
+      >
         {solved ? <Target className="size-5" /> : fb.direction === 'up' ? <ArrowUp className="size-5" /> : <ArrowDown className="size-5" />}
       </span>
     </motion.li>
@@ -183,9 +237,11 @@ function GuessRow({ fb }: { fb: GuessFeedback }) {
 
 export default function GrauzinhoGame(ctx: GameContext) {
   const { game, date, number } = ctx
+  const L = useL()
+  const lang = useLang()
   const { start, answer } = useMemo(() => dailyAngle(date), [date])
   const { state, status, setState, finish } = useDailyGame<State>({
-    slug: game.slug,
+    slug: ctx.stateKey,
     version: 1,
     date,
     isArchive: ctx.isArchive,
@@ -196,7 +252,7 @@ export default function GrauzinhoGame(ctx: GameContext) {
   const [sweep, setSweep] = useState(90)
   const [announce, setAnnounce] = useState('')
 
-  const feedback = state.guesses.map((g) => evaluateGuess(g, answer))
+  const feedback = state.guesses.map((g) => evaluateGuess(g, answer, lang))
   const won = feedback.some((f) => f.direction === 'solved')
   const finished = status === 'won' || status === 'lost'
 
@@ -204,19 +260,19 @@ export default function GrauzinhoGame(ctx: GameContext) {
     if (finished) return
     const value = Number(input)
     if (!Number.isInteger(value) || value < 0 || value > 360 || input === '') {
-      setAnnounce('Digite um número de 0 a 360.')
+      setAnnounce(L('Digite um número de 0 a 360.', 'Type a number from 0 to 360.'))
       return
     }
-    const fb = evaluateGuess(value, answer)
+    const fb = evaluateGuess(value, answer, lang)
     const guesses = [...state.guesses, value]
     setState({ ...state, guesses })
-    setAnnounce(`Palpite ${guesses.length}: ${value} graus. ${fb.label}`)
+    setAnnounce(L(`Palpite ${guesses.length}: ${value} graus. ${fb.label}`, `Guess ${guesses.length}: ${value} degrees. ${fb.label}`))
     if (fb.direction === 'solved') finish(true, String(guesses.length))
     else if (guesses.length >= MAX_GUESSES) finish(false, 'X')
   }
 
   const constructAttempts = state.construct ?? []
-  const constructResults = constructAttempts.map((p) => evaluateConstruct(p, answer))
+  const constructResults = constructAttempts.map((p) => evaluateConstruct(p, answer, lang))
   const constructSolved = constructResults.some((r) => r.solved)
   const constructDone = constructSolved || constructAttempts.length >= CONSTRUCT_ATTEMPTS
 
@@ -228,13 +284,18 @@ export default function GrauzinhoGame(ctx: GameContext) {
     state.construct && constructAttempts.length ? { attempts: constructAttempts.length, solved: constructSolved } : null,
   )
 
-  const startConstruct = () => setState({ ...state, construct: [] })
+  const startConstruct = () => {
+    setSweep(answer > 180 ? 90 : 270)
+    if (state.construct === null) setState({ ...state, construct: [] })
+  }
   const submitConstruct = () => {
     if (constructDone) return
     setState({ ...state, construct: [...constructAttempts, sweep] })
   }
 
   const inConstruct = finished && state.construct !== null
+  const recreateLabel = L(`Recriar o ângulo do dia (${answer}°)`, `Recreate today's angle (${answer}°)`)
+  const arcNames: Record<ArcStyle, string> = { suave: L('suave', 'soft'), tracejado: L('tracejado', 'dashed'), nenhum: L('sem arco', 'no arc') }
 
   return (
     <GameShell
@@ -242,17 +303,24 @@ export default function GrauzinhoGame(ctx: GameContext) {
       status={status}
       buckets={['1', '2', '3', '4', 'X']}
       highlightBucket={won ? String(state.guesses.length) : 'X'}
-      help={
+      resultAction={!inConstruct && !constructDone ? { label: `📐 ${recreateLabel}`, onClick: startConstruct } : undefined}
+      help={L(
         <>
           <p>Descubra quantos graus tem o ângulo entre as duas linhas em até <strong>{MAX_GUESSES} palpites</strong>. Só vale o número exato!</p>
           <p>O ângulo é medido no <strong>sentido anti-horário</strong>, da linha escura até a laranja, e pode passar de 180°. O arco ajuda a ver qual lado conta.</p>
           <p>A cada palpite, a seta diz se o ângulo é <strong>maior ↑</strong> ou <strong>menor ↓</strong>, e a temperatura diz o quão perto você chegou: de "Congelando! 🥶" a "Fervendo! 🔥".</p>
-          <p>Depois de terminar, tem uma <strong>rodada bônus</strong>: construa o ângulo do dia girando a linha. Vale errar até 5°.</p>
-        </>
-      }
+          <p>Ao terminar, você pode <strong>recriar o ângulo do dia</strong>: arraste a linha laranja até formar o mesmo ângulo. São {CONSTRUCT_ATTEMPTS} tentativas e vale errar até {CONSTRUCT_TOLERANCE}°.</p>
+        </>,
+        <>
+          <p>Find out how many degrees the angle between the two lines measures in up to <strong>{MAX_GUESSES} guesses</strong>. Only the exact number counts!</p>
+          <p>The angle is measured <strong>counterclockwise</strong>, from the dark line to the orange one, and it can go past 180°. The arc shows which side counts.</p>
+          <p>After each guess, the arrow tells you if the angle is <strong>bigger ↑</strong> or <strong>smaller ↓</strong>, and the temperature shows how close you got: from "Freezing! 🥶" to "Boiling! 🔥".</p>
+          <p>When you finish, you can <strong>recreate today's angle</strong>: drag the orange line until it makes the same angle. You get {CONSTRUCT_ATTEMPTS} tries and can be off by up to {CONSTRUCT_TOLERANCE}°.</p>
+        </>,
+      )}
       gameSettings={
         <fieldset>
-          <legend className="mb-1 text-sm">Desenho do arco</legend>
+          <legend className="mb-1 text-sm">{L('Desenho do arco', 'Arc style')}</legend>
           <div className="flex gap-2">
             {(['suave', 'tracejado', 'nenhum'] as ArcStyle[]).map((opt) => (
               <button
@@ -263,9 +331,9 @@ export default function GrauzinhoGame(ctx: GameContext) {
                   setArc(opt)
                   writeJSON('grauzinho:arc', opt)
                 }}
-                className={`rounded-lg border-2 px-3 py-1 text-sm capitalize ${arc === opt ? 'border-brand bg-accent' : 'border-ink/15'}`}
+                className={`rounded-lg border-2 px-3 py-1 text-sm ${arc === opt ? 'border-brand bg-accent' : 'border-ink/15'}`}
               >
-                {opt === 'nenhum' ? 'sem arco' : opt}
+                {arcNames[opt]}
               </button>
             ))}
           </div>
@@ -274,25 +342,27 @@ export default function GrauzinhoGame(ctx: GameContext) {
       result={
         <>
           <p className="text-center text-base">
-            O ângulo era <strong className="font-heading text-xl">{answer}°</strong>
+            {L('O ângulo era', 'The angle was')} <strong className="font-heading text-xl">{answer}°</strong>
           </p>
           <ShareButton text={share} />
         </>
       }
     >
-      <p className="sr-only" aria-live="polite">{announce}</p>
+      <p className="sr-only" aria-live="polite">
+        {announce}
+      </p>
 
       {!inConstruct ? (
         <>
-          <AngleDrawing start={start} sweep={answer} arc={arc} />
+          <AngleDrawing start={start} sweep={answer} arc={arc} label={L('Ângulo do dia', "Today's angle")} />
           {!finished && (
             <div className="mt-4 space-y-3">
               <Stepper value={input} onChange={setInput} min={0} max={360} onEnter={submit} />
               <Button variant="pop" size="xl" className="mx-auto flex w-full max-w-xs" onClick={submit}>
-                Chutar!
+                {L('Chutar!', 'Guess!')}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
-                Palpites: {state.guesses.length}/{MAX_GUESSES}
+                {L('Palpites', 'Guesses')}: {state.guesses.length}/{MAX_GUESSES}
               </p>
             </div>
           )}
@@ -306,56 +376,67 @@ export default function GrauzinhoGame(ctx: GameContext) {
           {finished && (
             <div className="mx-auto mt-6 w-full max-w-sm space-y-3 text-center">
               <p className="font-heading text-lg">
-                {won ? `Acertou em ${state.guesses.length}! 🎯` : `Era ${answer}°. Amanhã tem mais!`}
+                {won ? L(`Acertou em ${state.guesses.length}! 🎯`, `Got it in ${state.guesses.length}! 🎯`) : L(`Era ${answer}°. Amanhã tem mais!`, `It was ${answer}°. More tomorrow!`)}
               </p>
-              <Button variant="pop-outline" size="xl" className="w-full" onClick={startConstruct}>
-                Rodada bônus: construa {answer}°
+              <Button variant="pop" size="xl" className="w-full" onClick={startConstruct}>
+                📐 {state.construct !== null ? L('Ver o ângulo recriado', 'See your recreated angle') : recreateLabel}
               </Button>
+              <ShareButton text={share} />
             </div>
           )}
         </>
       ) : (
         <div className="space-y-4">
           <div className="text-center">
-            <h2 className="font-heading text-2xl font-semibold">Construa {answer}°</h2>
+            <h2 className="font-heading text-2xl font-semibold">{L(`Recrie ${answer}°`, `Recreate ${answer}°`)}</h2>
             <p className="text-sm text-muted-foreground">
               {constructDone
                 ? constructSolved
-                  ? 'Construiu! 🎉'
-                  : 'Não foi dessa vez.'
-                : `Tentativa ${constructAttempts.length + 1} de ${CONSTRUCT_ATTEMPTS} · vale errar até 5°`}
+                  ? L('Recriou! 🎉', 'Recreated! 🎉')
+                  : L('Não foi dessa vez.', 'Not this time.')
+                : L(
+                    `Tentativa ${constructAttempts.length + 1} de ${CONSTRUCT_ATTEMPTS} · arraste a linha laranja · vale errar até ${CONSTRUCT_TOLERANCE}°`,
+                    `Try ${constructAttempts.length + 1} of ${CONSTRUCT_ATTEMPTS} · drag the orange line · you can be off by up to ${CONSTRUCT_TOLERANCE}°`,
+                  )}
             </p>
           </div>
-          <AngleDrawing
-            start={start}
-            sweep={constructDone ? constructAttempts[constructAttempts.length - 1] : sweep}
-            arc={arc}
-            ghosts={constructAttempts}
-            truth={constructDone ? answer : null}
-          />
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:justify-center">
+            <div className="w-full max-w-[300px]">
+              <AngleDrawing
+                start={start}
+                sweep={constructDone ? constructAttempts[constructAttempts.length - 1] : sweep}
+                arc={arc}
+                ghosts={constructAttempts}
+                truth={constructDone ? answer : null}
+                onDrag={constructDone ? undefined : setSweep}
+                label={L('Seu ângulo: arraste a linha laranja', 'Your angle: drag the orange line')}
+              />
+            </div>
+            <figure className="rounded-2xl bg-muted p-2 text-center">
+              <AngleDrawing start={start} sweep={answer} arc={arc} label={L('Ângulo original do dia', "Today's original angle")} small />
+              <figcaption className="text-xs text-muted-foreground">{L('Ângulo do dia', "Today's angle")}</figcaption>
+            </figure>
+          </div>
           {!constructDone && (
             <div className="mx-auto max-w-sm space-y-3">
-              <label className="block">
-                <span className="sr-only">Girar a linha laranja</span>
-                <input
-                  type="range"
-                  min={1}
-                  max={359}
-                  value={sweep}
-                  onChange={(e) => setSweep(Number(e.target.value))}
-                  className="w-full accent-[var(--brand)]"
-                />
-              </label>
-              <p className="text-center text-xs text-muted-foreground">Arraste para girar. O número fica escondido 😉</p>
+              <div className="flex items-center justify-center gap-2">
+                <Button variant="pop-outline" size="icon-lg" aria-label={L('Fechar 1°', 'Close 1°')} onClick={() => setSweep((s) => Math.max(1, s - 1))}>
+                  <Minus />
+                </Button>
+                <span className="text-sm text-muted-foreground">{L('ajuste fino', 'fine-tune')}</span>
+                <Button variant="pop-outline" size="icon-lg" aria-label={L('Abrir 1°', 'Open 1°')} onClick={() => setSweep((s) => Math.min(359, s + 1))}>
+                  <Plus />
+                </Button>
+              </div>
               <Button variant="pop" size="xl" className="w-full" onClick={submitConstruct}>
-                É esse!
+                {L('É esse!', "That's it!")}
               </Button>
             </div>
           )}
           <ol className="mx-auto w-full max-w-sm space-y-2">
             {constructResults.map((r, i) => (
               <li key={i} className={`rounded-xl border-2 px-4 py-2 text-center font-heading ${r.solved ? 'tile-hit' : 'border-ink/15 bg-card'}`}>
-                {r.solved ? `${r.produced}° — ${r.hint}` : `${r.produced}° — ${r.hint} · ${r.label}`}
+                {r.produced}° — {r.off === 0 ? L('exato!', 'exact!') : L(`errou por ${r.off}°`, `off by ${r.off}°`)} · {r.solved ? r.hint : `${r.hint} · ${r.label}`}
               </li>
             ))}
           </ol>

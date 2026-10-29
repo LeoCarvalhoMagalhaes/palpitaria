@@ -9,10 +9,10 @@ import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
 import { fetchData, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
-import { useSettings } from '@/core/settings'
+import { useL, useLang, useSettings } from '@/core/settings'
 import { ClipPlayer, getPreview, unlockAudio, type PreviewInfo } from '@/core/preview'
 import type { Song } from '@/config/music'
-import { HINT_AFTER, MAX_GUESSES, compare, dailyArtist, flagEmoji, hintFor, shareText, type Artist, type Match } from './logic'
+import { HINT_AFTER, MAX_GUESSES, attr, compare, countryName, dailyArtist, flagEmoji, hintFor, shareText, type Artist, type Match } from './logic'
 
 interface State {
   guesses: string[]
@@ -23,21 +23,24 @@ interface State {
 const MATCH_CLASS: Record<Match, string> = { correct: 'tile-hit', close: 'tile-near', miss: 'bg-muted text-foreground border-ink/10' }
 
 export default function HolofoteGame(ctx: GameContext) {
+  const L = useL()
   const data = useData(() => fetchData<{ artists: Artist[] }>('holofote/artists.json'))
-  if (data.status === 'loading') return <LoadingScreen label="Acendendo o holofote…" />
+  if (data.status === 'loading') return <LoadingScreen label={L('Acendendo o holofote…', 'Turning on the spotlight…')} />
   if (data.status === 'error') return <ErrorBox message={data.error} onRetry={data.retry} />
   return <Play ctx={ctx} artists={data.data.artists} />
 }
 
 function Cell({ label, value, match, arrow, delay }: { label: string; value: string; match: Match; arrow?: 'up' | 'down' | null; delay: number }) {
-  const arrowText = arrow === 'up' ? ', a resposta é maior' : arrow === 'down' ? ', a resposta é menor' : ''
+  const L = useL()
+  const arrowText = arrow === 'up' ? L(', a resposta é maior', ', the answer is higher') : arrow === 'down' ? L(', a resposta é menor', ', the answer is lower') : ''
+  const matchText = match === 'correct' ? L('igual', 'same') : match === 'close' ? L('perto', 'close') : L('diferente', 'different')
   return (
     <motion.div
       initial={{ rotateY: 90, opacity: 0 }}
       animate={{ rotateY: 0, opacity: 1 }}
       transition={{ delay, duration: 0.3 }}
       className={`flex min-h-16 flex-col items-center justify-center rounded-xl border-2 px-1 py-1.5 text-center ${MATCH_CLASS[match]}`}
-      aria-label={`${label}: ${value}, ${match === 'correct' ? 'igual' : match === 'close' ? 'perto' : 'diferente'}${arrowText}`}
+      aria-label={`${label}: ${value}, ${matchText}${arrowText}`}
     >
       <span className="text-[10px] font-semibold tracking-wide uppercase opacity-80">{label}</span>
       <span className="flex items-center gap-0.5 font-heading text-sm leading-tight font-semibold sm:text-base">
@@ -46,6 +49,37 @@ function Cell({ label, value, match, arrow, delay }: { label: string; value: str
         {arrow === 'down' && <ArrowDown className="size-4 shrink-0" aria-hidden />}
       </span>
     </motion.div>
+  )
+}
+
+/** Foto do artista (Wikimedia Commons); sem foto, mostra a inicial. Clicar abre a página do arquivo (crédito e licença). */
+function ArtistPhoto({ artist, className }: { artist: Artist; className?: string }) {
+  const L = useL()
+  const [failed, setFailed] = useState(false)
+  const base = `shrink-0 overflow-hidden rounded-full border-2 border-ink/15 bg-muted ${className ?? ''}`
+  if (!artist.image || failed) {
+    return (
+      <span className={`grid place-items-center font-heading text-lg font-semibold ${base}`} aria-hidden>
+        {artist.name[0]}
+      </span>
+    )
+  }
+  return (
+    <a
+      href={artist.image.page}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`block ${base}`}
+      title={L('Foto: Wikimedia Commons (ver licença)', 'Photo: Wikimedia Commons (see license)')}
+    >
+      <img
+        src={artist.image.src}
+        alt={L(`Foto de ${artist.name}`, `Photo of ${artist.name}`)}
+        loading="lazy"
+        className="size-full object-cover object-top"
+        onError={() => setFailed(true)}
+      />
+    </a>
   )
 }
 
@@ -60,6 +94,7 @@ const foldName = (s: string) =>
 /** Como no outro jogo: no fim, toca a prévia da música mais ouvida do artista (se ele estiver no top 1.000). */
 function ArtistHit({ artist }: { artist: string }) {
   const { settings } = useSettings()
+  const L = useL()
   const [song, setSong] = useState<Song | null>(null)
   const [info, setInfo] = useState<PreviewInfo | null>(null)
   const [playing, setPlaying] = useState(false)
@@ -89,12 +124,12 @@ function ArtistHit({ artist }: { artist: string }) {
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold">{song.title}</p>
         <p className="text-xs text-muted-foreground">
-          Prévia cedida pela Apple Music
+          {L('Prévia cedida pela Apple Music', 'Preview provided by Apple Music')}
           {info && (
             <>
               {' · '}
               <a className="underline" href={info.trackViewUrl} target="_blank" rel="noopener noreferrer">
-                ouvir completa
+                {L('ouvir completa', 'listen in full')}
               </a>
             </>
           )}
@@ -103,7 +138,7 @@ function ArtistHit({ artist }: { artist: string }) {
       <Button
         variant="pop"
         size="icon-lg"
-        aria-label={playing ? 'Parar' : `Ouvir ${song.title}`}
+        aria-label={playing ? L('Parar', 'Stop') : L(`Ouvir ${song.title}`, `Play ${song.title}`)}
         onClick={() => {
           if (playing) {
             player.current.stop()
@@ -122,10 +157,12 @@ function ArtistHit({ artist }: { artist: string }) {
 
 function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
   const { game, date, number } = ctx
+  const L = useL()
+  const lang = useLang()
   const answer = useMemo(() => dailyArtist(artists, number), [artists, number])
   const byId = useMemo(() => new Map(artists.map((a) => [a.id, a])), [artists])
   const { state, status, setState, finish } = useDailyGame<State>({
-    slug: game.slug,
+    slug: ctx.stateKey,
     version: 1,
     date,
     isArchive: ctx.isArchive,
@@ -137,8 +174,8 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
   const won = state.guesses.includes(answer.id)
 
   const options: Option[] = useMemo(
-    () => artists.map((a) => ({ id: a.id, label: a.name, hint: `${flagEmoji(a.country)} ${a.genre}` })),
-    [artists],
+    () => artists.map((a) => ({ id: a.id, label: a.name, hint: `${flagEmoji(a.country)} ${attr(a.genre, lang)}` })),
+    [artists, lang],
   )
 
   const guess = (opt: Option) => {
@@ -158,10 +195,10 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
       status={status}
       buckets={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'X']}
       highlightBucket={won ? String(state.guesses.length) : 'X'}
-      help={
+      help={L(
         <>
           <p>Descubra o <strong>artista do dia</strong> em até {MAX_GUESSES} palpites, entre os {artists.length} artistas mais ouvidos.</p>
-          <p>Cada palpite mostra 6 pistas. <span className="rounded px-1 tile-hit">Verde</span> é igual; <span className="rounded px-1 tile-near">amarelo</span> está perto:</p>
+          <p>Cada palpite mostra a foto e 6 pistas. <span className="rounded px-1 tile-hit">Verde</span> é igual; <span className="rounded px-1 tile-near">amarelo</span> está perto:</p>
           <ul className="list-disc space-y-1 pl-5">
             <li><strong>Estreia:</strong> ano do 1º álbum de estúdio. Amarelo se a diferença for de até 5 anos. ↑ estreou depois, ↓ antes.</li>
             <li><strong>Integrantes:</strong> 1 para artista solo.</li>
@@ -171,13 +208,28 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
             <li><strong>País:</strong> amarelo se for do mesmo continente.</li>
           </ul>
           <p>Travou? Depois do {HINT_AFTER}º palpite, use a <strong>dica</strong>.</p>
-          <p className="text-muted-foreground">Dados: MusicBrainz e ListenBrainz (CC0).</p>
-        </>
-      }
+          <p className="text-muted-foreground">Dados: MusicBrainz e ListenBrainz (CC0). Fotos: Wikimedia Commons (licença na página de cada arquivo).</p>
+        </>,
+        <>
+          <p>Find <strong>today's artist</strong> in up to {MAX_GUESSES} guesses, among the {artists.length} most listened-to artists.</p>
+          <p>Each guess shows a photo and 6 clues. <span className="rounded px-1 tile-hit">Green</span> is a match; <span className="rounded px-1 tile-near">yellow</span> is close:</p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li><strong>Debut:</strong> year of the first studio album. Yellow if within 5 years. ↑ debuted later, ↓ earlier.</li>
+            <li><strong>Members:</strong> 1 for solo artists.</li>
+            <li><strong>Popularity:</strong> position in the listener ranking. Yellow within 50 positions. ↑ is more popular.</li>
+            <li><strong>Gender:</strong> male, female, mixed (a group with men and women) or non-binary.</li>
+            <li><strong>Genre:</strong> one music genre per artist.</li>
+            <li><strong>Country:</strong> yellow if it's on the same continent.</li>
+          </ul>
+          <p>Stuck? After guess {HINT_AFTER}, use the <strong>hint</strong>.</p>
+          <p className="text-muted-foreground">Data: MusicBrainz and ListenBrainz (CC0). Photos: Wikimedia Commons (license on each file's page).</p>
+        </>,
+      )}
       result={
         <>
+          <ArtistPhoto artist={answer} className="mx-auto size-28" />
           <p className="text-center text-base">
-            Era <strong className="font-heading text-xl">{answer.name}</strong> {flagEmoji(answer.country)}
+            {L('Era', 'It was')} <strong className="font-heading text-xl">{answer.name}</strong> {flagEmoji(answer.country)}
           </p>
           <ShareButton text={share} />
         </>
@@ -188,14 +240,20 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
           <Autocomplete
             options={options}
             excludeIds={new Set(state.guesses)}
-            label="Nome do artista"
-            placeholder="Digite um artista…"
+            label={L('Nome do artista', 'Artist name')}
+            placeholder={L('Digite um artista…', 'Type an artist…')}
             onSelect={guess}
-            onInvalid={(text, s) => toast.error(s ? `Não achei "${text}". Seria ${s.label}?` : `"${text}" não está na lista de artistas.`)}
+            onInvalid={(text, s) =>
+              toast.error(
+                s
+                  ? L(`Não achei "${text}". Seria ${s.label}?`, `Couldn't find "${text}". Did you mean ${s.label}?`)
+                  : L(`"${text}" não está na lista de artistas.`, `"${text}" isn't on the artist list.`),
+              )
+            }
           />
           <div className="mt-2 flex items-center justify-between text-sm">
             <span>
-              Palpite {Math.min(state.guesses.length + 1, MAX_GUESSES)} de {MAX_GUESSES}
+              {L('Palpite', 'Guess')} {Math.min(state.guesses.length + 1, MAX_GUESSES)} {L('de', 'of')} {MAX_GUESSES}
             </span>
             {state.hintAt === null && (
               <Button
@@ -203,9 +261,9 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
                 size="sm"
                 disabled={!canHint}
                 onClick={() => setState({ ...state, hintAt: state.guesses.length })}
-                title={canHint ? 'Usar dica' : `A dica libera depois do ${HINT_AFTER}º palpite`}
+                title={canHint ? L('Usar dica', 'Use hint') : L(`A dica libera depois do ${HINT_AFTER}º palpite`, `The hint unlocks after guess ${HINT_AFTER}`)}
               >
-                <Lightbulb aria-hidden /> Dica {canHint ? '' : `(após ${HINT_AFTER})`}
+                <Lightbulb aria-hidden /> {L('Dica', 'Hint')} {canHint ? '' : L(`(após ${HINT_AFTER})`, `(after ${HINT_AFTER})`)}
               </Button>
             )}
           </div>
@@ -214,7 +272,10 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
 
       {finished && (
         <div className="mx-auto mb-4 w-full max-w-sm space-y-2 text-center">
-          <p className="font-heading text-xl">{won ? `Acertou! Era ${answer.name} 🎤` : `Era ${answer.name}. Amanhã tem mais!`}</p>
+          <ArtistPhoto artist={answer} className="mx-auto size-32" />
+          <p className="font-heading text-xl">
+            {won ? L(`Acertou! Era ${answer.name} 🎤`, `You got it! It was ${answer.name} 🎤`) : L(`Era ${answer.name}. Amanhã tem mais!`, `It was ${answer.name}. More tomorrow!`)}
+          </p>
           <ArtistHit artist={answer.name} />
           <ShareButton text={share} />
         </div>
@@ -226,26 +287,32 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
           const c = rows[i]
           const isAnswer = g.id === answer.id
           return (
-            <li key={g.id} className={`rounded-2xl border-2 p-2 ${isAnswer ? 'border-hit' : 'border-ink/10'} bg-card`}>
-              {state.hintAt !== null && state.hintAt === i + 1 && (
-                <p className="mb-2 rounded-lg bg-sun/40 px-2 py-1 text-sm">💡 {hintFor(answer)}</p>
-              )}
-              <p className="mb-1.5 px-1 font-heading text-lg font-semibold">
-                {g.name} {isAnswer && '🎯'}
-              </p>
-              <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
-                <Cell label="Estreia" value={String(g.debut)} match={c.debut.match} arrow={c.debut.arrow} delay={0} />
-                <Cell label="Integrantes" value={g.members === 1 ? 'Solo' : String(g.members)} match={c.members.match} delay={0.08} />
-                <Cell label="Popularidade" value={`#${g.rank}`} match={c.popularity.match} arrow={c.popularity.arrow} delay={0.16} />
-                <Cell label="Gênero" value={g.gender} match={c.gender.match} delay={0.24} />
-                <Cell label="Estilo" value={g.genre} match={c.genre.match} delay={0.32} />
-                <Cell label="País" value={`${flagEmoji(g.country)} ${g.countryName}`} match={c.country.match} delay={0.4} />
+            <motion.li
+              key={g.id}
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`rounded-2xl border-2 p-2 ${isAnswer ? 'border-hit' : 'border-ink/10'} bg-card`}
+            >
+              {state.hintAt !== null && state.hintAt === i + 1 && <p className="mb-2 rounded-lg bg-sun/40 px-2 py-1 text-sm">💡 {hintFor(answer, lang)}</p>}
+              <div className="mb-1.5 flex items-center gap-2 px-1">
+                <ArtistPhoto artist={g} className="size-11" />
+                <p className="font-heading text-lg font-semibold">
+                  {g.name} {isAnswer && '🎯'}
+                </p>
               </div>
-            </li>
+              <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
+                <Cell label={L('Estreia', 'Debut')} value={String(g.debut)} match={c.debut.match} arrow={c.debut.arrow} delay={0} />
+                <Cell label={L('Integrantes', 'Members')} value={g.members === 1 ? 'Solo' : String(g.members)} match={c.members.match} delay={0.08} />
+                <Cell label={L('Popularidade', 'Popularity')} value={`#${g.rank}`} match={c.popularity.match} arrow={c.popularity.arrow} delay={0.16} />
+                <Cell label={L('Gênero', 'Gender')} value={attr(g.gender, lang)} match={c.gender.match} delay={0.24} />
+                <Cell label={L('Estilo', 'Genre')} value={attr(g.genre, lang)} match={c.genre.match} delay={0.32} />
+                <Cell label={L('País', 'Country')} value={`${flagEmoji(g.country)} ${countryName(g, lang)}`} match={c.country.match} delay={0.4} />
+              </div>
+            </motion.li>
           )
         })}
       </ol>
-      {guessed.length === 0 && <p className="text-center text-sm text-muted-foreground">Seus palpites aparecem aqui.</p>}
+      {guessed.length === 0 && <p className="text-center text-sm text-muted-foreground">{L('Seus palpites aparecem aqui.', 'Your guesses show up here.')}</p>}
     </GameShell>
   )
 }

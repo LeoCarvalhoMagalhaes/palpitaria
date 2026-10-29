@@ -10,7 +10,7 @@ export function readData<T>(file: string): T {
 
 /** Fecha o "Como jogar" que abre sozinho na primeira visita. */
 export async function closeHelp(page: Page) {
-  const btn = page.getByRole('button', { name: 'Bora jogar!' })
+  const btn = page.getByRole('button', { name: /^(Bora jogar!|Let's play!)$/ })
   await btn.waitFor({ state: 'visible', timeout: 15_000 })
   await btn.click()
   await btn.waitFor({ state: 'hidden' })

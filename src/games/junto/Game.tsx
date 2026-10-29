@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { fetchData, useData } from '@/core/data'
 import { seededShuffle } from '@/core/daily'
 import { useDailyGame } from '@/core/hooks'
+import { useL, useLang } from '@/core/settings'
 import { GROUP_COLOR, matchGroup, nextHint, puzzleFor, shareText, shuffledWords, type Move, type Puzzle } from './logic'
 
 interface State {
@@ -20,17 +21,22 @@ interface State {
 }
 
 export default function JuntoGame(ctx: GameContext) {
-  const data = useData(() => fetchData<{ puzzles: Puzzle[] }>('junto/puzzles.json'))
-  if (data.status === 'loading') return <LoadingScreen label="Separando as palavras…" />
+  const L = useL()
+  const lang = useLang()
+  const file = lang === 'en' ? 'junto/puzzles-en.json' : 'junto/puzzles.json'
+  const data = useData(() => fetchData<{ puzzles: Puzzle[] }>(file), [file])
+  if (data.status === 'loading') return <LoadingScreen label={L('Separando as palavras…', 'Sorting the words…')} />
   if (data.status === 'error') return <ErrorBox message={data.error} onRetry={data.retry} />
   return <Play ctx={ctx} puzzles={data.data.puzzles} />
 }
 
 function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
   const { game, date, number } = ctx
+  const L = useL()
+  const lang = useLang()
   const puzzle = useMemo(() => puzzleFor(puzzles, number), [puzzles, number])
   const { state, status, setState, finish } = useDailyGame<State>({
-    slug: game.slug,
+    slug: ctx.stateKey,
     version: 1,
     date,
     isArchive: ctx.isArchive,
@@ -52,7 +58,7 @@ function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
     const t = window.setTimeout(() => {
       const key = [...selected].sort().join('|')
       if (state.tried.includes(key)) {
-        toast('Você já tentou essa combinação 😉')
+        toast(L('Você já tentou essa combinação 😉', 'You already tried that one 😉'))
         setSelected([])
         return
       }
@@ -67,7 +73,7 @@ function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
       } else {
         setState({ ...state, moves, tried: [...state.tried, key] })
         setShake((s) => s + 1)
-        toast('Não é um grupo. Tenta de novo!')
+        toast(L('Não é um grupo. Tenta de novo!', 'Not a group. Try again!'))
       }
       setSelected([])
     }, 350)
@@ -83,13 +89,17 @@ function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
   const askHint = () => {
     const next = nextHint(puzzle, state.solved, state.hint)
     if (next.length === 0 || next === state.hint) {
-      toast(state.solved.length >= 3 ? 'Sem dicas: só falta um grupo!' : 'Acabaram as dicas para este grupo.')
+      toast(
+        state.solved.length >= 3
+          ? L('Sem dicas: só falta um grupo!', 'No hints: only one group left!')
+          : L('Acabaram as dicas para este grupo.', 'No more hints for this group.'),
+      )
       return
     }
     setState({ ...state, hint: next, moves: [...state.moves, { kind: 'hint' }] })
   }
 
-  const share = shareText(game.shareName, number, state.moves)
+  const share = shareText(game.shareName, number, state.moves, lang)
 
   return (
     <GameShell
@@ -97,28 +107,41 @@ function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
       status={status}
       buckets={['4', '5', '6', '7', '8', '9', '10+']}
       highlightBucket={finished ? (attempts > 9 ? '10+' : String(attempts)) : null}
-      showAverage="Média de tentativas"
+      showAverage={L('Média de tentativas', 'Average tries')}
       help={
         <>
-          <p>Forme <strong>4 grupos de 4 palavras</strong> que têm algo em comum.</p>
-          <p>Toque numa palavra para selecionar; toque de novo para desmarcar. Ao marcar 4, o jogo confere sozinho.</p>
-          <p>Acertou? A categoria aparece. Errou? Conta uma tentativa e você tenta de novo. As tentativas são <strong>ilimitadas</strong>.</p>
-          <p>Cuidado com as pegadinhas: algumas palavras parecem caber em mais de um grupo! Cada cor indica a dificuldade:</p>
+          {L(
+            <>
+              <p>Forme <strong>4 grupos de 4 palavras</strong> que têm algo em comum.</p>
+              <p>Toque numa palavra para selecionar; toque de novo para desmarcar. Ao marcar 4, o jogo confere sozinho.</p>
+              <p>Acertou? A categoria aparece. Errou? Conta uma tentativa e você tenta de novo. As tentativas são <strong>ilimitadas</strong>.</p>
+              <p>Cuidado com as pegadinhas: algumas palavras parecem caber em mais de um grupo! Cada cor indica a dificuldade:</p>
+            </>,
+            <>
+              <p>Make <strong>4 groups of 4 words</strong> that have something in common.</p>
+              <p>Tap a word to select it; tap again to deselect. Once you pick 4, the game checks them automatically.</p>
+              <p>Got it? The category shows up. Missed? It counts as a try and you go again. Tries are <strong>unlimited</strong>.</p>
+              <p>Watch out for red herrings: some words seem to fit more than one group! Each color shows the difficulty:</p>
+            </>,
+          )}
           <div className="flex flex-wrap gap-1.5 text-xs font-semibold text-white">
             {[1, 2, 3, 4].map((n) => (
               <span key={n} className="rounded-full px-2 py-0.5" style={{ background: GROUP_COLOR[n] }}>
-                {['mais fácil', 'fácil', 'médio', 'difícil'][n - 1]}
+                {L(['mais fácil', 'fácil', 'médio', 'difícil'], ['easiest', 'easy', 'medium', 'hard'])[n - 1]}
               </span>
             ))}
           </div>
-          <p>Travou? A <strong>dica</strong> destaca palavras do grupo mais fácil que falta.</p>
+          {L(
+            <p>Travou? A <strong>dica</strong> destaca palavras do grupo mais fácil que falta.</p>,
+            <p>Stuck? A <strong>hint</strong> highlights words from the easiest group left.</p>,
+          )}
         </>
       }
       result={
         <>
           <p className="text-center">
-            Você fez em <strong>{attempts} tentativas</strong>
-            {hints ? ` e ${hints} ${hints === 1 ? 'dica' : 'dicas'}` : ''}.
+            {L('Você fez em', 'You did it in')} <strong>{attempts} {L('tentativas', 'tries')}</strong>
+            {hints ? L(` e ${hints} ${hints === 1 ? 'dica' : 'dicas'}`, ` and ${hints} ${hints === 1 ? 'hint' : 'hints'}`) : ''}.
           </p>
           <ShareButton text={share} />
         </>
@@ -126,9 +149,9 @@ function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
     >
       <div className="mb-3 flex items-center justify-between text-sm">
         <span>
-          Tentativas: <strong className="tabular-nums">{attempts}</strong> · Dicas: <strong className="tabular-nums">{hints}</strong>
+          {L('Tentativas', 'Tries')}: <strong className="tabular-nums">{attempts}</strong> · {L('Dicas', 'Hints')}: <strong className="tabular-nums">{hints}</strong>
         </span>
-        {puzzle.status !== 'aprovado' && <span className="rounded-full bg-sun/50 px-2 py-0.5 text-xs font-semibold">em revisão</span>}
+        {puzzle.status !== 'aprovado' && <span className="rounded-full bg-sun/50 px-2 py-0.5 text-xs font-semibold">{L('em revisão', 'in review')}</span>}
       </div>
 
       <LayoutGroup>
@@ -180,13 +203,13 @@ function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
       {!finished ? (
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           <Button variant="pop-outline" onClick={() => setOrder((o) => seededShuffle(o, Math.random()))}>
-            <Shuffle aria-hidden /> Embaralhar
+            <Shuffle aria-hidden /> {L('Embaralhar', 'Shuffle')}
           </Button>
           <Button variant="pop-outline" onClick={() => setSelected([])} disabled={!selected.length}>
-            <X aria-hidden /> Limpar
+            <X aria-hidden /> {L('Limpar', 'Deselect')}
           </Button>
           <Button variant="pop-outline" onClick={askHint}>
-            <Lightbulb aria-hidden /> Dica
+            <Lightbulb aria-hidden /> {L('Dica', 'Hint')}
           </Button>
         </div>
       ) : (

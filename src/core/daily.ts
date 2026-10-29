@@ -48,12 +48,12 @@ export function formatCountdown(ms: number): string {
   return `${h}:${m}:${s}`
 }
 
-export function formatDateLong(key: string): string {
+export function formatDateLong(key: string, lang: 'pt' | 'en' = 'pt', withYear = true): string {
   const [y, m, d] = key.split('-').map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString('pt-BR', {
+  return new Date(y, m - 1, d).toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', {
     day: 'numeric',
     month: 'long',
-    year: 'numeric',
+    ...(withYear ? { year: 'numeric' } : {}),
   })
 }
 

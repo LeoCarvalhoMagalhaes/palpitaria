@@ -25,7 +25,7 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Toca Aí | Início do trecho | Começo da faixa (0 s) | Proposta |
 | Letra por Letra | Voz | Web Speech API pt-BR do aparelho | Proposta (gratuita; o original usa áudio gravado) |
 | Letra por Letra | Grafia | Acentos, cedilha e hífen contam; 1 tentativa por rodada; vitória com 3+ | Proposta (1 tentativa observada) |
-| Mais ou Menos | Categorias | As 5 do original, na mesma ordem: Google Searches → visualizações na Wikipédia (12 meses), Spotify Streams → Kworb, Movie Ratings → Metacritic (Wikidata), Prices → outro jogo (US$), Trivia → curiosidades (população, área, cidades, montanhas, rios); pares com diferença ≥15% | Observada (categorias); fontes substitutas propostas |
+| Mais ou Menos | Categorias (pt e en) | As 5 do original, na mesma ordem: Google Searches → visualizações na Wikipédia (12 meses), Spotify Streams → Kworb, Movie Ratings → Metacritic (Wikidata), Prices → outro jogo (US$), Trivia → curiosidades (população, área, cidades, montanhas, rios); pares com diferença ≥15% | Observada (categorias); fontes substitutas propostas |
 | Rastro | Vocabulário | 36,5 mil palavras mais frequentes do português (FrequencyWords, CC BY-SA) que existem no VERO; aceita plurais e conjugações; digitar sem acento vale | Proposta |
 | Rastro | Dica | Custo 7/5/3 por faixas de distância ≥1000/≥160/≥2 | Observada |
 | Rastro | Palavra revelada pela dica | Metade da posição do melhor palpite (ou posição 1000 sem palpites) | Proposta |
@@ -36,3 +36,13 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Holofote | Áudio | No fim, prévia da música mais ouvida do artista, se ele estiver no top 1.000 (como o outro jogo) | Observada |
 | Refrão Cruzado | Grade | 12×10, 5 a 8 palavras, geradas de 60 músicas do top 1.000 sorteadas pela data | Observado (12×10); geração automática é proposta |
 | Refrão Cruzado | Trecho | 8 s do início da prévia da Apple (o original usa 6 s por padrão, com início por palavra); ouvir de novo à vontade | Observada/adaptada |
+| Mais ou Menos | Rodadas | 5 categorias × 5 duelos (25), sem repetir item dentro da categoria; vitória com 15+; tela de abertura por categoria (fecha sozinha em 2,2 s) | Observada (5 × 5); limiar proposto |
+| Mais ou Menos | Imagens | Todo item tem imagem: Commons (Wikidata) ou capa da Apple Music para as músicas | Pedido do dono do projeto |
+| Grauzinho | Recriar o ângulo | No fim, botão "Recriar o ângulo do dia" (também na janela de resultado); a linha laranja é arrastável, com ajuste fino de 1°; o ângulo original fica ao lado como referência; cada tentativa mostra o erro em graus; tolerância ±5°, 3 tentativas | Pedido do dono do projeto |
+| Holofote | Fotos | Foto do artista em cada palpite e na revelação (Commons via Wikidata); sem foto, a inicial do nome | Pedido do dono do projeto |
+| Na Etiqueta | Fotos | Foto ilustrativa do Commons sem preço visível; sem foto confiável, emoji da categoria | Pedido do dono do projeto |
+| Refrão Cruzado | Pistas | Variadas, como no outro jogo: título, completar o título, quem canta (banda ou artista), primeiro nome/sobrenome (exceto nomes artísticos), gênero, país (sigla para EUA), integrantes por extenso; avisa "(em inglês)" / "(in Spanish)" pelo idioma do título | Observada (variedade); textos próprios |
+| Refrão Cruzado | Temas | Um por dia, em rodízio: geral, 5 recortes de década, hip hop, rock, latinos, pista de dança, R&B, divas do pop, bandas e especiais de 15 artistas com 10+ músicas; tema sem grade possível cai no geral | Proposta |
+| Refrão Cruzado | Tocar | Clicar na linha da pista seleciona e toca; o botão colorido e a barra da pista atual tocam/pausam | Pedido do dono do projeto |
+| Geral | Idiomas | Português e inglês (padrão: idioma do navegador); jogos de palavras têm conteúdo próprio em inglês e progresso separado por idioma | Pedido do dono do projeto |
+| Geral | Tema | Claro, escuro ou do sistema, com alto contraste opcional | Pedido do dono do projeto |

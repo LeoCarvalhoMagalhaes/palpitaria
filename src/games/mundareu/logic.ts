@@ -98,14 +98,25 @@ export function shareGrid(entries: { km: number; isAnswer: boolean }[]): string 
   return lines.join('\n')
 }
 
-export function proximityMessage(name: string, km: number, previousBest: number | null): string {
-  if (km === 0) return `${name} faz fronteira com o país misterioso!`
-  if (km <= ALMOST_ADJACENT_KM) return `${name} está quase colado no país misterioso!`
-  if (previousBest === null) return `${name} é o primeiro palpite. Agora é esquentar!`
-  return km < previousBest ? `${name} está mais quente! 🔥` : `${name} está mais frio. 🧊`
+export function proximityMessage(name: string, km: number, previousBest: number | null, lang: 'pt' | 'en' = 'pt'): string {
+  const en = lang === 'en'
+  if (km === 0) return en ? `${name} borders the mystery country!` : `${name} faz fronteira com o país misterioso!`
+  if (km <= ALMOST_ADJACENT_KM) return en ? `${name} is right next to the mystery country!` : `${name} está quase colado no país misterioso!`
+  if (previousBest === null) return en ? `${name} is your first guess. Now warm up!` : `${name} é o primeiro palpite. Agora é esquentar!`
+  if (km < previousBest) return en ? `${name} is warmer! 🔥` : `${name} está mais quente! 🔥`
+  return en ? `${name} is colder. 🧊` : `${name} está mais frio. 🧊`
 }
 
-export function formatDistance(km: number, units: 'km' | 'mi'): string {
+/** Nomes das paletas em inglês (a chave salva continua em português). */
+export const PALETTE_EN: Record<Palette, string> = {
+  Padrão: 'Default',
+  Vermelhos: 'Reds',
+  Azuis: 'Blues',
+  'Arco-íris': 'Rainbow',
+  'Tons de cinza': 'Grayscale',
+}
+
+export function formatDistance(km: number, units: 'km' | 'mi', lang: 'pt' | 'en' = 'pt'): string {
   const value = units === 'mi' ? Math.round(km * 0.621371) : km
-  return `${value.toLocaleString('pt-BR')} ${units}`
+  return `${value.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR')} ${units}`
 }

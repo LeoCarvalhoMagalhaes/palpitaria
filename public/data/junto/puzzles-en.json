@@ -1,0 +1,2019 @@
+{
+ "fonte": "Original Palpitaria puzzles in English (AI-assisted drafts awaiting human review)",
+ "licenca": "Own content",
+ "puzzles": [
+  {
+   "id": "e001",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Fruits",
+     "palavras": [
+      "apple",
+      "banana",
+      "grape",
+      "orange"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Colors",
+     "palavras": [
+      "green",
+      "blue",
+      "purple",
+      "yellow"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Flowers",
+     "palavras": [
+      "daisy",
+      "tulip",
+      "sunflower",
+      "rose"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Zodiac signs",
+     "palavras": [
+      "leo",
+      "taurus",
+      "pisces",
+      "aries"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "orange": [
+     "Colors"
+    ],
+    "rose": [
+     "Colors"
+    ]
+   }
+  },
+  {
+   "id": "e002",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Body parts",
+     "palavras": [
+      "arm",
+      "leg",
+      "knee",
+      "shoulder"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Musical instruments",
+     "palavras": [
+      "guitar",
+      "piano",
+      "flute",
+      "drums"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Chess pieces",
+     "palavras": [
+      "king",
+      "queen",
+      "rook",
+      "knight"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Car parts",
+     "palavras": [
+      "wheel",
+      "engine",
+      "brake",
+      "battery"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "drums": [
+     "Car parts"
+    ]
+   }
+  },
+  {
+   "id": "e003",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Farm animals",
+     "palavras": [
+      "cow",
+      "pig",
+      "chicken",
+      "sheep"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Months",
+     "palavras": [
+      "march",
+      "may",
+      "june",
+      "august"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Planets",
+     "palavras": [
+      "mercury",
+      "earth",
+      "mars",
+      "neptune"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Metals",
+     "palavras": [
+      "gold",
+      "silver",
+      "iron",
+      "copper"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "mercury": [
+     "Metals"
+    ]
+   }
+  },
+  {
+   "id": "e004",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Ball sports",
+     "palavras": [
+      "soccer",
+      "volleyball",
+      "basketball",
+      "baseball"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Soccer positions",
+     "palavras": [
+      "goalkeeper",
+      "defender",
+      "midfielder",
+      "striker"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Gemstones",
+     "palavras": [
+      "emerald",
+      "ruby",
+      "diamond",
+      "sapphire"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Card suits",
+     "palavras": [
+      "hearts",
+      "spades",
+      "clubs",
+      "diamonds"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e005",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Kitchen utensils",
+     "palavras": [
+      "fork",
+      "knife",
+      "spoon",
+      "ladle"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Sea creatures",
+     "palavras": [
+      "octopus",
+      "squid",
+      "whale",
+      "shark"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Things with teeth",
+     "palavras": [
+      "comb",
+      "saw",
+      "zipper",
+      "gear"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Slang for money",
+     "palavras": [
+      "dough",
+      "bread",
+      "bucks",
+      "cash"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "shark": [
+     "Things with teeth"
+    ]
+   }
+  },
+  {
+   "id": "e006",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Jobs",
+     "palavras": [
+      "doctor",
+      "teacher",
+      "firefighter",
+      "baker"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "School supplies",
+     "palavras": [
+      "pencil",
+      "notebook",
+      "eraser",
+      "ruler"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Halloween things",
+     "palavras": [
+      "pumpkin",
+      "witch",
+      "skeleton",
+      "costume"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Slang for cool",
+     "palavras": [
+      "rad",
+      "sick",
+      "dope",
+      "lit"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e007",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Rooms of a house",
+     "palavras": [
+      "kitchen",
+      "bedroom",
+      "bathroom",
+      "attic"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Furniture",
+     "palavras": [
+      "sofa",
+      "table",
+      "chair",
+      "dresser"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Kitchen appliances",
+     "palavras": [
+      "fridge",
+      "oven",
+      "blender",
+      "toaster"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Dance styles",
+     "palavras": [
+      "salsa",
+      "tango",
+      "waltz",
+      "ballet"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e008",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Drinks",
+     "palavras": [
+      "tea",
+      "juice",
+      "soda",
+      "water"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Grains",
+     "palavras": [
+      "rice",
+      "corn",
+      "wheat",
+      "oats"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Breads",
+     "palavras": [
+      "baguette",
+      "brioche",
+      "ciabatta",
+      "bagel"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Things you roast",
+     "palavras": [
+      "peanuts",
+      "marshmallows",
+      "chestnuts",
+      "coffee"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "coffee": [
+     "Drinks"
+    ]
+   }
+  },
+  {
+   "id": "e009",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Animals that fly",
+     "palavras": [
+      "eagle",
+      "owl",
+      "bat",
+      "sparrow"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Insects",
+     "palavras": [
+      "ant",
+      "bee",
+      "beetle",
+      "cricket"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Lay eggs but can't fly",
+     "palavras": [
+      "turtle",
+      "crocodile",
+      "platypus",
+      "ostrich"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Mythical creatures",
+     "palavras": [
+      "dragon",
+      "unicorn",
+      "phoenix",
+      "griffin"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "bee": [
+     "Animals that fly"
+    ],
+    "beetle": [
+     "Animals that fly"
+    ]
+   }
+  },
+  {
+   "id": "e010",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "South American countries",
+     "palavras": [
+      "Chile",
+      "Peru",
+      "Bolivia",
+      "Ecuador"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "South American capitals",
+     "palavras": [
+      "Lima",
+      "Quito",
+      "Santiago",
+      "Bogota"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Mexican foods",
+     "palavras": [
+      "taco",
+      "burrito",
+      "tamale",
+      "quesadilla"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Birds",
+     "palavras": [
+      "toucan",
+      "macaw",
+      "parrot",
+      "robin"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e011",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Ice cream flavors",
+     "palavras": [
+      "chocolate",
+      "strawberry",
+      "vanilla",
+      "mint"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Pasta",
+     "palavras": [
+      "lasagna",
+      "spaghetti",
+      "gnocchi",
+      "ravioli"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Cheeses",
+     "palavras": [
+      "mozzarella",
+      "parmesan",
+      "cheddar",
+      "gouda"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Italian cities",
+     "palavras": [
+      "Rome",
+      "Milan",
+      "Venice",
+      "Naples"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e012",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Parts of a tree",
+     "palavras": [
+      "root",
+      "trunk",
+      "branch",
+      "leaf"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Parts of a book",
+     "palavras": [
+      "cover",
+      "page",
+      "chapter",
+      "index"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Parts of a shoe",
+     "palavras": [
+      "sole",
+      "lace",
+      "heel",
+      "insole"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Fish",
+     "palavras": [
+      "salmon",
+      "tuna",
+      "cod",
+      "trout"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "leaf": [
+     "Parts of a book"
+    ],
+    "sole": [
+     "Fish"
+    ]
+   }
+  },
+  {
+   "id": "e013",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Olympic sports",
+     "palavras": [
+      "swimming",
+      "judo",
+      "gymnastics",
+      "rowing"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Martial arts",
+     "palavras": [
+      "karate",
+      "capoeira",
+      "taekwondo",
+      "aikido"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Dances",
+     "palavras": [
+      "polka",
+      "foxtrot",
+      "salsa",
+      "samba"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Sauces",
+     "palavras": [
+      "mayo",
+      "ketchup",
+      "pesto",
+      "gravy"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "salsa": [
+     "Sauces"
+    ],
+    "judo": [
+     "Martial arts"
+    ]
+   }
+  },
+  {
+   "id": "e014",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Vehicles",
+     "palavras": [
+      "car",
+      "bus",
+      "motorcycle",
+      "bicycle"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Things with wings",
+     "palavras": [
+      "airplane",
+      "butterfly",
+      "angel",
+      "penguin"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Jobs with uniforms",
+     "palavras": [
+      "police",
+      "soldier",
+      "nurse",
+      "pilot"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Boats",
+     "palavras": [
+      "canoe",
+      "raft",
+      "yacht",
+      "ferry"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "airplane": [
+     "Vehicles"
+    ]
+   }
+  },
+  {
+   "id": "e015",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Weather",
+     "palavras": [
+      "rain",
+      "snow",
+      "hail",
+      "thunder"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Feelings",
+     "palavras": [
+      "joy",
+      "sadness",
+      "anger",
+      "fear"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Holidays",
+     "palavras": [
+      "Christmas",
+      "Easter",
+      "Halloween",
+      "Thanksgiving"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Things you can break",
+     "palavras": [
+      "record",
+      "promise",
+      "silence",
+      "news"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e016",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Percussion",
+     "palavras": [
+      "drum",
+      "tambourine",
+      "cymbal",
+      "triangle"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Shapes",
+     "palavras": [
+      "square",
+      "circle",
+      "oval",
+      "rectangle"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Playing cards",
+     "palavras": [
+      "jack",
+      "queen",
+      "king",
+      "joker"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Chess pieces",
+     "palavras": [
+      "bishop",
+      "pawn",
+      "rook",
+      "knight"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "triangle": [
+     "Shapes"
+    ],
+    "king": [
+     "Chess pieces"
+    ],
+    "queen": [
+     "Chess pieces"
+    ]
+   }
+  },
+  {
+   "id": "e017",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Sea mammals",
+     "palavras": [
+      "dolphin",
+      "whale",
+      "seal",
+      "otter"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Big cats",
+     "palavras": [
+      "lion",
+      "tiger",
+      "jaguar",
+      "leopard"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Zodiac signs",
+     "palavras": [
+      "scorpio",
+      "capricorn",
+      "gemini",
+      "cancer"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Car brands",
+     "palavras": [
+      "ford",
+      "honda",
+      "fiat",
+      "toyota"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "lion": [
+     "Zodiac signs"
+    ],
+    "jaguar": [
+     "Car brands"
+    ]
+   }
+  },
+  {
+   "id": "e018",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Clothes",
+     "palavras": [
+      "shirt",
+      "pants",
+      "skirt",
+      "dress"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Jewelry",
+     "palavras": [
+      "earring",
+      "necklace",
+      "bracelet",
+      "ring"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Fabrics",
+     "palavras": [
+      "cotton",
+      "silk",
+      "linen",
+      "denim"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Things with buttons",
+     "palavras": [
+      "remote",
+      "elevator",
+      "calculator",
+      "doorbell"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "shirt": [
+     "Things with buttons"
+    ]
+   }
+  },
+  {
+   "id": "e019",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Musical notes",
+     "palavras": [
+      "do",
+      "re",
+      "mi",
+      "sol"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Space objects",
+     "palavras": [
+      "moon",
+      "star",
+      "comet",
+      "planet"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Currencies",
+     "palavras": [
+      "real",
+      "euro",
+      "dollar",
+      "peso"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Units of measure",
+     "palavras": [
+      "meter",
+      "liter",
+      "gram",
+      "inch"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "sol": [
+     "Space objects"
+    ]
+   }
+  },
+  {
+   "id": "e020",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Classroom things",
+     "palavras": [
+      "chalkboard",
+      "chalk",
+      "eraser",
+      "backpack"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Things in a purse",
+     "palavras": [
+      "keys",
+      "phone",
+      "lipstick",
+      "wallet"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Documents",
+     "palavras": [
+      "passport",
+      "certificate",
+      "diploma",
+      "license"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Board games",
+     "palavras": [
+      "chess",
+      "checkers",
+      "backgammon",
+      "scrabble"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e021",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Round things",
+     "palavras": [
+      "ball",
+      "coin",
+      "tire",
+      "plate"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Racket sports",
+     "palavras": [
+      "tennis",
+      "badminton",
+      "squash",
+      "pickleball"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Footwear",
+     "palavras": [
+      "sandal",
+      "boot",
+      "slipper",
+      "sneaker"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Breakfast foods",
+     "palavras": [
+      "toast",
+      "butter",
+      "cereal",
+      "pancake"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "squash": [
+     "Breakfast foods"
+    ]
+   }
+  },
+  {
+   "id": "e022",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Tools",
+     "palavras": [
+      "hammer",
+      "saw",
+      "pliers",
+      "drill"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Things that open doors",
+     "palavras": [
+      "key",
+      "password",
+      "card",
+      "remote"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Parts of a door",
+     "palavras": [
+      "knob",
+      "hinge",
+      "lock",
+      "frame"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Bathroom items",
+     "palavras": [
+      "soap",
+      "towel",
+      "toothbrush",
+      "shampoo"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "key": [
+     "Tools"
+    ]
+   }
+  },
+  {
+   "id": "e023",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Songbirds",
+     "palavras": [
+      "canary",
+      "sparrow",
+      "finch",
+      "swallow"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Artists",
+     "palavras": [
+      "actor",
+      "painter",
+      "sculptor",
+      "singer"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Yellow things",
+     "palavras": [
+      "banana",
+      "yolk",
+      "sunflower",
+      "mustard"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Slang for food",
+     "palavras": [
+      "grub",
+      "chow",
+      "eats",
+      "nosh"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "canary": [
+     "Yellow things"
+    ],
+    "swallow": [
+     "Slang for food"
+    ]
+   }
+  },
+  {
+   "id": "e024",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Wind instruments",
+     "palavras": [
+      "flute",
+      "saxophone",
+      "trumpet",
+      "clarinet"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Garden tools",
+     "palavras": [
+      "rake",
+      "shovel",
+      "hoe",
+      "hose"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Trees",
+     "palavras": [
+      "oak",
+      "maple",
+      "birch",
+      "willow"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Things with needles",
+     "palavras": [
+      "syringe",
+      "compass",
+      "pine",
+      "cactus"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "pine": [
+     "Trees"
+    ]
+   }
+  },
+  {
+   "id": "e025",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Hot things",
+     "palavras": [
+      "oven",
+      "fever",
+      "pepper",
+      "summer"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Flowers",
+     "palavras": [
+      "orchid",
+      "lily",
+      "carnation",
+      "poppy"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Carnival things",
+     "palavras": [
+      "confetti",
+      "mask",
+      "costume",
+      "parade"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "String instruments",
+     "palavras": [
+      "violin",
+      "cello",
+      "harp",
+      "banjo"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e026",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Family",
+     "palavras": [
+      "uncle",
+      "cousin",
+      "grandma",
+      "aunt"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Slang for friend",
+     "palavras": [
+      "buddy",
+      "pal",
+      "mate",
+      "bro"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Noble titles",
+     "palavras": [
+      "duke",
+      "earl",
+      "baron",
+      "count"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Pizza toppings",
+     "palavras": [
+      "pepperoni",
+      "mushroom",
+      "olive",
+      "onion"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e027",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Red fruits",
+     "palavras": [
+      "strawberry",
+      "raspberry",
+      "cherry",
+      "cranberry"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Light sources",
+     "palavras": [
+      "lamp",
+      "candle",
+      "flashlight",
+      "lantern"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Parts of the eye",
+     "palavras": [
+      "iris",
+      "pupil",
+      "cornea",
+      "retina"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Things that blink",
+     "palavras": [
+      "eye",
+      "firefly",
+      "cursor",
+      "lighthouse"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "lighthouse": [
+     "Light sources"
+    ]
+   }
+  },
+  {
+   "id": "e028",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Movie genres",
+     "palavras": [
+      "horror",
+      "comedy",
+      "drama",
+      "action"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Music genres",
+     "palavras": [
+      "rock",
+      "funk",
+      "jazz",
+      "blues"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Movie theater things",
+     "palavras": [
+      "popcorn",
+      "ticket",
+      "screen",
+      "seat"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Film jobs",
+     "palavras": [
+      "director",
+      "writer",
+      "editor",
+      "stuntman"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e029",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Desserts",
+     "palavras": [
+      "pudding",
+      "brownie",
+      "mousse",
+      "cupcake"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Snacks",
+     "palavras": [
+      "chips",
+      "pretzel",
+      "popcorn",
+      "nachos"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Middle Eastern foods",
+     "palavras": [
+      "hummus",
+      "falafel",
+      "kebab",
+      "tabbouleh"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Cold cuts",
+     "palavras": [
+      "ham",
+      "salami",
+      "bologna",
+      "turkey"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e030",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Soccer moves",
+     "palavras": [
+      "kick",
+      "dribble",
+      "header",
+      "pass"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Parts of a soccer field",
+     "palavras": [
+      "box",
+      "post",
+      "net",
+      "corner"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Fishing gear",
+     "palavras": [
+      "hook",
+      "rod",
+      "bait",
+      "reel"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Things you give",
+     "palavras": [
+      "hug",
+      "gift",
+      "advice",
+      "speech"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "net": [
+     "Fishing gear"
+    ]
+   }
+  },
+  {
+   "id": "e031",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Greek gods",
+     "palavras": [
+      "Zeus",
+      "Hera",
+      "Athena",
+      "Apollo"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Greek heroes",
+     "palavras": [
+      "Achilles",
+      "Hercules",
+      "Perseus",
+      "Odysseus"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Greek letters",
+     "palavras": [
+      "alpha",
+      "beta",
+      "gamma",
+      "delta"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Constellations",
+     "palavras": [
+      "Orion",
+      "Cassiopeia",
+      "Andromeda",
+      "Pegasus"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e032",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Computer parts",
+     "palavras": [
+      "mouse",
+      "keyboard",
+      "monitor",
+      "speaker"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Things with keys",
+     "palavras": [
+      "piano",
+      "calculator",
+      "accordion",
+      "typewriter"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Internet words",
+     "palavras": [
+      "password",
+      "link",
+      "profile",
+      "like"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Animals with shells",
+     "palavras": [
+      "armadillo",
+      "tortoise",
+      "snail",
+      "crab"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "keyboard": [
+     "Things with keys"
+    ]
+   }
+  },
+  {
+   "id": "e033",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Party sweets",
+     "palavras": [
+      "candy",
+      "lollipop",
+      "cookie",
+      "truffle"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Pet names",
+     "palavras": [
+      "honey",
+      "sweetie",
+      "darling",
+      "babe"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Baby things",
+     "palavras": [
+      "pacifier",
+      "diaper",
+      "bottle",
+      "crib"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Noisy things",
+     "palavras": [
+      "siren",
+      "horn",
+      "whistle",
+      "alarm"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "honey": [
+     "Party sweets"
+    ]
+   }
+  },
+  {
+   "id": "e034",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Parts of the face",
+     "palavras": [
+      "nose",
+      "mouth",
+      "chin",
+      "forehead"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Landforms",
+     "palavras": [
+      "mountain",
+      "plateau",
+      "plain",
+      "valley"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Ways to pay",
+     "palavras": [
+      "coin",
+      "check",
+      "card",
+      "cash"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Test words",
+     "palavras": [
+      "grade",
+      "question",
+      "answer",
+      "draft"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "grade": [
+     "Landforms"
+    ]
+   }
+  },
+  {
+   "id": "e035",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Pets",
+     "palavras": [
+      "dog",
+      "cat",
+      "hamster",
+      "parakeet"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Dog breeds",
+     "palavras": [
+      "poodle",
+      "labrador",
+      "pug",
+      "dalmatian"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Cat breeds",
+     "palavras": [
+      "siamese",
+      "persian",
+      "sphynx",
+      "bengal"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Dog commands",
+     "palavras": [
+      "sit",
+      "stay",
+      "fetch",
+      "heel"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "e036",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Things that float",
+     "palavras": [
+      "buoy",
+      "cork",
+      "raft",
+      "duck"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Birthday party things",
+     "palavras": [
+      "balloon",
+      "cake",
+      "candle",
+      "present"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Parts of a ship",
+     "palavras": [
+      "hull",
+      "rudder",
+      "mast",
+      "anchor"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Things that glow",
+     "palavras": [
+      "lamp",
+      "bulb",
+      "neon",
+      "ember"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "candle": [
+     "Things that glow"
+    ]
+   }
+  },
+  {
+   "id": "e037",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Extreme sports",
+     "palavras": [
+      "surfing",
+      "climbing",
+      "skydiving",
+      "skateboarding"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Gym equipment",
+     "palavras": [
+      "dumbbell",
+      "barbell",
+      "kettlebell",
+      "treadmill"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Floor coverings",
+     "palavras": [
+      "rug",
+      "carpet",
+      "tile",
+      "mat"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Parts of a skateboard",
+     "palavras": [
+      "deck",
+      "wheels",
+      "truck",
+      "bearings"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "mat": [
+     "Gym equipment"
+    ]
+   }
+  },
+  {
+   "id": "e038",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Seasons",
+     "palavras": [
+      "spring",
+      "summer",
+      "autumn",
+      "winter"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Directions",
+     "palavras": [
+      "north",
+      "south",
+      "east",
+      "west"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Things that coil",
+     "palavras": [
+      "snake",
+      "rope",
+      "hose",
+      "slinky"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Kinds of water",
+     "palavras": [
+      "tap",
+      "sparkling",
+      "mineral",
+      "salt"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "spring": [
+     "Things that coil",
+     "Kinds of water"
+    ]
+   }
+  },
+  {
+   "id": "e039",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Vegetables",
+     "palavras": [
+      "carrot",
+      "potato",
+      "broccoli",
+      "spinach"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Spices",
+     "palavras": [
+      "cinnamon",
+      "nutmeg",
+      "paprika",
+      "cumin"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Nuts",
+     "palavras": [
+      "almond",
+      "cashew",
+      "walnut",
+      "pecan"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Shades of brown",
+     "palavras": [
+      "beige",
+      "tan",
+      "chestnut",
+      "mocha"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "chestnut": [
+     "Nuts"
+    ]
+   }
+  },
+  {
+   "id": "e040",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Planets",
+     "palavras": [
+      "venus",
+      "jupiter",
+      "saturn",
+      "uranus"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Days of the week",
+     "palavras": [
+      "monday",
+      "tuesday",
+      "friday",
+      "sunday"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Car brands",
+     "palavras": [
+      "tesla",
+      "porsche",
+      "volvo",
+      "audi"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Famous scientists",
+     "palavras": [
+      "newton",
+      "darwin",
+      "curie",
+      "einstein"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "tesla": [
+     "Famous scientists"
+    ]
+   }
+  }
+ ]
+}

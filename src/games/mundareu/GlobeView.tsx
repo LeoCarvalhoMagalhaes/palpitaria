@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import Globe, { type GlobeInstance } from 'globe.gl'
+import { useLang } from '@/core/settings'
 import type { Country } from './logic'
 
 interface GlobeViewProps {
@@ -16,6 +17,7 @@ interface MaterialLike {
 }
 
 export function GlobeView({ countries, colors, focus, dark, showLabels }: GlobeViewProps) {
+  const lang = useLang()
   const ref = useRef<HTMLDivElement>(null)
   const globe = useRef<GlobeInstance | null>(null)
 
@@ -75,7 +77,7 @@ export function GlobeView({ countries, colors, focus, dark, showLabels }: GlobeV
       ref={ref}
       className="mx-auto aspect-square w-full max-w-[520px] cursor-grab touch-none overflow-hidden rounded-full active:cursor-grabbing"
       role="img"
-      aria-label="Globo com os países chutados coloridos pela proximidade"
+      aria-label={lang === 'en' ? 'Globe with guessed countries colored by closeness' : 'Globo com os países chutados coloridos pela proximidade'}
     />
   )
 }

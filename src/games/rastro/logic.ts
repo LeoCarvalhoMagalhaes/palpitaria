@@ -21,9 +21,9 @@ export function decodeRanks(base64: string): Uint16Array {
   return new Uint16Array(bytes.buffer)
 }
 
-export function dayFile(number: number, days: number): string {
+export function dayFile(number: number, days: number, dir = 'rastro'): string {
   const n = (((number - 1) % days) + days) % days
-  return `rastro/day-${String(n + 1).padStart(3, '0')}.json`
+  return `${dir}/day-${String(n + 1).padStart(3, '0')}.json`
 }
 
 /** Custo da dica (em tentativas) pela distância da palavra revelada — regra observada no original. */
@@ -68,11 +68,14 @@ export function barWidth(rank: number, total: number): number {
   return Math.max(4, Math.round(t * 100))
 }
 
-export function shareText(name: string, number: number, entries: Entry[], won: boolean): string {
+export function shareText(name: string, number: number, entries: Entry[], won: boolean, lang: 'pt' | 'en' = 'pt'): string {
   const { guessCount, hintCount } = metrics(entries)
+  const en = lang === 'en'
+  const tries = en ? (guessCount === 1 ? 'guess' : 'guesses') : guessCount === 1 ? 'tentativa' : 'tentativas'
+  const hints = en ? (hintCount === 1 ? 'hint' : 'hints') : hintCount === 1 ? 'dica' : 'dicas'
   const head = won
-    ? `${name} #${number} — achei em ${guessCount} ${guessCount === 1 ? 'tentativa' : 'tentativas'}${hintCount ? ` e ${hintCount} ${hintCount === 1 ? 'dica' : 'dicas'}` : ''}`
-    : `${name} #${number} — desisti depois de ${guessCount} tentativas`
+    ? `${name} #${number} — ${en ? 'found it in' : 'achei em'} ${guessCount} ${tries}${hintCount ? ` ${en ? 'and' : 'e'} ${hintCount} ${hints}` : ''}`
+    : `${name} #${number} — ${en ? 'gave up after' : 'desisti depois de'} ${guessCount} ${tries}`
   const counts = { hot: 0, warm: 0, cold: 0 }
   for (const e of entries) if (e.rank > 1) counts[heat(e.rank)] += 1
   const bar = (n: number, emoji: string) => emoji.repeat(Math.min(n, 10)) + (n > 10 ? `+${n - 10}` : '')

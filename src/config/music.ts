@@ -2,15 +2,16 @@
 export interface MusicCategory {
   id: string
   name: string
+  nameEn: string
   /** null = todas as músicas */
   cat: string | null
 }
 
 export const MUSIC_CATEGORIES: MusicCategory[] = [
-  { id: 'todas', name: 'Todas', cat: null },
-  { id: 'pop', name: 'Pop', cat: 'pop' },
-  { id: 'hiphop', name: 'Hip Hop', cat: 'hiphop' },
-  { id: 'rock', name: 'Rock', cat: 'rock' },
+  { id: 'todas', name: 'Todas', nameEn: 'All', cat: null },
+  { id: 'pop', name: 'Pop', nameEn: 'Pop', cat: 'pop' },
+  { id: 'hiphop', name: 'Hip Hop', nameEn: 'Hip Hop', cat: 'hiphop' },
+  { id: 'rock', name: 'Rock', nameEn: 'Rock', cat: 'rock' },
 ]
 
 /** Uma categoria só aparece se tiver músicas suficientes para um mês sem repetir. */
@@ -27,6 +28,8 @@ export interface Song {
   genre: string | null
   year: number | null
   cat: string | null
+  /** Idioma do título (scripts/data/musicas/title-lang.mjs). */
+  titleLang?: 'en' | 'pt' | 'es' | 'other'
 }
 
 export const songLabel = (s: Song) => `${s.artist} – ${s.title}`

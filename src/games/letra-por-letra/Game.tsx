@@ -7,7 +7,8 @@ import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
 import { fetchData, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
-import { hasPortugueseVoice, onVoicesReady, speak, speechAvailable } from '@/core/speech'
+import { hasVoice, onVoicesReady, speak as speakIn, speechAvailable } from '@/core/speech'
+import { useL, useLang } from '@/core/settings'
 import { ROUNDS, WIN_SCORE, dailyWords, isCorrect, sentenceForSpeech, shareText, type Bank } from './logic'
 
 interface State {
@@ -15,19 +16,27 @@ interface State {
 }
 
 const ACCENTS = ['á', 'à', 'â', 'ã', 'é', 'ê', 'í', 'ó', 'ô', 'õ', 'ú', 'ç', '-']
+/** Em inglês, só hífen e apóstrofo. */
+const ACCENTS_EN = ['-', "'"]
 
 export default function LetraPorLetraGame(ctx: GameContext) {
-  const data = useData(() => fetchData<{ niveis: Bank }>('letra-por-letra/words.json'))
-  if (data.status === 'loading') return <LoadingScreen label="Afinando a voz…" />
+  const L = useL()
+  const lang = useLang()
+  const file = lang === 'en' ? 'letra-por-letra/words-en.json' : 'letra-por-letra/words.json'
+  const data = useData(() => fetchData<{ niveis: Bank }>(file), [file])
+  if (data.status === 'loading') return <LoadingScreen label={L('Afinando a voz…', 'Warming up the voice…')} />
   if (data.status === 'error') return <ErrorBox message={data.error} onRetry={data.retry} />
   return <Play ctx={ctx} bank={data.data.niveis} />
 }
 
 function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
   const { game, date, number } = ctx
+  const L = useL()
+  const lang = useLang()
+  const speak = (text: string, rate?: number) => speakIn(text, rate, lang)
   const words = useMemo(() => dailyWords(bank, number), [bank, number])
   const { state, status, setState, finish } = useDailyGame<State>({
-    slug: game.slug,
+    slug: ctx.stateKey,
     version: 1,
     date,
     isArchive: ctx.isArchive,
@@ -39,7 +48,7 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
   const [voiceOk, setVoiceOk] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => onVoicesReady(() => setVoiceOk(hasPortugueseVoice())), [])
+  useEffect(() => onVoicesReady(() => setVoiceOk(hasVoice(lang))), [lang])
 
   const results = state.answers.map((a, i) => isCorrect(a, words[i].palavra))
   const score = results.filter(Boolean).length
@@ -81,20 +90,27 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
       status={status}
       buckets={['0', '1', '2', '3', '4', '5']}
       highlightBucket={finished ? String(score) : null}
-      showAverage="Média de acertos"
-      help={
+      showAverage={L('Média de acertos', 'Average score')}
+      help={L(
         <>
           <p>São <strong>5 rodadas</strong>, cada uma mais difícil. Toque em <strong>Ouvir</strong>, escute a palavra e escreva do jeitinho certo.</p>
           <p>Acentos, cedilha e hífen contam! Use os botões de acento se o seu teclado não tiver.</p>
           <p>Ficou na dúvida? Peça a <strong>definição</strong> ou uma <strong>frase de exemplo</strong>. Você tem <strong>uma tentativa</strong> por rodada.</p>
           <p>Acertando 3 ou mais, o dia conta como vitória para a sequência.</p>
           <p className="text-muted-foreground">A voz é a do seu próprio aparelho (pt-BR).</p>
-        </>
-      }
+        </>,
+        <>
+          <p>There are <strong>5 rounds</strong>, each one harder. Tap <strong>Listen</strong>, hear the word and spell it exactly right.</p>
+          <p>Hyphens and apostrophes count! American spelling is used.</p>
+          <p>Not sure? Ask for the <strong>definition</strong> or an <strong>example sentence</strong>. You get <strong>one try</strong> per round.</p>
+          <p>Get 3 or more right and the day counts as a win for your streak.</p>
+          <p className="text-muted-foreground">The voice comes from your own device (en-US).</p>
+        </>,
+      )}
       result={
         <>
           <p className="text-center">
-            Você acertou <strong>{score} de {ROUNDS}</strong>.
+            {L('Você acertou', 'You got')} <strong>{score} {L('de', 'of')} {ROUNDS}</strong>.
           </p>
           <ul className="space-y-1 text-sm">
             {words.map((w, i) => (
@@ -110,11 +126,14 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
     >
       {(!speechAvailable() || !voiceOk) && (
         <p className="mb-3 rounded-xl bg-sun/40 px-3 py-2 text-center text-sm" role="alert">
-          Não encontramos uma voz em português neste aparelho. Use a definição e a frase como pistas, ou tente outro navegador.
+          {L(
+            'Não encontramos uma voz em português neste aparelho. Use a definição e a frase como pistas, ou tente outro navegador.',
+            "We couldn't find an English voice on this device. Use the definition and the sentence as clues, or try another browser.",
+          )}
         </p>
       )}
 
-      <ol className="mb-5 flex justify-center gap-2" aria-label="Rodadas">
+      <ol className="mb-5 flex justify-center gap-2" aria-label={L('Rodadas', 'Rounds')}>
         {words.map((_, i) => {
           const done = i < state.answers.length
           const cls = done ? (results[i] ? 'tile-hit' : 'tile-far') : i === round ? 'border-ink bg-card' : 'border-ink/15 bg-card'
@@ -128,13 +147,13 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
 
       {!allDone ? (
         <div className="mx-auto w-full max-w-md space-y-4 text-center">
-          <p className="text-sm font-semibold text-muted-foreground uppercase">Rodada {round + 1} · nível {round + 1}</p>
+          <p className="text-sm font-semibold text-muted-foreground uppercase">{L('Rodada', 'Round')} {round + 1} · {L('nível', 'level')} {round + 1}</p>
           <motion.button
             type="button"
             whileTap={{ scale: 0.92 }}
             onClick={() => speak(entry.palavra)}
             className="mx-auto grid size-28 place-items-center rounded-full bg-primary text-primary-foreground sticker sticker-press"
-            aria-label="Ouvir a palavra"
+            aria-label={L('Ouvir a palavra', 'Listen to the word')}
           >
             <Volume2 className="size-12" />
           </motion.button>
@@ -147,7 +166,7 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
                 speak(entry.definicao, 1)
               }}
             >
-              <BookOpen aria-hidden /> Definição
+              <BookOpen aria-hidden /> {L('Definição', 'Definition')}
             </Button>
             <Button
               variant="pop-outline"
@@ -157,12 +176,12 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
                 speak(sentenceForSpeech(entry), 1)
               }}
             >
-              <MessageSquareQuote aria-hidden /> Frase
+              <MessageSquareQuote aria-hidden /> {L('Frase', 'Sentence')}
             </Button>
           </div>
           {reveal && (
             <p className="rounded-xl bg-muted px-4 py-3 text-left">
-              <strong>{reveal === 'definicao' ? 'Definição: ' : 'Frase: '}</strong>
+              <strong>{reveal === 'definicao' ? L('Definição: ', 'Definition: ') : L('Frase: ', 'Sentence: ')}</strong>
               {reveal === 'definicao' ? entry.definicao : entry.frase}
             </p>
           )}
@@ -183,12 +202,12 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
                 autoCorrect="off"
                 autoCapitalize="none"
                 spellCheck={false}
-                placeholder="Escreva a palavra…"
-                aria-label="Sua resposta"
+                placeholder={L('Escreva a palavra…', 'Type the word…')}
+                aria-label={L('Sua resposta', 'Your answer')}
                 className="h-14 w-full rounded-xl border-2 border-ink bg-card px-4 text-center font-heading text-2xl font-semibold outline-none focus:border-brand-2"
               />
-              <div className="flex flex-wrap justify-center gap-1" aria-label="Acentos">
-                {ACCENTS.map((a) => (
+              <div className="flex flex-wrap justify-center gap-1" aria-label={L('Acentos', 'Special characters')}>
+                {(lang === 'en' ? ACCENTS_EN : ACCENTS).map((a) => (
                   <button
                     key={a}
                     type="button"
@@ -203,21 +222,21 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
                 ))}
               </div>
               <Button type="submit" variant="pop" size="xl" className="w-full" disabled={!typed.trim()}>
-                Conferir
+                {L('Conferir', 'Check')}
               </Button>
             </form>
           ) : (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3" aria-live="polite">
               <p className={`rounded-xl px-4 py-3 font-heading text-xl ${lastCorrect ? 'tile-hit' : 'tile-far'}`}>
-                {lastCorrect ? 'Certinho! ✨' : 'Quase!'} A grafia é <strong>{entry.palavra}</strong>
+                {lastCorrect ? L('Certinho! ✨', 'Spot on! ✨') : L('Quase!', 'So close!')} {L('A grafia é', 'It is spelled')} <strong>{entry.palavra}</strong>
               </p>
               {state.answers.length < ROUNDS ? (
                 <Button variant="pop" size="xl" className="w-full" onClick={next} autoFocus>
-                  Próxima palavra
+                  {L('Próxima palavra', 'Next word')}
                 </Button>
               ) : (
                 <Button variant="pop" size="xl" className="w-full" onClick={() => setShowResult(false)} autoFocus>
-                  Ver resultado
+                  {L('Ver resultado', 'See results')}
                 </Button>
               )}
             </motion.div>
@@ -225,7 +244,7 @@ function Play({ ctx, bank }: { ctx: GameContext; bank: Bank }) {
         </div>
       ) : (
         <div className="mx-auto w-full max-w-md space-y-3 text-center">
-          <p className="font-heading text-2xl">{score === ROUNDS ? 'Gabaritou! 🐝' : `${score} de ${ROUNDS} certas`}</p>
+          <p className="font-heading text-2xl">{score === ROUNDS ? L('Gabaritou! 🐝', 'Perfect score! 🐝') : L(`${score} de ${ROUNDS} certas`, `${score} of ${ROUNDS} right`)}</p>
           <ShareButton text={share} />
         </div>
       )}

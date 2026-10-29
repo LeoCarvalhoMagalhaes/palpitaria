@@ -27,6 +27,17 @@ Verificação inicial: 27/10/2026. Reconfirme as licenças antes de qualquer uso
 | Holofote | MusicBrainz (dados centrais) | musicbrainz.org/doc/About/Data_License | CC0 | Não | Limite de 1 req/s | Usar |
 | Holofote | ListenBrainz (estatística sitewide all_time) | api.listenbrainz.org | CC0 (confirmar) | Não | Ranking retorna no máximo ~1.000 artistas | Usar |
 | Refrão Cruzado (outro jogo) | Grades editoriais no bundle; áudio por prévias da Apple Music | Bundles `/_app/immutable/chunks/*.js` | Proprietário | — | Não copiar grades | **Substituir**: grade gerada a partir de 60 músicas do top 1.000 sorteadas por dia |
+| Holofote, Mais ou Menos | Fotos do Wikimedia Commons ligadas no Wikidata (P18; bandeiras P41; cidades via P1585) | query.wikidata.org + upload.wikimedia.org | Licença de cada arquivo (CC0, PD, CC BY, CC BY-SA…) | Link para a página do arquivo em cada foto | Miniaturas de 330 px (tamanho padrão do Commons) | **Usar** |
+| Na Etiqueta, Mais ou Menos (Preços) | Fotos ilustrativas do Commons achadas por busca de texto (`filetype:bitmap`), só licenças CC0/PD/CC BY/CC BY-SA, título com todas as palavras do termo, sem "price", "logo" ou lojas | commons.wikimedia.org/w/api.php | Licença de cada arquivo | Link e licença abaixo da foto | Segunda etapa (`filter-images.cjs`) descarta homônimos e paisagens: 214 de 400 produtos ficam com foto, o resto mostra o emoji | **Usar** |
+| Palavreta, Letra por Letra, Rastro (inglês) | Lista dwyl/english-words (`words_alpha.txt`) | github.com/dwyl/english-words | Unlicense | Não | — | **Usar** para validar palpites e grafias |
+| Rastro (inglês), Refrão Cruzado | FrequencyWords en (OpenSubtitles 2018) | github.com/hermitdave/FrequencyWords | CC BY-SA 4.0 | Sim | Lista derivada sob a mesma licença | **Usar** (vocabulário do Rastro em inglês; detectar títulos em inglês) |
+| Juntô, Letra por Letra, Palavreta (inglês) | Conteúdo autoral em inglês: 40 quebra-cabeças, 150 palavras com definição e frase, 509 respostas | — | Próprio | — | Conferido no dicionário dwyl; quebra-cabeças com solução única | **Usar** |
+
+## Uso das APIs da Wikimedia
+
+As coletas (Wikidata SPARQL, API do Commons e Pageviews) rodam só no build, com `User-Agent` identificado (projeto + contato), cache em
+`scripts/.cache/wikimedia/` e novas tentativas com espera em respostas 429/5xx, seguindo a política de User-Agent e as diretrizes de uso da API.
+O site só carrega as miniaturas publicadas em `upload.wikimedia.org`, como qualquer página que exibe imagens do Commons.
 
 ## Áudio (histórico)
 

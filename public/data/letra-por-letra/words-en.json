@@ -1,0 +1,766 @@
+{
+ "fonte": "Original Palpitaria word bank (spellings checked against the dwyl/english-words list)",
+ "licenca": "Own content",
+ "niveis": {
+  "1": [
+   {
+    "palavra": "friend",
+    "definicao": "A person you know well and like.",
+    "frase": "My best ___ lives next door."
+   },
+   {
+    "palavra": "people",
+    "definicao": "Human beings in general.",
+    "frase": "Many ___ came to the party."
+   },
+   {
+    "palavra": "because",
+    "definicao": "For the reason that.",
+    "frase": "I stayed home ___ it was raining."
+   },
+   {
+    "palavra": "school",
+    "definicao": "A place where children learn.",
+    "frase": "The ___ bus arrives at eight."
+   },
+   {
+    "palavra": "laugh",
+    "definicao": "To make sounds that show you think something is funny.",
+    "frase": "His jokes always make me ___."
+   },
+   {
+    "palavra": "pretty",
+    "definicao": "Pleasant to look at.",
+    "frase": "She wore a ___ blue dress."
+   },
+   {
+    "palavra": "kitchen",
+    "definicao": "The room where food is cooked.",
+    "frase": "Dad is baking a cake in the ___."
+   },
+   {
+    "palavra": "listen",
+    "definicao": "To pay attention to a sound.",
+    "frase": "Please ___ to the teacher."
+   },
+   {
+    "palavra": "island",
+    "definicao": "Land surrounded by water.",
+    "frase": "We took a boat to the ___."
+   },
+   {
+    "palavra": "answer",
+    "definicao": "A reply to a question.",
+    "frase": "Do you know the ___ to number five?"
+   },
+   {
+    "palavra": "earth",
+    "definicao": "The planet we live on.",
+    "frase": "The ___ goes around the Sun."
+   },
+   {
+    "palavra": "knife",
+    "definicao": "A tool with a blade for cutting.",
+    "frase": "Use a ___ to slice the bread."
+   },
+   {
+    "palavra": "doctor",
+    "definicao": "A person who treats sick people.",
+    "frase": "The ___ checked my temperature."
+   },
+   {
+    "palavra": "orange",
+    "definicao": "A round citrus fruit.",
+    "frase": "I had an ___ for breakfast."
+   },
+   {
+    "palavra": "button",
+    "definicao": "A small object used to fasten clothes or start a machine.",
+    "frase": "Press the green ___ to start."
+   },
+   {
+    "palavra": "cousin",
+    "definicao": "A child of your aunt or uncle.",
+    "frase": "My ___ is visiting this weekend."
+   },
+   {
+    "palavra": "flower",
+    "definicao": "The colorful part of a plant.",
+    "frase": "She picked a ___ from the garden."
+   },
+   {
+    "palavra": "guitar",
+    "definicao": "A string instrument played by plucking.",
+    "frase": "He plays the ___ in a band."
+   },
+   {
+    "palavra": "monkey",
+    "definicao": "A playful animal that climbs trees.",
+    "frase": "The ___ swung from branch to branch."
+   },
+   {
+    "palavra": "summer",
+    "definicao": "The warmest season of the year.",
+    "frase": "We go to the beach every ___."
+   },
+   {
+    "palavra": "pencil",
+    "definicao": "A tool for writing or drawing.",
+    "frase": "Sharpen your ___ before the test."
+   },
+   {
+    "palavra": "yellow",
+    "definicao": "The color of a lemon.",
+    "frase": "The taxi was bright ___."
+   },
+   {
+    "palavra": "bridge",
+    "definicao": "A structure built over a river or road.",
+    "frase": "We walked across the old ___."
+   },
+   {
+    "palavra": "castle",
+    "definicao": "A large old building with thick walls and towers.",
+    "frase": "The king lived in a ___."
+   },
+   {
+    "palavra": "chicken",
+    "definicao": "A bird kept for its eggs and meat.",
+    "frase": "We had roast ___ for dinner."
+   },
+   {
+    "palavra": "breakfast",
+    "definicao": "The first meal of the day.",
+    "frase": "I eat cereal for ___."
+   },
+   {
+    "palavra": "pocket",
+    "definicao": "A small bag sewn into clothes.",
+    "frase": "The keys are in my ___."
+   },
+   {
+    "palavra": "turtle",
+    "definicao": "A reptile with a hard shell.",
+    "frase": "The ___ moved very slowly."
+   },
+   {
+    "palavra": "window",
+    "definicao": "An opening in a wall that lets in light.",
+    "frase": "Open the ___ to let in fresh air."
+   },
+   {
+    "palavra": "thumb",
+    "definicao": "The short, thick finger on your hand.",
+    "frase": "He gave me a ___ up."
+   }
+  ],
+  "2": [
+   {
+    "palavra": "believe",
+    "definicao": "To think that something is true.",
+    "frase": "I ___ you are telling the truth."
+   },
+   {
+    "palavra": "receive",
+    "definicao": "To get something that is given or sent.",
+    "frase": "Did you ___ my letter?"
+   },
+   {
+    "palavra": "weird",
+    "definicao": "Very strange or unusual.",
+    "frase": "That was a ___ dream."
+   },
+   {
+    "palavra": "beautiful",
+    "definicao": "Very pleasing to look at.",
+    "frase": "What a ___ sunset!"
+   },
+   {
+    "palavra": "business",
+    "definicao": "The activity of buying and selling.",
+    "frase": "She started her own ___."
+   },
+   {
+    "palavra": "February",
+    "definicao": "The second month of the year.",
+    "frase": "Carnival is usually in ___."
+   },
+   {
+    "palavra": "Wednesday",
+    "definicao": "The day after Tuesday.",
+    "frase": "The meeting is on ___."
+   },
+   {
+    "palavra": "library",
+    "definicao": "A place where books are kept to borrow.",
+    "frase": "I borrowed this book from the ___."
+   },
+   {
+    "palavra": "separate",
+    "definicao": "To divide or keep apart.",
+    "frase": "Please ___ the whites from the colors."
+   },
+   {
+    "palavra": "tomorrow",
+    "definicao": "The day after today.",
+    "frase": "See you ___ morning."
+   },
+   {
+    "palavra": "different",
+    "definicao": "Not the same.",
+    "frase": "Twins can have very ___ personalities."
+   },
+   {
+    "palavra": "favorite",
+    "definicao": "Liked more than all others.",
+    "frase": "Pizza is my ___ food."
+   },
+   {
+    "palavra": "neighbor",
+    "definicao": "A person who lives near you.",
+    "frase": "Our ___ lent us a ladder."
+   },
+   {
+    "palavra": "chocolate",
+    "definicao": "A sweet food made from cocoa.",
+    "frase": "She baked a ___ cake."
+   },
+   {
+    "palavra": "vegetable",
+    "definicao": "A plant eaten as food, like a carrot.",
+    "frase": "Eat your ___ soup."
+   },
+   {
+    "palavra": "calendar",
+    "definicao": "A chart showing the days and months.",
+    "frase": "Mark the date on the ___."
+   },
+   {
+    "palavra": "surprise",
+    "definicao": "Something unexpected.",
+    "frase": "We planned a ___ party."
+   },
+   {
+    "palavra": "address",
+    "definicao": "The details of where someone lives.",
+    "frase": "Write your ___ on the envelope."
+   },
+   {
+    "palavra": "carrot",
+    "definicao": "An orange root vegetable.",
+    "frase": "The rabbit ate a ___."
+   },
+   {
+    "palavra": "tongue",
+    "definicao": "The soft part in your mouth used for tasting.",
+    "frase": "Hot soup can burn your ___."
+   },
+   {
+    "palavra": "height",
+    "definicao": "How tall something is.",
+    "frase": "Measure the ___ of the door."
+   },
+   {
+    "palavra": "science",
+    "definicao": "The study of the natural world.",
+    "frase": "We did an experiment in ___ class."
+   },
+   {
+    "palavra": "scissors",
+    "definicao": "A tool with two blades for cutting paper.",
+    "frase": "Pass me the ___, please."
+   },
+   {
+    "palavra": "although",
+    "definicao": "In spite of the fact that.",
+    "frase": "We went out, ___ it was cold."
+   },
+   {
+    "palavra": "beginning",
+    "definicao": "The start of something.",
+    "frase": "Read the story from the ___."
+   },
+   {
+    "palavra": "caught",
+    "definicao": "Past tense of catch.",
+    "frase": "She ___ the ball with one hand."
+   },
+   {
+    "palavra": "enough",
+    "definicao": "As much as needed.",
+    "frase": "Do we have ___ chairs?"
+   },
+   {
+    "palavra": "guess",
+    "definicao": "To give an answer without being sure.",
+    "frase": "Can you ___ my age?"
+   },
+   {
+    "palavra": "chief",
+    "definicao": "The leader or head of a group.",
+    "frase": "The fire ___ gave a speech."
+   },
+   {
+    "palavra": "special",
+    "definicao": "Better or different from usual.",
+    "frase": "Today is a ___ day."
+   }
+  ],
+  "3": [
+   {
+    "palavra": "necessary",
+    "definicao": "Needed; required.",
+    "frase": "Water is ___ for life."
+   },
+   {
+    "palavra": "embarrass",
+    "definicao": "To make someone feel awkward or ashamed.",
+    "frase": "Please don't ___ me in front of my friends."
+   },
+   {
+    "palavra": "definitely",
+    "definicao": "Without any doubt.",
+    "frase": "I will ___ be there."
+   },
+   {
+    "palavra": "restaurant",
+    "definicao": "A place where you pay to eat meals.",
+    "frase": "We had dinner at a new ___."
+   },
+   {
+    "palavra": "government",
+    "definicao": "The group that rules a country.",
+    "frase": "The ___ announced new laws."
+   },
+   {
+    "palavra": "environment",
+    "definicao": "The natural world around us.",
+    "frase": "We must protect the ___."
+   },
+   {
+    "palavra": "occasion",
+    "definicao": "A special event or time.",
+    "frase": "Wear your best clothes for the ___."
+   },
+   {
+    "palavra": "occurred",
+    "definicao": "Past tense of occur; happened.",
+    "frase": "The accident ___ late at night."
+   },
+   {
+    "palavra": "rhythm",
+    "definicao": "A regular pattern of beats.",
+    "frase": "Clap to the ___ of the music."
+   },
+   {
+    "palavra": "argument",
+    "definicao": "A disagreement with angry words.",
+    "frase": "They had an ___ about money."
+   },
+   {
+    "palavra": "colleague",
+    "definicao": "A person you work with.",
+    "frase": "My ___ helped me with the report."
+   },
+   {
+    "palavra": "foreign",
+    "definicao": "From another country.",
+    "frase": "She speaks three ___ languages."
+   },
+   {
+    "palavra": "guarantee",
+    "definicao": "A firm promise.",
+    "frase": "The phone comes with a one-year ___."
+   },
+   {
+    "palavra": "immediately",
+    "definicao": "At once; right now.",
+    "frase": "Call me ___ when you arrive."
+   },
+   {
+    "palavra": "knowledge",
+    "definicao": "What you know or have learned.",
+    "frase": "Reading increases your ___."
+   },
+   {
+    "palavra": "mischievous",
+    "definicao": "Playfully causing small trouble.",
+    "frase": "The ___ kitten knocked over the vase."
+   },
+   {
+    "palavra": "noticeable",
+    "definicao": "Easy to see or notice.",
+    "frase": "There was a ___ change in the weather."
+   },
+   {
+    "palavra": "parallel",
+    "definicao": "Side by side and never meeting.",
+    "frase": "Draw two ___ lines."
+   },
+   {
+    "palavra": "pronunciation",
+    "definicao": "The way a word is spoken.",
+    "frase": "Her ___ is very clear."
+   },
+   {
+    "palavra": "recommend",
+    "definicao": "To suggest something as good.",
+    "frase": "Can you ___ a good movie?"
+   },
+   {
+    "palavra": "schedule",
+    "definicao": "A plan of times for events.",
+    "frase": "Check the train ___."
+   },
+   {
+    "palavra": "sincerely",
+    "definicao": "In an honest way; used to end letters.",
+    "frase": "Yours ___, Maria."
+   },
+   {
+    "palavra": "tomato",
+    "definicao": "A red fruit used in salads and sauces.",
+    "frase": "Add a slice of ___ to the sandwich."
+   },
+   {
+    "palavra": "vacuum",
+    "definicao": "To clean with a machine that sucks up dirt.",
+    "frase": "I need to ___ the living room."
+   },
+   {
+    "palavra": "weather",
+    "definicao": "The state of the air: rain, sun or wind.",
+    "frase": "The ___ is perfect for a picnic."
+   },
+   {
+    "palavra": "aggressive",
+    "definicao": "Ready to attack or argue.",
+    "frase": "The dog became ___ when strangers came near."
+   },
+   {
+    "palavra": "accommodate",
+    "definicao": "To provide space or a place to stay.",
+    "frase": "The hotel can ___ two hundred guests."
+   },
+   {
+    "palavra": "conscious",
+    "definicao": "Awake and aware.",
+    "frase": "He was ___ after the fall."
+   },
+   {
+    "palavra": "existence",
+    "definicao": "The state of being real.",
+    "frase": "Scientists doubt the ___ of the monster."
+   },
+   {
+    "palavra": "maintenance",
+    "definicao": "The work of keeping something in good condition.",
+    "frase": "The elevator is closed for ___."
+   }
+  ],
+  "4": [
+   {
+    "palavra": "conscientious",
+    "definicao": "Careful to do things well and correctly.",
+    "frase": "She is a ___ student who never misses homework."
+   },
+   {
+    "palavra": "questionnaire",
+    "definicao": "A list of questions to collect information.",
+    "frase": "Please fill out the ___."
+   },
+   {
+    "palavra": "millennium",
+    "definicao": "A period of one thousand years.",
+    "frase": "The new ___ began in 2001."
+   },
+   {
+    "palavra": "liaison",
+    "definicao": "A person who connects two groups.",
+    "frase": "She acts as a ___ between the teams."
+   },
+   {
+    "palavra": "harass",
+    "definicao": "To keep bothering or attacking someone.",
+    "frase": "It is wrong to ___ other people online."
+   },
+   {
+    "palavra": "occurrence",
+    "definicao": "Something that happens.",
+    "frase": "Thunderstorms are a common ___ in summer."
+   },
+   {
+    "palavra": "privilege",
+    "definicao": "A special right or advantage.",
+    "frase": "It is a ___ to meet you."
+   },
+   {
+    "palavra": "perseverance",
+    "definicao": "Continuing to try despite difficulties.",
+    "frase": "Her ___ helped her finish the marathon."
+   },
+   {
+    "palavra": "entrepreneur",
+    "definicao": "A person who starts a business.",
+    "frase": "The young ___ opened three shops."
+   },
+   {
+    "palavra": "bureaucracy",
+    "definicao": "A system with many complicated rules.",
+    "frase": "Getting a passport involves a lot of ___."
+   },
+   {
+    "palavra": "camouflage",
+    "definicao": "Colors or patterns that help something hide.",
+    "frase": "The chameleon uses ___ to stay safe."
+   },
+   {
+    "palavra": "fluorescent",
+    "definicao": "Very bright, giving off light.",
+    "frase": "He wore a ___ green vest."
+   },
+   {
+    "palavra": "hierarchy",
+    "definicao": "A system of levels from top to bottom.",
+    "frase": "The company has a strict ___."
+   },
+   {
+    "palavra": "lieutenant",
+    "definicao": "A rank of officer in the army or navy.",
+    "frase": "The ___ gave the order."
+   },
+   {
+    "palavra": "miniature",
+    "definicao": "A very small copy of something.",
+    "frase": "He collects ___ cars."
+   },
+   {
+    "palavra": "pharaoh",
+    "definicao": "A ruler of ancient Egypt.",
+    "frase": "The ___ was buried in a pyramid."
+   },
+   {
+    "palavra": "reminiscent",
+    "definicao": "Making you think of something from the past.",
+    "frase": "The song is ___ of the eighties."
+   },
+   {
+    "palavra": "silhouette",
+    "definicao": "A dark shape against a light background.",
+    "frase": "We saw the ___ of a man at the window."
+   },
+   {
+    "palavra": "surveillance",
+    "definicao": "Close watching of a person or place.",
+    "frase": "The bank is under video ___."
+   },
+   {
+    "palavra": "threshold",
+    "definicao": "The bottom of a doorway; a starting point.",
+    "frase": "He carried her across the ___."
+   },
+   {
+    "palavra": "unnecessary",
+    "definicao": "Not needed.",
+    "frase": "Avoid ___ trips during the storm."
+   },
+   {
+    "palavra": "vengeance",
+    "definicao": "Punishment given in return for harm.",
+    "frase": "The hero swore ___ on the villain."
+   },
+   {
+    "palavra": "accidentally",
+    "definicao": "By chance, without meaning to.",
+    "frase": "I ___ deleted the photo."
+   },
+   {
+    "palavra": "acquaintance",
+    "definicao": "A person you know a little.",
+    "frase": "He is an old ___ from school."
+   },
+   {
+    "palavra": "colonel",
+    "definicao": "A high rank of army officer.",
+    "frase": "The ___ inspected the troops."
+   },
+   {
+    "palavra": "exhilarate",
+    "definicao": "To make someone feel very happy and excited.",
+    "frase": "Fast rides ___ me."
+   },
+   {
+    "palavra": "inoculate",
+    "definicao": "To protect someone with a vaccine.",
+    "frase": "Nurses will ___ the children against flu."
+   },
+   {
+    "palavra": "maneuver",
+    "definicao": "A skillful movement.",
+    "frase": "The pilot made a sharp ___."
+   },
+   {
+    "palavra": "playwright",
+    "definicao": "A person who writes plays.",
+    "frase": "The ___ attended opening night."
+   },
+   {
+    "palavra": "rhythmically",
+    "definicao": "In a regular, repeated pattern.",
+    "frase": "The drums beat ___."
+   }
+  ],
+  "5": [
+   {
+    "palavra": "onomatopoeia",
+    "definicao": "A word that imitates a sound, like buzz.",
+    "frase": "Boom is an example of ___."
+   },
+   {
+    "palavra": "pneumonia",
+    "definicao": "A serious infection of the lungs.",
+    "frase": "He was in the hospital with ___."
+   },
+   {
+    "palavra": "chrysanthemum",
+    "definicao": "A garden flower with many petals.",
+    "frase": "She planted a yellow ___."
+   },
+   {
+    "palavra": "idiosyncrasy",
+    "definicao": "A habit or way of behaving that is unusual.",
+    "frase": "Wearing two watches is his ___."
+   },
+   {
+    "palavra": "mnemonic",
+    "definicao": "Something that helps you remember.",
+    "frase": "Use a ___ to learn the planets."
+   },
+   {
+    "palavra": "connoisseur",
+    "definicao": "An expert who knows a lot about a subject.",
+    "frase": "He is a ___ of fine cheese."
+   },
+   {
+    "palavra": "bourgeois",
+    "definicao": "Belonging to the middle class.",
+    "frase": "The novel mocks ___ values."
+   },
+   {
+    "palavra": "dachshund",
+    "definicao": "A dog with a long body and short legs.",
+    "frase": "Our ___ loves to dig."
+   },
+   {
+    "palavra": "fuchsia",
+    "definicao": "A bright purplish-pink color.",
+    "frase": "She painted her nails ___."
+   },
+   {
+    "palavra": "handkerchief",
+    "definicao": "A small square of cloth for wiping your nose.",
+    "frase": "He pulled a ___ from his pocket."
+   },
+   {
+    "palavra": "kaleidoscope",
+    "definicao": "A tube with mirrors that shows changing patterns.",
+    "frase": "The child looked through the ___."
+   },
+   {
+    "palavra": "mischievousness",
+    "definicao": "The quality of playfully causing trouble.",
+    "frase": "The puppy's ___ made everyone laugh."
+   },
+   {
+    "palavra": "pharmaceutical",
+    "definicao": "Related to medicines.",
+    "frase": "She works for a ___ company."
+   },
+   {
+    "palavra": "psychology",
+    "definicao": "The study of the mind and behavior.",
+    "frase": "He is studying ___ at university."
+   },
+   {
+    "palavra": "rendezvous",
+    "definicao": "A planned meeting.",
+    "frase": "The spies arranged a secret ___."
+   },
+   {
+    "palavra": "sacrilegious",
+    "definicao": "Showing disrespect to something sacred.",
+    "frase": "The act was considered ___."
+   },
+   {
+    "palavra": "supersede",
+    "definicao": "To take the place of something older.",
+    "frase": "The new rules ___ the old ones."
+   },
+   {
+    "palavra": "unequivocally",
+    "definicao": "In a way that leaves no doubt.",
+    "frase": "She ___ denied the story."
+   },
+   {
+    "palavra": "vicissitude",
+    "definicao": "A change of circumstances, often unwelcome.",
+    "frase": "He survived every ___ of life."
+   },
+   {
+    "palavra": "worcestershire",
+    "definicao": "A tangy brown sauce from England.",
+    "frase": "Add a dash of ___ sauce."
+   },
+   {
+    "palavra": "xylophone",
+    "definicao": "An instrument of wooden bars struck with hammers.",
+    "frase": "The child played a tune on the ___."
+   },
+   {
+    "palavra": "zucchini",
+    "definicao": "A long green summer squash.",
+    "frase": "Grill the ___ with olive oil."
+   },
+   {
+    "palavra": "acquiesce",
+    "definicao": "To accept something quietly without arguing.",
+    "frase": "He chose to ___ to their demands."
+   },
+   {
+    "palavra": "bureaucratic",
+    "definicao": "Involving many complicated official rules.",
+    "frase": "The process was slow and ___."
+   },
+   {
+    "palavra": "conscientiousness",
+    "definicao": "The quality of being careful and thorough.",
+    "frase": "Her ___ earned her a promotion."
+   },
+   {
+    "palavra": "entrepreneurial",
+    "definicao": "Having the spirit of someone who starts businesses.",
+    "frase": "He has an ___ mind."
+   },
+   {
+    "palavra": "hemorrhage",
+    "definicao": "Heavy bleeding.",
+    "frase": "The doctors stopped the ___."
+   },
+   {
+    "palavra": "liquefy",
+    "definicao": "To turn into a liquid.",
+    "frase": "Heat will ___ the butter."
+   },
+   {
+    "palavra": "nauseous",
+    "definicao": "Feeling sick to your stomach.",
+    "frase": "The boat ride made me ___."
+   },
+   {
+    "palavra": "questionnaires",
+    "definicao": "Lists of questions used to gather information.",
+    "frase": "We handed out fifty ___."
+   }
+  ]
+ }
+}

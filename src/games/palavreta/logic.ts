@@ -33,19 +33,19 @@ export function scoreGuess(guess: string, answer: string): LetterState[] {
 }
 
 /** Modo difícil: letras verdes ficam no lugar e amarelas precisam ser usadas. Retorna o erro ou null. */
-export function hardModeViolation(guess: string, previous: { word: string; score: LetterState[] }[]): string | null {
+export function hardModeViolation(guess: string, previous: { word: string; score: LetterState[] }[], lang: 'pt' | 'en' = 'pt'): string | null {
   const g = fold(guess)
   for (const prev of previous) {
     const p = fold(prev.word)
     for (let i = 0; i < p.length; i++) {
-      if (prev.score[i] === 'hit' && g[i] !== p[i]) return `A ${i + 1}ª letra precisa ser ${p[i].toUpperCase()}`
+      if (prev.score[i] === 'hit' && g[i] !== p[i]) return lang === 'en' ? `Letter ${i + 1} must be ${p[i].toUpperCase()}` : `A ${i + 1}ª letra precisa ser ${p[i].toUpperCase()}`
     }
     const needed: Record<string, number> = {}
     prev.score.forEach((s, i) => {
       if (s !== 'miss') needed[p[i]] = (needed[p[i]] ?? 0) + 1
     })
     for (const [ch, count] of Object.entries(needed)) {
-      if (g.split('').filter((c) => c === ch).length < count) return `O palpite precisa ter a letra ${ch.toUpperCase()}`
+      if (g.split('').filter((c) => c === ch).length < count) return lang === 'en' ? `Your guess must contain ${ch.toUpperCase()}` : `O palpite precisa ter a letra ${ch.toUpperCase()}`
     }
   }
   return null

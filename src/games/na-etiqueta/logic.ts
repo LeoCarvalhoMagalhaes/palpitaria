@@ -11,6 +11,21 @@ export interface Product {
   price: number
   category: string
   emoji: string
+  image?: { src: string; page: string; license?: string }
+}
+
+export const CATEGORY_EN: Record<string, string> = {
+  Carnes: 'Meat',
+  Mercearia: 'Pantry',
+  'Doces e salgadinhos': 'Candy and snacks',
+  Padaria: 'Bakery',
+  'Peixes e frutos do mar': 'Fish and seafood',
+  Bebidas: 'Drinks',
+  'Temperos e molhos': 'Spices and sauces',
+  'Frutas e verduras': 'Fruits and vegetables',
+  'Laticínios e ovos': 'Dairy and eggs',
+  'Café e chá': 'Coffee and tea',
+  Congelados: 'Frozen food',
 }
 
 export type Closeness = 'win' | 'near' | 'far'
@@ -63,8 +78,9 @@ export function dailyProduct(products: Product[], number: number): Product {
   return pickDaily(sorted, number, 'na-etiqueta')
 }
 
-export function formatUSD(value: number): string {
-  return `US$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+export function formatUSD(value: number, lang: 'pt' | 'en' = 'pt'): string {
+  const n = value.toLocaleString(lang === 'en' ? 'en-US' : 'pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  return lang === 'en' ? `$${n}` : `US$ ${n}`
 }
 
 export function shareText(shareName: string, number: number, guesses: PriceGuess[], won: boolean): string {

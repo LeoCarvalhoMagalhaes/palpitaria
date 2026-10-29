@@ -40,6 +40,21 @@ Copyright Hermit Dave. Conteúdo sob CC BY-SA 4.0 (https://creativecommons.org/l
 A lista `public/data/rastro/vocab.json` é uma adaptação (filtrada pelo dicionário VERO) e é distribuída sob a mesma licença CC BY-SA 4.0.
 Fonte: https://github.com/hermitdave/FrequencyWords
 
+### FrequencyWords en (vocabulário do Rastro em inglês)
+
+Copyright Hermit Dave. CC BY-SA 4.0, derivado do OpenSubtitles 2018. `public/data/rastro-en/vocab.json` é uma adaptação (filtrada pela
+lista dwyl) distribuída sob a mesma licença. Fonte: https://github.com/hermitdave/FrequencyWords
+
+### dwyl/english-words
+
+Unlicense (domínio público). Usada para validar palavras em inglês (Palavreta, Letra por Letra, Rastro). https://github.com/dwyl/english-words
+
+### Imagens do Wikimedia Commons
+
+Fotos dos artistas (Holofote), dos produtos (Na Etiqueta) e das opções (Mais ou Menos). Cada arquivo tem a própria licença (CC0, domínio
+público, CC BY ou CC BY-SA); autor e licença ficam na página do arquivo, linkada em cada imagem. Não alteramos as imagens além da
+miniatura padrão do Commons.
+
 ### Natural Earth
 
 Domínio público. https://www.naturalearthdata.com/about/terms-of-use/

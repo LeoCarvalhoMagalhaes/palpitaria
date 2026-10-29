@@ -16,6 +16,43 @@ export interface Artist {
   country: string
   countryName: string
   continent: string
+  image?: { src: string; page: string }
+}
+
+export type Lang = 'pt' | 'en'
+
+const EN: Record<string, string> = {
+  Masculino: 'Male',
+  Feminino: 'Female',
+  Misto: 'Mixed',
+  'Não binário': 'Non-binary',
+  Alternativo: 'Alternative',
+  Metal: 'Metal',
+  Eletrônica: 'Electronic',
+  Rock: 'Rock',
+  'Hip Hop': 'Hip Hop',
+  'R&B': 'R&B',
+  Pop: 'Pop',
+  Folk: 'Folk',
+  Jazz: 'Jazz',
+  Clássica: 'Classical',
+  Country: 'Country',
+  Reggae: 'Reggae',
+  Latina: 'Latin',
+}
+
+/** Gênero e estilo vêm em português nos dados; em inglês, traduz pela tabela. */
+export function attr(value: string, lang: Lang): string {
+  return lang === 'en' ? (EN[value] ?? value) : value
+}
+
+export function countryName(a: Artist, lang: Lang): string {
+  if (lang === 'pt') return a.countryName
+  try {
+    return new Intl.DisplayNames(['en'], { type: 'region' }).of(a.country) ?? a.countryName
+  } catch {
+    return a.countryName
+  }
 }
 
 export type Match = 'correct' | 'close' | 'miss'
@@ -60,9 +97,11 @@ export function dailyArtist(artists: Artist[], number: number): Artist {
 }
 
 /** Dica liberada após o 6º palpite: primeira letra e número de palavras do nome. */
-export function hintFor(answer: Artist): string {
+export function hintFor(answer: Artist, lang: Lang = 'pt'): string {
   const words = answer.name.trim().split(/\s+/).length
-  return `O nome começa com "${answer.name[0].toUpperCase()}" e tem ${words} ${words === 1 ? 'palavra' : 'palavras'}.`
+  const first = answer.name[0].toUpperCase()
+  if (lang === 'en') return `The name starts with "${first}" and has ${words} ${words === 1 ? 'word' : 'words'}.`
+  return `O nome começa com "${first}" e tem ${words} ${words === 1 ? 'palavra' : 'palavras'}.`
 }
 
 const EMOJI: Record<Match, string> = { correct: '🟩', close: '🟨', miss: '⬜' }

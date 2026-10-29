@@ -41,6 +41,13 @@ describe('Grauzinho', () => {
     expect(filledSquares(0)).toBe(5)
   })
 
+  it('rótulos em inglês', () => {
+    expect(warmthLabel(5, 'en')).toBe('Boiling! 🔥')
+    expect(evaluateGuess(65, 65, 'en').label).toBe('Bullseye! 🎯')
+    expect(evaluateConstruct(94, 100, 'en').hint).toBe('Open it more')
+    expect(evaluateConstruct(97, 100).off).toBe(3)
+  })
+
   it('rodada bônus vale ±5°', () => {
     expect(evaluateConstruct(95, 100).solved).toBe(true)
     expect(evaluateConstruct(94, 100).solved).toBe(false)
@@ -51,7 +58,7 @@ describe('Grauzinho', () => {
   it('monta o texto de compartilhamento', () => {
     const g = [evaluateGuess(50, 65), evaluateGuess(62, 65), evaluateGuess(65, 65)]
     expect(shareText('Grauzinho', 8, g, true, { attempts: 2, solved: true })).toBe(
-      'Grauzinho #8 3/4 · Bônus: feito em 2\n⬆️ 🟧🟧⬜⬜⬜\n⬆️ 🟧🟧🟧🟧⬜\n🎉 🟩🟩🟩🟩🟩',
+      'Grauzinho #8 3/4 · 📐 2/3\n⬆️ 🟧🟧⬜⬜⬜\n⬆️ 🟧🟧🟧🟧⬜\n🎉 🟩🟩🟩🟩🟩',
     )
   })
 })

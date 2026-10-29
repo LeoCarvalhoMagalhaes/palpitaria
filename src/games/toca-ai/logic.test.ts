@@ -26,9 +26,9 @@ const songs: Song[] = Array.from({ length: 60 }, (_, i) => ({
   cat: i < 40 ? 'pop' : 'rock',
 }))
 const cats: MusicCategory[] = [
-  { id: 'todas', name: 'Todas', cat: null },
-  { id: 'pop', name: 'Pop', cat: 'pop' },
-  { id: 'rock', name: 'Rock', cat: 'rock' },
+  { id: 'todas', name: 'Todas', nameEn: 'Todas', cat: null },
+  { id: 'pop', name: 'Pop', nameEn: 'Pop', cat: 'pop' },
+  { id: 'rock', name: 'Rock', nameEn: 'Rock', cat: 'rock' },
 ]
 
 describe('Toca Aí', () => {

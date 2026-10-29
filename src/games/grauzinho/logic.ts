@@ -26,18 +26,21 @@ export function dailyAngle(date: string): DailyAngle {
 
 export type Direction = 'up' | 'down' | 'solved'
 
-export const WARMTH: { under: number; label: string }[] = [
-  { under: 10, label: 'Fervendo! 🔥' },
-  { under: 20, label: 'Quente!' },
-  { under: 35, label: 'Esquentando' },
-  { under: 60, label: 'Morno' },
-  { under: 100, label: 'Frio!' },
-  { under: Infinity, label: 'Congelando! 🥶' },
+export type Lang = 'pt' | 'en'
+
+export const WARMTH: { under: number; label: string; en: string }[] = [
+  { under: 10, label: 'Fervendo! 🔥', en: 'Boiling! 🔥' },
+  { under: 20, label: 'Quente!', en: 'Hot!' },
+  { under: 35, label: 'Esquentando', en: 'Getting hot' },
+  { under: 60, label: 'Morno', en: 'Warm' },
+  { under: 100, label: 'Frio!', en: 'Cold!' },
+  { under: Infinity, label: 'Congelando! 🥶', en: 'Freezing! 🥶' },
 ]
 
-export function warmthLabel(diff: number): string {
+export function warmthLabel(diff: number, lang: Lang = 'pt'): string {
   const abs = Math.abs(diff)
-  return WARMTH.find((w) => abs < w.under)!.label
+  const w = WARMTH.find((x) => abs < x.under)!
+  return lang === 'en' ? w.en : w.label
 }
 
 export interface GuessFeedback {
@@ -47,10 +50,10 @@ export interface GuessFeedback {
   label: string
 }
 
-export function evaluateGuess(value: number, answer: number): GuessFeedback {
+export function evaluateGuess(value: number, answer: number, lang: Lang = 'pt'): GuessFeedback {
   const delta = answer - value
-  if (delta === 0) return { value, delta, direction: 'solved', label: 'Na mosca! 🎯' }
-  return { value, delta, direction: delta > 0 ? 'up' : 'down', label: warmthLabel(delta) }
+  if (delta === 0) return { value, delta, direction: 'solved', label: lang === 'en' ? 'Bullseye! 🎯' : 'Na mosca! 🎯' }
+  return { value, delta, direction: delta > 0 ? 'up' : 'down', label: warmthLabel(delta, lang) }
 }
 
 const SQUARE_BANDS = [
@@ -74,14 +77,17 @@ export function shareLine(fb: GuessFeedback): string {
 }
 
 /** Rodada bônus: o jogador gira a semirreta e "produz" um ângulo. */
-export function evaluateConstruct(produced: number, target: number) {
+export function evaluateConstruct(produced: number, target: number, lang: Lang = 'pt') {
   const diff = target - produced
   const solved = Math.abs(diff) <= CONSTRUCT_TOLERANCE
+  const en = lang === 'en'
   return {
     produced,
     solved,
-    hint: solved ? 'Construiu! 🎉' : diff > 0 ? 'Abra mais' : 'Feche mais',
-    label: solved ? '' : warmthLabel(diff),
+    /** Diferença absoluta em graus (0 = exato). */
+    off: Math.abs(diff),
+    hint: solved ? (en ? 'Nailed it! 🎉' : 'Construiu! 🎉') : diff > 0 ? (en ? 'Open it more' : 'Abra mais') : en ? 'Close it more' : 'Feche mais',
+    label: solved ? '' : warmthLabel(diff, lang),
   }
 }
 
@@ -93,6 +99,6 @@ export function shareText(
   construct: { attempts: number; solved: boolean } | null,
 ): string {
   const head = `${shareName} #${number} ${won ? guesses.length : 'X'}/${MAX_GUESSES}`
-  const bonus = construct ? ` · Bônus: ${construct.solved ? `feito em ${construct.attempts}` : 'não feito'}` : ''
+  const bonus = construct ? ` · 📐 ${construct.solved ? `${construct.attempts}/${CONSTRUCT_ATTEMPTS}` : `X/${CONSTRUCT_ATTEMPTS}`}` : ''
   return [head + bonus, ...guesses.map(shareLine)].join('\n')
 }
