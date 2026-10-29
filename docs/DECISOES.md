@@ -51,3 +51,6 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Mais ou Menos | Imagens | Quadro 4:5 com a imagem inteira (sem corte) sobre fundo desfocado; pré-carregamento dos duelos do dia | Pedido do dono do projeto |
 | Na Etiqueta | Fotos | Foto real da embalagem (Open Food Facts); o produto do dia sai só entre os 1.652 com foto | Pedido do dono do projeto |
 | Refrão Cruzado | Grade | Clicar numa casa seleciona a palavra e toca o trecho dela (como no outro jogo) | Observada |
+| Mais ou Menos | Lado da resposta | Em cada duelo, uma moeda (semente do dia) decide se a opção nova tem mais ou menos que a que continua; antes, quem continuava vencia 75% das vezes e a resposta ficava previsível | Pedido do dono do projeto |
+| Mais ou Menos | Preços e Curiosidades misturados | Cada dia usa 6 itens de tipos diferentes (mercado, foguetes, obras, roubos, arte...; alturas, distâncias, recordes, populações...); o grupo é sorteado antes do item, para os 1.650 produtos de mercado não dominarem. Fatos em `scripts/data/mais-ou-menos/facts.mjs`, conferidos na Wikipédia | Pedido do dono do projeto |
+| Mais ou Menos | Números grandes | De um milhão para cima, por extenso ("US$ 25,8 bilhões", "1,2 milhão de habitantes") | Escolha nossa |

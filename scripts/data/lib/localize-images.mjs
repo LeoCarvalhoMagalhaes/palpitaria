@@ -21,12 +21,14 @@ const TARGETS = [
 ]
 
 async function download(src) {
-  // Miniatura de 500 px (um dos tamanhos padrão, já em cache no Commons).
-  const url = src.replace(/\/\d+px-/, '/500px-')
+  // Miniatura de 330 px, a que o site já usava: costuma estar pronta no cache do Commons. Tamanhos que ainda
+  // precisariam ser gerados (500 px) recebem 429 com frequência.
+  const url = src
   for (let attempt = 0; attempt < 8; attempt++) {
-    const res = await fetch(url, { headers: { 'User-Agent': UA } })
-    if (res.ok) return Buffer.from(await res.arrayBuffer())
-    if (res.status === 404 && url !== src) return download(src.replace(/\/500px-/, '/330px-'))
+    // Tempo limite: uma conexão parada travou uma rodada inteira por horas.
+    const res = await fetch(url, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(30000) }).catch(() => null)
+    if (!res) continue
+    if (res.ok) return Buffer.from(await res.arrayBuffer().catch(() => new ArrayBuffer(0)))
     // 429: espera o que o servidor pedir (Retry-After) ou 20 s, e conta para o log.
     if (res.status === 429) limited++
     const retry = Number(res.headers.get('retry-after'))
@@ -57,7 +59,7 @@ async function main() {
             ok = true
             fetched++
             if (fetched % 25 === 0) console.log(`${new Date().toISOString().slice(11, 19)} ${fetched} imagens baixadas, ${limited} respostas 429`)
-            await sleep(2000)
+            await sleep(1000)
           } else failed++
         }
         done.set(src, ok ? `img/c/${name}` : src)

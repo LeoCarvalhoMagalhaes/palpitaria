@@ -23,11 +23,14 @@ describe.each([
         expect(Boolean(i.image?.src)).toBe(true)
       }
     }
-    const trivia = categories.find((c) => c.groups)!
-    for (const g of Object.keys(trivia.groups!)) expect(trivia.items.filter((i) => i.group === g).length).toBeGreaterThan(20)
+    for (const c of categories.filter((c) => c.mix)) {
+      expect(new Set(c.items.map((i) => i.group)).size).toBeGreaterThanOrEqual(8)
+      for (const i of c.items) expect(i.detail).toBeTruthy()
+    }
   })
 
   it('25 duelos por dia; quem tem mais continua e uma opção nova entra, sem empate apertado', () => {
+    let newWins = 0
     for (let n = 1; n <= 365; n++) {
       const rounds = dailyRounds(categories, n)
       expect(rounds).toHaveLength(ROUNDS)
@@ -37,13 +40,19 @@ describe.each([
         const names = [block[0].left.name, ...block.map((r) => r.right.name)]
         expect(new Set(names).size).toBe(names.length)
         for (let d = 1; d < block.length; d++) expect(block[d].left).toBe(winnerOf(block[d - 1]))
+        // Nas categorias misturadas, os 6 itens do dia são de tipos diferentes.
+        if (block[0].category.mix) expect(new Set([block[0].left.group, ...block.map((r) => r.right.group)]).size).toBe(6)
       }
       for (const r of rounds) {
         expect(distinct(r.left.value, r.right.value, r.category)).toBe(true)
-        expect(r.left.group).toBe(r.right.group)
         expect(r.question).toBeTruthy()
+        if (r.right.value > r.left.value) newWins++
       }
     }
+    // O lado certo não é previsível: a opção nova ganha perto de metade das vezes.
+    const share = newWins / (365 * ROUNDS)
+    expect(share).toBeGreaterThan(0.4)
+    expect(share).toBeLessThan(0.6)
     expect(dailyRounds(categories, 7)).toEqual(dailyRounds(categories, 7))
   })
 })
@@ -55,8 +64,11 @@ describe('Mais ou Menos: utilitários', () => {
     expect(isRight(r, 'left')).toBe(false)
     expect(formatValue(12.5, '', 'US$ ', 2)).toBe('US$ 12,50')
     expect(formatValue(12.5, '', 'US$ ', 2, 'en')).toBe('$12.50')
-    expect(formatValue(1234567, 'streams')).toBe('1.234.567 streams')
-    expect(formatValue(1234567, 'streams', '', 0, 'en')).toBe('1,234,567 streams')
+    expect(formatValue(123456, 'km')).toBe('123.456 km')
+    expect(formatValue(1234567, 'streams')).toBe('1,23 milhão de streams')
+    expect(formatValue(1234567, 'streams', '', 0, 'en')).toBe('1.23 million streams')
+    expect(formatValue(25.8e9, '', 'US$ ', 0)).toBe('US$ 25,8 bilhões')
+    expect(formatValue(25.8e9, '', 'US$ ', 0, 'en')).toBe('$25.8 billion')
   })
 
   it('faixas de pontuação', () => {

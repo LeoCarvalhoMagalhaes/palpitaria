@@ -148,7 +148,9 @@ function ItemCard({
   const reduce = useReducedMotion()
   const other = item === round.left ? round.right : round.left
   const isBigger = item.value > other.value
-  const value = formatValue(item.value, round.unit, round.category.prefix, round.category.decimals, lang)
+  const unit = item.unit ?? round.unit
+  const decimals = item.decimals ?? round.category.decimals
+  const value = formatValue(item.value, unit, round.category.prefix, decimals, lang)
   return (
     <motion.button
       ref={ref}
@@ -168,8 +170,9 @@ function ItemCard({
     >
       <ItemImage item={item} />
       <span className="line-clamp-3 font-heading text-base leading-tight font-semibold sm:text-xl">{displayName(item.name)}</span>
+      {item.detail && <span className="line-clamp-2 text-xs text-muted-foreground sm:text-sm">{item.detail}</span>}
       <span className="min-h-7 font-heading text-base sm:text-lg">
-        {showValue ? <CountUp value={item.value} unit={round.unit} prefix={round.category.prefix} decimals={round.category.decimals} run={revealed} /> : '?'}
+        {showValue ? <CountUp value={item.value} unit={unit} prefix={round.category.prefix} decimals={decimals} run={revealed} /> : '?'}
       </span>
       {revealed && chosen && <span className="text-sm font-semibold">{correct ? L('Sua escolha ✓', 'Your pick ✓') : L('Sua escolha ✗', 'Your pick ✗')}</span>}
     </motion.button>
@@ -222,7 +225,10 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
   const share = shareText(game.shareName, number, results, icons)
   const slide = reduce ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } } : { initial: { opacity: 0, x: 48 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -48 } }
   const lastOfCategory = round.duel === DUELS_PER_CATEGORY - 1
-  const triviaHint = L('população, área, cidades, montanhas ou rios', 'population, area, cities, mountains or rivers')
+  const mixHint: Record<string, string> = {
+    precos: L('do mercado a foguetes, roubos famosos e obras de arte, qual custou mais', 'from groceries to rockets, famous heists and artworks, which cost more'),
+    curiosidades: L('alturas, distâncias, recordes, populações... qual número é maior', 'heights, distances, records, populations... which number is bigger'),
+  }
   const sides = [
     ['left', round.left],
     ['right', round.right],
@@ -246,7 +252,7 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
               <li key={c.id} className="flex items-start gap-2">
                 <CategoryBadge icon={c.icon} className="mt-0.5 size-4 shrink-0" />
                 <span>
-                  <strong>{c.name}:</strong> {c.groups ? triviaHint : c.question.toLowerCase()}
+                  <strong>{c.name}:</strong> {mixHint[c.id] ?? c.question.toLowerCase()}
                 </span>
               </li>
             ))}
