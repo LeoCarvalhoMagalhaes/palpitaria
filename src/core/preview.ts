@@ -56,13 +56,21 @@ function audioContext(): AudioContext {
   return ctx
 }
 
+/** No iPhone, o modo silencioso cala o Web Audio, a não ser que a sessão seja de reprodução (Safari 17+). */
+function playbackSession(): void {
+  const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession
+  if (session && session.type !== 'playback') session.type = 'playback'
+}
+
 /**
  * Libera o som. Precisa ser chamado de dentro de um clique/toque (regra dos navegadores);
  * depois disso o contexto continua liberado, mesmo que o arquivo termine de baixar mais tarde.
  */
 export function unlockAudio(): void {
+  playbackSession()
   const c = audioContext()
-  if (c.state === 'suspended') void c.resume()
+  // "interrupted" acontece no Safari depois de uma ligação ou de trocar de app.
+  if (c.state !== 'running') void c.resume()
 }
 
 /** Baixa e decodifica a prévia (fica em cache). Chame com antecedência para tocar sem espera. */
@@ -102,7 +110,7 @@ export class ClipPlayer {
     const buffer = await loadClip(appleId)
     if (token !== this.token) return
     const c = audioContext()
-    if (c.state === 'suspended') await c.resume()
+    if (c.state !== 'running') await c.resume()
     const start = Math.min(startMs / 1000, Math.max(0, buffer.duration - 0.5))
     const duration = Math.min(durationMs / 1000, buffer.duration - start)
     const source = c.createBufferSource()
