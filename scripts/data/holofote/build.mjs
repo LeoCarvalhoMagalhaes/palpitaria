@@ -1,9 +1,14 @@
 // Gera public/data/holofote/artists.json a partir de fontes abertas:
 //  - ListenBrainz (ranking de popularidade, estatística sitewide all_time)
 //  - MusicBrainz (tipo, gênero, país, integrantes, álbum de estreia, gêneros musicais) — dados centrais CC0
+//  - Kworb (3.000 artistas mais ouvidos no Spotify): só para ampliar a lista de palpites além dos ~1.000 do
+//    ranking do ListenBrainz. O artista é ligado ao MusicBrainz pelo Wikidata (P1902 → P434), e a popularidade
+//    vem do total de audições do próprio artista no ListenBrainz, na mesma escala do ranking.
+// A resposta do dia sai só dos 500 primeiros do ranking do ListenBrainz (`pool`), como antes da ampliação.
 // Respeita o limite de 1 requisição/s do MusicBrainz e guarda cache em scripts/.cache para poder retomar.
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { chunk, sparql } from '../lib/wikimedia.mjs'
 
 const ROOT = path.resolve(import.meta.dirname, '../../..')
 const CACHE = path.join(ROOT, 'scripts/.cache/musicbrainz')
@@ -54,6 +59,55 @@ async function topArtists(count) {
   }
   await fs.writeFile(file, JSON.stringify(out))
   return out
+}
+
+/** Artistas do Kworb ligados ao MusicBrainz pelo Wikidata (ID do Spotify P1902 → ID do MusicBrainz P434). */
+async function extraArtists() {
+  const file = path.join(CACHE, 'kworb-artists.html')
+  let html
+  try {
+    html = await fs.readFile(file, 'utf8')
+  } catch {
+    const res = await fetch('https://kworb.net/spotify/artists.html', { headers: { 'User-Agent': UA } })
+    if (!res.ok) throw new Error(`Kworb ${res.status}`)
+    html = await res.text()
+    await fs.writeFile(file, html)
+  }
+  const rows = [...html.matchAll(/artist\/([A-Za-z0-9]{22})_songs\.html">([^<]+)</g)].map((m) => ({ spotify: m[1], name: m[2] }))
+  const mbids = new Map()
+  for (const [i, batch] of chunk(rows, 200).entries()) {
+    const res = await sparql(
+      `SELECT ?sp ?mbid WHERE { VALUES ?sp { ${batch.map((r) => `"${r.spotify}"`).join(' ')} } ?a wdt:P1902 ?sp; wdt:P434 ?mbid. }`,
+      `holofote-kworb-mbid-${i}`,
+    )
+    for (const r of res) if (!mbids.has(r.sp.value)) mbids.set(r.sp.value, r.mbid.value)
+  }
+  return rows.filter((r) => mbids.has(r.spotify)).map((r) => ({ artist_mbid: mbids.get(r.spotify), artist_name: r.name, listen_count: null }))
+}
+
+/** Total de audições do artista no ListenBrainz (todas as épocas). */
+async function totalListens(mbid) {
+  const file = path.join(CACHE, `lb-total-${mbid}.json`)
+  try {
+    return JSON.parse(await fs.readFile(file, 'utf8'))
+  } catch {}
+  for (let tries = 0; tries < 5; tries++) {
+    const res = await fetch(`https://api.listenbrainz.org/1/stats/artist/${mbid}/listeners?range=all_time`, { headers: { 'User-Agent': UA } })
+    await sleep(400)
+    if (res.status === 204 || res.status === 404) {
+      await fs.writeFile(file, '0')
+      return 0
+    }
+    if (res.status === 429 || res.status >= 500) {
+      await sleep(Number(res.headers.get('x-ratelimit-reset-in') ?? 5) * 1000 + 500)
+      continue
+    }
+    if (!res.ok) throw new Error(`ListenBrainz ${res.status}`)
+    const total = (await res.json()).payload?.total_listen_count ?? 0
+    await fs.writeFile(file, JSON.stringify(total))
+    return total
+  }
+  throw new Error('ListenBrainz indisponível')
 }
 
 // Lista fechada de gêneros musicais (inclui gêneros brasileiros). Ordem = prioridade de correspondência.
@@ -120,12 +174,36 @@ async function main() {
   const overrides = JSON.parse(await fs.readFile(path.join(ROOT, 'scripts/data/holofote/overrides.json'), 'utf8')).members
   const top = await topArtists(Math.ceil(TARGET * 1.35))
   console.log(`ListenBrainz: ${top.length} artistas no ranking`)
+  const known = new Set(top.map((e) => e.artist_mbid))
+  const extra = (await extraArtists()).filter((e) => !known.has(e.artist_mbid) && known.add(e.artist_mbid))
+  console.log(`Kworb + Wikidata: ${extra.length} artistas a mais`)
+  // Escala: o ranking geral e o total por artista são calculados em datas diferentes; a mediana da razão
+  // entre os dois, numa amostra do ranking, converte o total dos artistas novos para a escala do ranking.
+  const sample = top.slice(0, 1000).filter((_, i) => i % 7 === 0)
+  const ratios = []
+  for (const e of sample) {
+    const t = await totalListens(e.artist_mbid)
+    if (t > 0) ratios.push(e.listen_count / t)
+  }
+  ratios.sort((a, b) => a - b)
+  const scale = ratios[Math.floor(ratios.length / 2)]
+  console.log(`Escala das audições: ${scale.toFixed(3)} (amostra de ${ratios.length})`)
   const artists = []
   const skipped = []
   let rank = 0
-  for (const entry of top) {
+  let fromTop = 0
+  for (const entry of [...top, ...extra]) {
     rank += 1
-    if (artists.length >= TARGET) break
+    const isTop = entry.listen_count != null
+    if (isTop && fromTop >= TARGET) continue
+    if (!isTop) {
+      const total = await totalListens(entry.artist_mbid)
+      if (!total) {
+        skipped.push([entry.artist_name, 'sem audições no ListenBrainz'])
+        continue
+      }
+      entry.listen_count = Math.round(total * scale)
+    }
     const mbid = entry.artist_mbid
     if (!mbid) {
       skipped.push([entry.artist_name, 'sem MBID'])
@@ -165,6 +243,7 @@ async function main() {
         name: a.name,
         rank,
         listens: entry.listen_count,
+        pool: isTop,
         debut,
         members,
         gender,
@@ -174,18 +253,23 @@ async function main() {
         licenca: 'CC0',
         url: `https://musicbrainz.org/artist/${mbid}`,
       })
-      if (artists.length % 25 === 0) console.log(`${artists.length} artistas prontos (posição ${rank})`)
+      if (isTop) fromTop++
+      if (artists.length % 100 === 0) console.log(`${new Date().toISOString().slice(11, 19)} ${artists.length} artistas prontos (posição ${rank})`)
     } catch (err) {
       skipped.push([entry.artist_name, String(err.message ?? err)])
     }
   }
-  // O ranking exibido é a posição entre os artistas válidos (1 = mais ouvido).
+  // O ranking exibido é a posição entre os artistas válidos (1 = mais ouvido). A resposta do dia sai dos 500
+  // primeiros do ranking do ListenBrainz, na mesma ordem de antes da ampliação.
+  artists.filter((a) => a.pool).forEach((a, i) => (a.pool = i < 500))
+  artists.sort((a, b) => b.listens - a.listens)
   artists.forEach((a, i) => (a.rank = i + 1))
   const payload = {
     generatedAt: new Date().toISOString().slice(0, 10),
     sources: [
       { name: 'ListenBrainz sitewide artist statistics (all time)', url: 'https://listenbrainz.org/statistics/', license: 'CC0 (confirmar)' },
       { name: 'MusicBrainz core data', url: 'https://musicbrainz.org/doc/About/Data_License', license: 'CC0' },
+      { name: 'Kworb (lista de artistas mais ouvidos, só para ampliar os palpites)', url: 'https://kworb.net/spotify/artists.html', license: 'Dados públicos do Kworb' },
     ],
     artists,
   }

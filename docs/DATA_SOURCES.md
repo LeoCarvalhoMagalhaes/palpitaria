@@ -20,6 +20,7 @@ Verificação inicial: 27/10/2026. Reconfirme as licenças antes de qualquer uso
 | Toca Aí | Gênero, ano e ID da Apple | iTunes Search API, coleta única (cache) | — | — | O robots.txt de itunes.apple.com bloqueia `/search*` para robôs: a coleta já feita não será repetida; o site usa só `/lookup?id=` |
 | Holofote | MusicBrainz (dados centrais) | musicbrainz.org/doc/About/Data_License | CC0 | Não | Limite de 1 req/s |
 | Holofote | ListenBrainz (estatística sitewide all_time) | api.listenbrainz.org | CC0 | Não | Ranking retorna no máximo ~1.000 artistas |
+| Holofote | Lista de artistas mais ouvidos do Kworb, ligada ao MusicBrainz pelo Wikidata (P1902 → P434); popularidade pelo total de audições de cada artista no ListenBrainz | kworb.net/spotify/artists.html + query.wikidata.org + api.listenbrainz.org | Fatos (nome e ID); CC0 | Citar o Kworb | Amplia os palpites para ~2.350 artistas; a resposta do dia continua saindo dos 500 primeiros do ranking do ListenBrainz |
 | Mais ou Menos | Wikimedia Pageviews (top mensal da Wikipédia em pt e en, 12 meses) | wikimedia.org/api/rest_v1 | CC0 | Não | — |
 | Mais ou Menos | IBGE: estimativas da população (agregado 6579) | servicodados.ibge.gov.br | Dados públicos | Citar IBGE | — |
 | Mais ou Menos | Wikidata: altitude (P2044), comprimento (P2043), ligação dos filmes ao IMDb (P345) e à Apple (P6398) | query.wikidata.org | CC0 | Não | — |

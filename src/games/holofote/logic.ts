@@ -17,6 +17,8 @@ export interface Artist {
   countryName: string
   continent: string
   image?: { src: string; page: string }
+  /** Pode ser a resposta do dia (os 500 mais ouvidos do ranking original); os demais servem só de palpite. */
+  pool?: boolean
 }
 
 export type Lang = 'pt' | 'en'
@@ -92,7 +94,7 @@ export function compare(guess: Artist, answer: Artist): Comparison {
 }
 
 export function dailyArtist(artists: Artist[], number: number): Artist {
-  const pool = [...artists].sort((a, b) => a.rank - b.rank).slice(0, ANSWER_POOL)
+  const pool = [...artists].sort((a, b) => a.rank - b.rank).filter((a) => a.pool ?? true).slice(0, ANSWER_POOL)
   return pickDaily(pool, number, 'holofote')
 }
 
