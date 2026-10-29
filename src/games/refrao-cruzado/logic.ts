@@ -200,7 +200,7 @@ const T = {
 }
 
 /**
- * Monta candidatos com pistas variadas, como no outro jogo: título, completar o título,
+ * Monta candidatos com pistas variadas: título, completar o título,
  * artista (nome, primeiro nome ou sobrenome), gênero, país e número de integrantes.
  * Avisa quando a resposta está em outro idioma.
  */

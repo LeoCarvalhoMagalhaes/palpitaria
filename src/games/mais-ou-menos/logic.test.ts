@@ -11,7 +11,7 @@ describe.each([
 ])('Mais ou Menos (%s)', (_lang, file) => {
   const categories = load(file)
 
-  it('as 5 categorias do original, com ícone, fonte, licença e imagem em todo item', () => {
+  it('as 5 categorias, com ícone, fonte, licença e imagem em todo item', () => {
     expect(categories.map((c) => c.id)).toEqual(['wikipedia', 'spotify', 'filmes', 'precos', 'curiosidades'])
     expect(categories.map((c) => c.icon)).toEqual(['search', 'music', 'film', 'tag', 'lightbulb'])
     for (const c of categories) {

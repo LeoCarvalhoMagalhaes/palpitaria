@@ -1,6 +1,6 @@
 import { seededRandom } from '@/core/daily'
 
-/** Como no outro jogo: 5 categorias, 5 duelos em cada. */
+/** 5 categorias, 5 duelos em cada. */
 export const CATEGORIES = 5
 export const DUELS_PER_CATEGORY = 5
 export const ROUNDS = CATEGORIES * DUELS_PER_CATEGORY
@@ -80,7 +80,7 @@ function pickItem(items: Item[], category: Category, rand: () => number): Item {
 }
 
 /**
- * 25 duelos, 5 por categoria, como no outro jogo: quem tem mais continua (vai para a esquerda) e uma opção
+ * 25 duelos, 5 por categoria: quem tem mais continua (vai para a esquerda) e uma opção
  * nova entra à direita. Cada categoria usa 6 itens diferentes. Em cada duelo, uma moeda decide se a opção nova
  * terá mais ou menos que a que continua; sem isso, quem continua (já vencedor) ganharia quase sempre e a
  * resposta ficaria previsível. Nas categorias misturadas, os 6 itens do dia são de tipos diferentes.

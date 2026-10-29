@@ -287,7 +287,7 @@ function Board({
     return pick.i
   }
 
-  /** Como no outro jogo: clicar na grade seleciona a palavra e toca o trecho dela (sem pausar se já estiver tocando). */
+  /** Clicar na grade seleciona a palavra e toca o trecho dela (sem pausar se já estiver tocando). */
   const clickCell = (x: number, y: number) => {
     const i = selectCell(x, y)
     if (i === undefined || !state.started || finished) return

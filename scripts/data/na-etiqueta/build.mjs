@@ -1,4 +1,4 @@
-// Gera public/data/na-etiqueta/products.json a partir do games.json do outro jogo (licença MIT,
+// Gera public/data/na-etiqueta/products.json a partir do games.json da base de preços de KermWasTaken (licença MIT,
 // Copyright (c) 2023 KermWasTaken). Descarta as URLs de imagem, separa o tamanho do nome e
 // atribui uma categoria por palavras-chave (ilustrada por emoji na interface).
 import fs from 'node:fs/promises'
@@ -64,7 +64,7 @@ async function main() {
   await fs.writeFile(
     OUT,
     JSON.stringify({
-      fonte: 'games.json do repositório KermWasTaken',
+      fonte: 'games.json, base de preços de KermWasTaken',
       licenca: 'MIT — Copyright (c) 2023 KermWasTaken',
       url: 'https://github.com/KermWasTaken',
       referencia: 'Preços em US$ de um atacado dos EUA, base compilada em 2022–2023',

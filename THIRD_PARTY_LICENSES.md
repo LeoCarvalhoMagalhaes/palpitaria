@@ -2,7 +2,7 @@
 
 ## Dados
 
-### outro jogo — games.json (usado pelo Na Etiqueta)
+### Base de produtos e preços — games.json (usada pelo Na Etiqueta e pelo Mais ou Menos)
 
 ```
 MIT License

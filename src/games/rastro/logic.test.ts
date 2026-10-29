@@ -5,7 +5,7 @@ import { decodeRanks, dayFile, hintCost, hintTargetRank, metrics, type Entry } f
 const dir = path.resolve(__dirname, '../../../public/data/rastro')
 
 describe('Rastro', () => {
-  it('custo da dica nas faixas observadas', () => {
+  it('custo da dica por faixa de distância', () => {
     expect(hintCost(1)).toBe(0)
     expect(hintCost(2)).toBe(3)
     expect(hintCost(159)).toBe(3)

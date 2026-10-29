@@ -263,8 +263,8 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
           )}
           <p className="text-muted-foreground">
             {L(
-              'Dados: Wikipédia, Kworb, IMDb, outro jogo, Natural Earth, IBGE e Wikidata. Imagens: Wikimedia Commons, Open Food Facts e Apple. Veja os créditos completos.',
-              'Data: Wikipedia, Kworb, IMDb, outro jogo, Natural Earth, IBGE and Wikidata. Images: Wikimedia Commons, Open Food Facts and Apple. See the full credits.',
+              'Dados: Wikipédia, Kworb, IMDb, Natural Earth, IBGE e Wikidata. Imagens: Wikimedia Commons, Open Food Facts e Apple. Veja os créditos completos.',
+              'Data: Wikipedia, Kworb, IMDb, Natural Earth, IBGE and Wikidata. Images: Wikimedia Commons, Open Food Facts and Apple. See the full credits.',
             )}
           </p>
         </>

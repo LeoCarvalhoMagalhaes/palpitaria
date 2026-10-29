@@ -19,12 +19,12 @@ const DATA: { pt: string; en: string; items: Source[] }[] = [
     en: 'Na Etiqueta',
     items: [
       [
-        'Base de produtos e preços do projeto outro jogo (games.json), Copyright (c) 2023 KermWasTaken',
-        'Product and price data from the outro jogo project (games.json), Copyright (c) 2023 KermWasTaken',
+        'Base de produtos e preços (games.json), Copyright (c) 2023 KermWasTaken',
+        'Product and price data (games.json), Copyright (c) 2023 KermWasTaken',
         'MIT',
         'https://github.com/KermWasTaken',
       ],
-      ['Preços originalmente compilados com apoio do site Costco Food Database', 'Prices originally compiled with help from the Costco Food Database site', 'Referência citada pelo outro jogo / Reference cited by outro jogo', 'https://costcofdb.com/'],
+      ['Preços originalmente compilados com apoio do site Costco Food Database', 'Prices originally compiled with help from the Costco Food Database site', 'Referência citada pela base / Reference cited by the data', 'https://costcofdb.com/'],
       [
         'Fotos das embalagens: Open Food Facts, colaboradores do Open Food Facts (link para a página do produto em cada foto). Base de dados sob ODbL',
         "Package photos: Open Food Facts contributors (each photo links to the product's page). Database under ODbL",
@@ -71,7 +71,7 @@ const DATA: { pt: string; en: string; items: Source[] }[] = [
       ['Kworb — streams no Spotify', 'Kworb — Spotify streams', 'Dados públicos do Kworb / Public Kworb data', 'https://kworb.net/spotify/songs.html'],
       ['Notas dos filmes: informação cedida pelo IMDb (https://www.imdb.com), usada com permissão nos termos dos conjuntos de dados não comerciais', 'Movie ratings: information courtesy of IMDb (https://www.imdb.com). Used with permission under the non-commercial datasets terms', 'Uso pessoal e não comercial / Personal, non-commercial use', 'https://developer.imdb.com/non-commercial-datasets/'],
       ['Wikidata — ligação dos filmes ao IMDb e à Apple, altitude de montanhas, comprimento de rios e nomes', 'Wikidata — links from movies to IMDb and Apple, mountain heights, river lengths and names', 'CC0', 'https://www.wikidata.org/'],
-      ['outro jogo — preços (mesma base do Na Etiqueta)', 'outro jogo — prices (same data as Na Etiqueta)', 'MIT', 'https://github.com/KermWasTaken'],
+      ['Preços de mercado (mesma base do Na Etiqueta), Copyright (c) 2023 KermWasTaken', 'Grocery prices (same data as Na Etiqueta), Copyright (c) 2023 KermWasTaken', 'MIT', 'https://github.com/KermWasTaken'],
       ['Fatos de Preços e Curiosidades (custos de foguetes, obras e roubos, alturas, recordes...): escritos para a Palpitaria, com os valores conferidos nos artigos da Wikipédia em inglês', 'Prices and Trivia facts (costs of rockets, buildings and heists, heights, records...): written for Palpitaria, with values checked against English Wikipedia articles', 'Conteúdo próprio / Original content', 'https://en.wikipedia.org/'],
       ['IBGE — estimativas da população dos municípios', 'IBGE — Brazilian city population estimates', 'Dados públicos / Public data', 'https://servicodados.ibge.gov.br/api/docs/agregados'],
       ['Imagens das opções: Wikimedia Commons (licença na página de cada arquivo; cópias redimensionadas servidas pelo site), fotos do Open Food Facts, capas de álbum da Apple Music e pôsteres da Apple TV', "Option images: Wikimedia Commons (license on each file's page; resized copies served by this site), Open Food Facts photos, Apple Music album artwork and Apple TV posters", 'Licença de cada arquivo / Per-file license', 'https://commons.wikimedia.org/'],
@@ -110,8 +110,8 @@ export default function Credits() {
       </header>
       <p className="mb-6 text-muted-foreground">
         {L(
-          'A Palpitaria reimplementa regras de jogos diários conhecidos com conteúdo próprio ou de fontes abertas. Os nomes, textos e visual são nossos. Abaixo, todas as fontes de dados e as atribuições exigidas.',
-          'Palpitaria reimplements the rules of well-known daily games with original content or open sources. The names, texts and design are our own. Below are all data sources and required attributions.',
+          'A Palpitaria reúne jogos diários com conteúdo próprio ou de fontes abertas. Os nomes, textos e visual são nossos. Abaixo, todas as fontes de dados e as atribuições exigidas.',
+          'Palpitaria brings together daily games with original content or open sources. The names, texts and design are our own. Below are all data sources and required attributions.',
         )}
       </p>
       {DATA.map((d) => (
@@ -138,8 +138,8 @@ export default function Credits() {
           </a>
           .{' '}
           {L(
-            'O áudio são as prévias oficiais de 30 s cedidas pela Apple Music (catálogo do iTunes), tocadas direto do servidor da Apple, como fazem os jogos de referência; cada resultado tem link para a faixa. Nada é baixado para o nosso servidor; os direitos das músicas pertencem aos titulares. Projeto sem vínculo com Spotify, Kworb ou Apple.',
-            "The audio is Apple Music's official 30-second previews (iTunes catalog), played straight from Apple's servers, as the reference games do; every result links to the track. Nothing is downloaded to our server; song rights belong to their owners. Not affiliated with Spotify, Kworb or Apple.",
+            'O áudio são as prévias oficiais de 30 s cedidas pela Apple Music (catálogo do iTunes), tocadas direto do servidor da Apple; cada resultado tem link para a faixa. Nada é baixado para o nosso servidor; os direitos das músicas pertencem aos titulares. Projeto sem vínculo com Spotify, Kworb ou Apple.',
+            "The audio is Apple Music's official 30-second previews (iTunes catalog), played straight from Apple's servers; every result links to the track. Nothing is downloaded to our server; song rights belong to their owners. Not affiliated with Spotify, Kworb or Apple.",
           )}
         </p>
       </section>

@@ -106,7 +106,7 @@ function Play({ ctx, products }: { ctx: GameContext; products: Product[] }) {
             <li><span className="rounded px-1 tile-far">vermelho</span> errou por mais de 25%</li>
           </ul>
           <p className="text-muted-foreground">
-            Preços em dólar de um atacado dos EUA (base compilada em 2022–2023). Dados do projeto outro jogo, licença MIT. Fotos das embalagens: Open Food Facts (CC BY-SA), sem preço visível.
+            Preços em dólar de um atacado dos EUA (base compilada em 2022–2023). Base de preços de KermWasTaken, licença MIT. Fotos das embalagens: Open Food Facts (CC BY-SA), sem preço visível.
           </p>
         </>,
         <>
@@ -118,7 +118,7 @@ function Play({ ctx, products }: { ctx: GameContext; products: Product[] }) {
             <li><span className="rounded px-1 tile-far">red</span> off by more than 25%</li>
           </ul>
           <p className="text-muted-foreground">
-            US dollar prices from a US warehouse club (data compiled in 2022–2023). Data from the outro jogo project, MIT license. Package photos: Open Food Facts (CC BY-SA), with no visible price.
+            US dollar prices from a US warehouse club (data compiled in 2022–2023). Price data by KermWasTaken, MIT license. Package photos: Open Food Facts (CC BY-SA), with no visible price.
           </p>
         </>,
       )}

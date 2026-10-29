@@ -26,7 +26,7 @@ export function dayFile(number: number, days: number, dir = 'rastro'): string {
   return `${dir}/day-${String(n + 1).padStart(3, '0')}.json`
 }
 
-/** Custo da dica (em tentativas) pela distância da palavra revelada — regra observada no original. */
+/** Custo da dica (em tentativas) pela distância da palavra revelada. */
 export const HINT_COST_BANDS = [
   { minRank: 1000, cost: 7 },
   { minRank: 160, cost: 5 },

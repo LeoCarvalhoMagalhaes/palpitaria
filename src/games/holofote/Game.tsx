@@ -90,7 +90,7 @@ const foldName = (s: string) =>
     .replace(/[^a-z0-9]+/g, ' ')
     .trim()
 
-/** Como no outro jogo: no fim, toca a prévia da música mais ouvida do artista (se ele estiver no top 1.000). */
+/** No fim, toca a prévia da música mais ouvida do artista (se ele estiver no top 1.000). */
 function ArtistHit({ artist }: { artist: string }) {
   const { settings } = useSettings()
   const L = useL()

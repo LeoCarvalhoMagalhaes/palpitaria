@@ -40,7 +40,7 @@ export function matchGroup(selected: string[], puzzle: Puzzle): Group | null {
 }
 
 /**
- * Próxima dica (regra observada no original): com 3 grupos achados não há dica; a 1ª dica mostra
+ * Próxima dica: com 3 grupos achados não há dica; a 1ª dica mostra
  * 2 palavras do grupo mais fácil ainda não achado; a 2ª dica completa 3 palavras do mesmo grupo.
  */
 export function nextHint(puzzle: Puzzle, solvedNiveis: number[], currentHint: string[]): string[] {

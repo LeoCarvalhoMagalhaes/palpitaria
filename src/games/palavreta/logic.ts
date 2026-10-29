@@ -12,7 +12,7 @@ export function fold(word: string): string {
     .toLowerCase()
 }
 
-/** Avalia um palpite tratando letras repetidas como no outro jogo: amarelos limitados às ocorrências restantes. */
+/** Avalia um palpite tratando letras repetidas: amarelos limitados às ocorrências restantes. */
 export function scoreGuess(guess: string, answer: string): LetterState[] {
   const g = fold(guess).split('')
   const a = fold(answer).split('')

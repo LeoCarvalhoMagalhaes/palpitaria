@@ -1,11 +1,11 @@
 // Gera public/data/mais-ou-menos/categories.json (pt) e categories-en.json (en) com as 5 categorias do
-// outro jogo (outro jogo). Cada item tem nome em português e inglês e, quando existe, uma imagem livre do
+// Mais ou Menos. Cada item tem nome em português e inglês e, quando existe, uma imagem livre do
 // Wikimedia Commons (via Wikidata P18/P41). Fontes:
 //  1. Popularidade na internet — visualizações na Wikipédia (pt para a versão pt, en para a versão en)
 //  2. Streams no Spotify — Kworb, com a capa do álbum (Apple, /lookup em lote)
 //  3. Nota dos filmes — nota do IMDb (conjunto de dados oficial, uso não comercial), ligada ao filme pelo
 //     Wikidata (P345); pôster oficial da Apple (Wikidata P6398 + /lookup em lote)
-//  4. Preços — mistura de tipos: produtos de mercado (outro jogo, MIT, com foto do Open Food Facts) e custos
+//  4. Preços — mistura de tipos: produtos de mercado (base MIT de KermWasTaken, com foto do Open Food Facts) e custos
 //     históricos (foguetes, obras, roubos, obras de arte...) escritos em facts.mjs a partir da Wikipédia
 //  5. Curiosidades — mistura de tipos: Natural Earth (população/área + bandeiras), IBGE (cidades), Wikidata
 //     (montanhas, rios) e os fatos de facts.mjs (alturas, distâncias, recordes, números do dia a dia)
@@ -538,8 +538,8 @@ function build(lang, wiki, spotify, films, priceItems, t) {
       mix: true,
       items: priceItems,
       fonte: L(
-        "Produtos de mercado: outro jogo (atacado dos EUA, 2022–2023), fotos do Open Food Facts (CC BY-SA). Custos históricos em dólares da época, conferidos na Wikipédia; imagens do Wikimedia Commons",
-        "Grocery items: outro jogo (US warehouse store, 2022–2023), photos from Open Food Facts (CC BY-SA). Historical costs in dollars of the time, checked on Wikipedia; images from Wikimedia Commons",
+        "Produtos de mercado: base de preços de KermWasTaken, MIT (atacado dos EUA, 2022–2023), fotos do Open Food Facts (CC BY-SA). Custos históricos em dólares da época, conferidos na Wikipédia; imagens do Wikimedia Commons",
+        "Grocery items: price data by KermWasTaken, MIT (US warehouse store, 2022–2023), photos from Open Food Facts (CC BY-SA). Historical costs in dollars of the time, checked on Wikipedia; images from Wikimedia Commons",
       ),
       licenca: "MIT",
       url: "https://github.com/KermWasTaken",

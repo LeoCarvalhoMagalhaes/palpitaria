@@ -67,7 +67,7 @@ export interface Comparison {
   country: { match: Match }
 }
 
-/** Regras observadas no original: estreia a até 5 anos e popularidade a até 50 posições ficam amarelas. */
+/** Estreia a até 5 anos e popularidade a até 50 posições ficam amarelas. */
 export function compare(guess: Artist, answer: Artist): Comparison {
   const debutDiff = answer.debut - guess.debut
   const rankDiff = answer.rank - guess.rank

@@ -1,9 +1,9 @@
 /**
- * Áudio dos jogos de música, no mesmo modelo dos jogos de referência:
- *  - a prévia oficial de 30 s da faixa vem do catálogo da Apple (como no outro jogo e no outro jogo),
+ * Áudio dos jogos de música:
+ *  - a prévia oficial de 30 s da faixa vem do catálogo da Apple,
  *    buscada pelo ID na hora de tocar (a URL pode expirar, por isso não é guardada);
  *  - o arquivo é baixado e decodificado com Web Audio, e o trecho é tocado com início e duração
- *    exatos (como o outro jogo faz com Howler.js), sem depender de eventos de um player externo.
+ *    exatos, sem depender de eventos de um player externo.
  */
 
 export interface PreviewInfo {

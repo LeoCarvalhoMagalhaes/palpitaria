@@ -1,7 +1,7 @@
 import { pickDaily } from '@/core/daily'
 import { MIN_SONGS_PER_CATEGORY, type MusicCategory, type Song } from '@/config/music'
 
-/** Duração do trecho liberado a cada tentativa (ms) — valores observados no original. */
+/** Duração do trecho liberado a cada tentativa (ms). */
 export const SNIPPETS_MS = [130, 530, 2000, 8000, 15000]
 export const MAX_TRIES = SNIPPETS_MS.length
 

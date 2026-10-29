@@ -1,4 +1,4 @@
-// IDs do Spotify das 1.000 músicas mais tocadas, pela mesma técnica do projeto outro projeto:
+// IDs do Spotify das 1.000 músicas mais tocadas:
 // o ranking do Kworb não tem links, então o ID vem da página de músicas de cada artista no Kworb
 // (mesmo título e streams com diferença de até 1%). robots.txt do Kworb: Allow /.
 // Saída: scripts/.cache/musicas/spotify-ids.json (usado por merge.mjs).
