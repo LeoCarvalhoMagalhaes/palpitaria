@@ -26,10 +26,10 @@ const DATA: { pt: string; en: string; items: Source[] }[] = [
       ],
       ['Preços originalmente compilados com apoio do site Costco Food Database', 'Prices originally compiled with help from the Costco Food Database site', 'Referência citada pelo outro jogo / Reference cited by outro jogo', 'https://costcofdb.com/'],
       [
-        'Fotos ilustrativas dos produtos: Wikimedia Commons, só arquivos com licença livre (CC0, domínio público, CC BY, CC BY-SA). Autor e licença na página de cada arquivo (link na foto)',
-        "Illustrative product photos: Wikimedia Commons, freely licensed files only (CC0, public domain, CC BY, CC BY-SA). Author and license on each file's page (linked from the photo)",
-        'CC0 / PD / CC BY / CC BY-SA',
-        'https://commons.wikimedia.org/',
+        'Fotos das embalagens: Open Food Facts, colaboradores do Open Food Facts (link para a página do produto em cada foto). Base de dados sob ODbL',
+        "Package photos: Open Food Facts contributors (each photo links to the product's page). Database under ODbL",
+        'CC BY-SA 3.0',
+        'https://world.openfoodfacts.org/',
       ],
     ],
   },
@@ -69,10 +69,11 @@ const DATA: { pt: string; en: string; items: Source[] }[] = [
     items: [
       ['Wikimedia — visualizações de páginas da Wikipédia em português e em inglês', 'Wikimedia — page views of the Portuguese and English Wikipedias', 'CC0', 'https://wikimedia.org/api/rest_v1/'],
       ['Kworb — streams no Spotify', 'Kworb — Spotify streams', 'Dados públicos do Kworb / Public Kworb data', 'https://kworb.net/spotify/songs.html'],
-      ['Wikidata — notas do Metacritic, altitude de montanhas, comprimento de rios e nomes', 'Wikidata — Metacritic scores, mountain heights, river lengths and names', 'CC0', 'https://www.wikidata.org/'],
+      ['Notas dos filmes: informação cedida pelo IMDb (https://www.imdb.com), usada com permissão nos termos dos conjuntos de dados não comerciais', 'Movie ratings: information courtesy of IMDb (https://www.imdb.com). Used with permission under the non-commercial datasets terms', 'Uso pessoal e não comercial / Personal, non-commercial use', 'https://developer.imdb.com/non-commercial-datasets/'],
+      ['Wikidata — ligação dos filmes ao IMDb e à Apple, altitude de montanhas, comprimento de rios e nomes', 'Wikidata — links from movies to IMDb and Apple, mountain heights, river lengths and names', 'CC0', 'https://www.wikidata.org/'],
       ['outro jogo — preços (mesma base do Na Etiqueta)', 'outro jogo — prices (same data as Na Etiqueta)', 'MIT', 'https://github.com/KermWasTaken'],
       ['IBGE — estimativas da população dos municípios', 'IBGE — Brazilian city population estimates', 'Dados públicos / Public data', 'https://servicodados.ibge.gov.br/api/docs/agregados'],
-      ['Imagens das opções: Wikimedia Commons (licença na página de cada arquivo) e capas de álbum da Apple Music', "Option images: Wikimedia Commons (license on each file's page) and Apple Music album artwork", 'Licença de cada arquivo / Per-file license', 'https://commons.wikimedia.org/'],
+      ['Imagens das opções: Wikimedia Commons (licença na página de cada arquivo; cópias redimensionadas servidas pelo site), fotos do Open Food Facts, capas de álbum da Apple Music e pôsteres da Apple TV', "Option images: Wikimedia Commons (license on each file's page; resized copies served by this site), Open Food Facts photos, Apple Music album artwork and Apple TV posters", 'Licença de cada arquivo / Per-file license', 'https://commons.wikimedia.org/'],
     ],
   },
 ]

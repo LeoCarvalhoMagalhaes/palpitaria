@@ -35,16 +35,13 @@ function ProductImage({ product, color }: { product: Product; color: string }) {
   }
   return (
     <figure>
-      <img
-        src={product.image.src}
-        alt={product.name}
-        className="mx-auto aspect-square w-full max-w-56 rounded-2xl border-2 border-ink/10 bg-muted object-cover"
-        onError={() => setFailed(true)}
-      />
+      <span className="mx-auto block aspect-square w-full max-w-xs overflow-hidden rounded-2xl border-2 border-ink/10 bg-white p-2 sm:max-w-sm">
+        <img src={product.image.src} alt={product.name} fetchPriority="high" className="size-full object-contain" onError={() => setFailed(true)} />
+      </span>
       <figcaption className="mt-1 text-[11px] text-muted-foreground">
         <a className="underline" href={product.image.page} target="_blank" rel="noopener noreferrer">
-          {L('Foto ilustrativa: Wikimedia Commons', 'Illustrative photo: Wikimedia Commons')}
-          {product.image.license ? ` (${product.image.license})` : ''}
+          {L('Foto da embalagem: Open Food Facts', 'Package photo: Open Food Facts')}
+          {product.image.license ? ` (${product.image.license.replace(', Open Food Facts', '')})` : ''}
         </a>
       </figcaption>
     </figure>
@@ -109,7 +106,7 @@ function Play({ ctx, products }: { ctx: GameContext; products: Product[] }) {
             <li><span className="rounded px-1 tile-far">vermelho</span> errou por mais de 25%</li>
           </ul>
           <p className="text-muted-foreground">
-            Preços em dólar de um atacado dos EUA (base compilada em 2022–2023). Dados do projeto outro jogo, licença MIT. Fotos ilustrativas do Wikimedia Commons, sem preço visível.
+            Preços em dólar de um atacado dos EUA (base compilada em 2022–2023). Dados do projeto outro jogo, licença MIT. Fotos das embalagens: Open Food Facts (CC BY-SA), sem preço visível.
           </p>
         </>,
         <>
@@ -121,7 +118,7 @@ function Play({ ctx, products }: { ctx: GameContext; products: Product[] }) {
             <li><span className="rounded px-1 tile-far">red</span> off by more than 25%</li>
           </ul>
           <p className="text-muted-foreground">
-            US dollar prices from a US warehouse club (data compiled in 2022–2023). Data from the outro jogo project, MIT license. Illustrative photos from Wikimedia Commons, with no visible price.
+            US dollar prices from a US warehouse club (data compiled in 2022–2023). Data from the outro jogo project, MIT license. Package photos: Open Food Facts (CC BY-SA), with no visible price.
           </p>
         </>,
       )}

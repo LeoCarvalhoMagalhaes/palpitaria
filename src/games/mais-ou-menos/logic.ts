@@ -6,7 +6,7 @@ export const DUELS_PER_CATEGORY = 5
 export const ROUNDS = CATEGORIES * DUELS_PER_CATEGORY
 /** Acertando 15 de 25 (60%), o dia conta como vitória para a sequência. */
 export const WIN_SCORE = 15
-/** O maior valor precisa ser pelo menos 15% maior: evita empates "na unha". */
+/** O maior valor precisa ser pelo menos 15% maior: evita empates "na unha" (exceto onde há `minDiff`). */
 export const MIN_RATIO = 1.15
 
 export type Lang = 'pt' | 'en'
@@ -19,8 +19,6 @@ export interface Item {
   /** Em "Curiosidades", o tipo de comparação (só compara itens do mesmo grupo). */
   group?: string
   image?: { src: string; page: string } | null
-  /** Músicas: a capa vem da Apple (lookup no navegador). */
-  appleId?: number
 }
 
 export interface Category {
@@ -31,6 +29,8 @@ export interface Category {
   unit: string
   prefix?: string
   decimals?: number
+  /** Diferença mínima entre os valores de um duelo (usada nas notas dos filmes, em vez da razão). */
+  minDiff?: number
   items: Item[]
   groups?: Record<string, { question: string; unit: string }>
   fonte: string
@@ -53,45 +53,53 @@ export function displayName(name: string): string {
   return name.charAt(0).toLocaleUpperCase('pt-BR') + name.slice(1)
 }
 
+/** Dois valores são comparáveis sem empate "na unha": diferença mínima absoluta (notas) ou razão mínima. */
+export function distinct(a: number, b: number, category: Pick<Category, 'minDiff'>): boolean {
+  if (category.minDiff) return Math.abs(a - b) >= category.minDiff - 1e-9
+  return Math.max(a, b) / Math.min(a, b) >= MIN_RATIO
+}
+
 /**
- * 25 duelos: 5 por categoria, sem repetir item dentro da mesma categoria.
- * Em "Curiosidades", cada duelo sorteia um tipo (população, área, cidades, montanhas ou rios).
- * Mesma data, mesmos duelos.
+ * 25 duelos, 5 por categoria, como no outro jogo: quem tem mais continua (vai para a esquerda) e uma opção
+ * nova entra à direita. Cada categoria usa 6 itens diferentes; em "Curiosidades", o tipo (população, área,
+ * cidades, montanhas ou rios) é sorteado por dia. Mesma data, mesmos duelos.
  */
 export function dailyRounds(categories: Category[], number: number): Round[] {
   return categories.slice(0, CATEGORIES).flatMap((category, categoryIndex) => {
     const rand = seededRandom(`mais-ou-menos:${category.id}:${number}`)
+    let pool = category.items
+    let question = category.question
+    let unit = category.unit
+    if (category.groups) {
+      const keys = Object.keys(category.groups)
+      const g = keys[Math.floor(rand() * keys.length)]
+      pool = category.items.filter((i) => i.group === g)
+      question = category.groups[g].question
+      unit = category.groups[g].unit
+    }
     const used = new Set<string>()
+    let champion = pool[Math.floor(rand() * pool.length)]
+    used.add(champion.name)
     const rounds: Round[] = []
     for (let duel = 0; duel < DUELS_PER_CATEGORY; duel++) {
-      let pool = category.items
-      let question = category.question
-      let unit = category.unit
-      if (category.groups) {
-        const keys = Object.keys(category.groups)
-        const g = keys[Math.floor(rand() * keys.length)]
-        pool = category.items.filter((i) => i.group === g)
-        question = category.groups[g].question
-        unit = category.groups[g].unit
-      }
       const free = pool.filter((i) => !used.has(i.name))
-      let pair: [Item, Item] | null = null
-      for (let attempt = 0; attempt < 400 && !pair; attempt++) {
-        const a = free[Math.floor(rand() * free.length)]
-        const b = free[Math.floor(rand() * free.length)]
-        if (a === b || a.name === b.name) continue
-        if (Math.max(a.value, b.value) / Math.min(a.value, b.value) >= MIN_RATIO) pair = [a, b]
+      let next: Item | null = null
+      for (let attempt = 0; attempt < 400 && !next; attempt++) {
+        const c = free[Math.floor(rand() * free.length)]
+        if (distinct(champion.value, c.value, category)) next = c
       }
-      if (!pair) {
-        const sorted = [...free].sort((x, y) => x.value - y.value)
-        pair = [sorted[0], sorted[sorted.length - 1]]
-      }
-      used.add(pair[0].name)
-      used.add(pair[1].name)
-      rounds.push({ category, categoryIndex, duel, left: pair[0], right: pair[1], question, unit })
+      next ??= [...free].sort((x, y) => Math.abs(y.value - champion.value) - Math.abs(x.value - champion.value))[0]
+      used.add(next.name)
+      rounds.push({ category, categoryIndex, duel, left: champion, right: next, question, unit })
+      if (next.value > champion.value) champion = next
     }
     return rounds
   })
+}
+
+/** Quem continua para o próximo duelo (o que tem mais). */
+export function winnerOf(round: Pick<Round, 'left' | 'right'>): Item {
+  return round.right.value > round.left.value ? round.right : round.left
 }
 
 export function isRight(round: Pick<Round, 'left' | 'right'>, choice: 'left' | 'right'): boolean {

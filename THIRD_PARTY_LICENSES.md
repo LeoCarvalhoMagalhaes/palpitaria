@@ -55,6 +55,16 @@ Fotos dos artistas (Holofote), dos produtos (Na Etiqueta) e das opções (Mais o
 público, CC BY ou CC BY-SA); autor e licença ficam na página do arquivo, linkada em cada imagem. Não alteramos as imagens além da
 miniatura padrão do Commons.
 
+### Open Food Facts (fotos dos produtos)
+
+Base de dados sob Open Database License (ODbL); fotos sob CC BY-SA 3.0, dos colaboradores do Open Food Facts.
+Cada foto tem link para a página do produto. https://world.openfoodfacts.org/terms-of-use
+
+### IMDb (notas dos filmes)
+
+Information courtesy of IMDb (https://www.imdb.com). Used with permission. Conjunto `title.ratings.tsv.gz` dos IMDb Non-Commercial
+Datasets, só para uso pessoal e não comercial. https://developer.imdb.com/non-commercial-datasets/
+
 ### Natural Earth
 
 Domínio público. https://www.naturalearthdata.com/about/terms-of-use/

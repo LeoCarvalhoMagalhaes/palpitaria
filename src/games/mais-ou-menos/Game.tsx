@@ -1,14 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type Ref } from 'react'
 import { AnimatePresence, animate, motion, useReducedMotion } from 'motion/react'
 import { Clapperboard, Lightbulb, Music, Search, Tag, type LucideIcon } from 'lucide-react'
 import { GameShell, type GameContext } from '@/components/GameShell'
 import { ShareButton } from '@/components/ShareButton'
 import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
-import { fetchData, useData } from '@/core/data'
+import { fetchData, imageUrl, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
 import { useL, useLang } from '@/core/settings'
-import { getPreview } from '@/core/preview'
 import {
   CATEGORIES,
   DUELS_PER_CATEGORY,
@@ -40,6 +39,7 @@ const ICON_COLOR: Record<CategoryIcon, string> = {
   tag: 'var(--far)',
   lightbulb: 'var(--near)',
 }
+const EASE = [0.32, 0.72, 0, 1] as const
 
 export default function MaisOuMenosGame(ctx: GameContext) {
   const L = useL()
@@ -66,33 +66,38 @@ function CountUp({ value, unit, prefix, decimals, run }: { value: number; unit: 
       return
     }
     const f = 10 ** (decimals ?? 0)
-    const controls = animate(0, value, { duration: 0.9, ease: [0.32, 0.72, 0, 1], onUpdate: (v) => setShown(Math.round(v * f) / f) })
+    const controls = animate(0, value, { duration: 0.9, ease: EASE, onUpdate: (v) => setShown(Math.round(v * f) / f) })
     return () => controls.stop()
   }, [value, run, reduce, decimals])
   return <span className="tabular-nums">{formatValue(shown, unit, prefix, decimals, lang)}</span>
 }
 
-/** Imagem do item: foto do Commons ou, nas músicas, a capa da Apple. Sem imagem, o emoji. */
+/**
+ * Imagem inteira, sem corte (object-contain), sobre um fundo desfocado da própria imagem que preenche o quadro.
+ * As imagens dos próximos duelos já foram pré-carregadas (ver `usePreload`).
+ */
 function ItemImage({ item }: { item: Item }) {
-  const [art, setArt] = useState<string | null>(null)
-  const [failed, setFailed] = useState(false)
-  useEffect(() => {
-    if (item.image || !item.appleId) return
-    let alive = true
-    getPreview(item.appleId)
-      .then((i) => alive && setArt(i.artworkUrl))
-      .catch(() => {})
-    return () => {
-      alive = false
-    }
-  }, [item])
-  const src = item.image?.src ?? art
+  const [state, setState] = useState<'loading' | 'ok' | 'error'>('loading')
+  const src = item.image?.src ? imageUrl(item.image.src) : null
   return (
-    <span className="relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border-2 border-ink/10 bg-muted">
-      {src && !failed ? (
-        <img src={src} alt="" loading="lazy" className="size-full object-cover" onError={() => setFailed(true)} />
-      ) : (
-        <span className="grid size-full place-items-center text-5xl" aria-hidden>
+    <span className="relative block aspect-[4/5] w-full overflow-hidden rounded-2xl border-2 border-ink/10 bg-muted">
+      {src && state !== 'error' && (
+        <>
+          <img src={src} alt="" aria-hidden className="absolute inset-0 size-full scale-125 object-cover opacity-60 blur-xl" />
+          <img
+            src={src}
+            alt=""
+            decoding="async"
+            fetchPriority="high"
+            onLoad={() => setState('ok')}
+            onError={() => setState('error')}
+            className={`relative size-full object-contain transition-opacity duration-300 ${state === 'ok' ? 'opacity-100' : 'opacity-0'}`}
+          />
+        </>
+      )}
+      {state === 'loading' && src && <span className="absolute inset-0 animate-pulse bg-muted" aria-hidden />}
+      {(!src || state === 'error') && (
+        <span className="absolute inset-0 grid place-items-center text-6xl" aria-hidden>
           {item.emoji}
         </span>
       )}
@@ -100,16 +105,39 @@ function ItemImage({ item }: { item: Item }) {
   )
 }
 
+/** Pré-carrega as imagens da categoria atual e da próxima (12 imagens), para aparecerem na hora. */
+function usePreload(rounds: Round[], from: number) {
+  const cache = useRef(new Map<string, HTMLImageElement>())
+  useEffect(() => {
+    for (const r of rounds.slice(from, from + DUELS_PER_CATEGORY * 2)) {
+      for (const item of [r.left, r.right]) {
+        const src = item.image?.src ? imageUrl(item.image.src) : null
+        if (!src || cache.current.has(src)) continue
+        const img = new Image()
+        img.decoding = 'async'
+        img.src = src
+        cache.current.set(src, img)
+      }
+    }
+  }, [rounds, from])
+}
+
 function ItemCard({
+  ref,
   item,
   round,
+  showValue,
   revealed,
   chosen,
   correct,
   onPick,
 }: {
+  ref?: Ref<HTMLButtonElement>
   item: Item
   round: Round
+  /** Valor visível: depois de responder ou quando o item é o que "continuou" do duelo anterior. */
+  showValue: boolean
+  /** Duelo respondido: pinta quem tem mais e trava o clique. */
   revealed: boolean
   chosen: boolean
   correct: boolean
@@ -117,24 +145,31 @@ function ItemCard({
 }) {
   const L = useL()
   const lang = useLang()
+  const reduce = useReducedMotion()
   const other = item === round.left ? round.right : round.left
   const isBigger = item.value > other.value
   const value = formatValue(item.value, round.unit, round.category.prefix, round.category.decimals, lang)
   return (
     <motion.button
+      ref={ref}
+      layout={!reduce}
       type="button"
       disabled={revealed}
       onClick={onPick}
-      whileTap={{ scale: 0.97 }}
-      className={`flex flex-1 flex-col items-center gap-2 rounded-3xl p-3 text-center transition-colors duration-300 sticker sticker-press disabled:cursor-default ${
+      initial={reduce ? { opacity: 0 } : { opacity: 0, x: 90, scale: 0.96 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={reduce ? { opacity: 0 } : { opacity: 0, x: -90, scale: 0.9 }}
+      transition={{ duration: 0.45, ease: EASE }}
+      whileTap={revealed ? undefined : { scale: 0.97 }}
+      className={`flex min-w-0 flex-col items-center gap-1.5 rounded-3xl p-2 text-center transition-colors duration-300 sticker sticker-press disabled:cursor-default sm:gap-2 sm:p-3 ${
         revealed ? (isBigger ? 'tile-hit' : 'bg-card') : 'bg-card hover:bg-accent'
       } ${revealed && chosen ? 'ring-4 ring-brand-2 ring-offset-2 ring-offset-background' : ''}`}
-      aria-label={revealed ? `${displayName(item.name)}: ${value}` : L(`Escolher ${displayName(item.name)}`, `Pick ${displayName(item.name)}`)}
+      aria-label={showValue ? `${displayName(item.name)}: ${value}` : L(`Escolher ${displayName(item.name)}`, `Pick ${displayName(item.name)}`)}
     >
       <ItemImage item={item} />
-      <span className="font-heading text-lg leading-tight font-semibold sm:text-xl">{displayName(item.name)}</span>
-      <span className="min-h-7 font-heading text-lg">
-        {revealed ? <CountUp value={item.value} unit={round.unit} prefix={round.category.prefix} decimals={round.category.decimals} run /> : '?'}
+      <span className="line-clamp-3 font-heading text-base leading-tight font-semibold sm:text-xl">{displayName(item.name)}</span>
+      <span className="min-h-7 font-heading text-base sm:text-lg">
+        {showValue ? <CountUp value={item.value} unit={round.unit} prefix={round.category.prefix} decimals={round.category.decimals} run={revealed} /> : '?'}
       </span>
       {revealed && chosen && <span className="text-sm font-semibold">{correct ? L('Sua escolha ✓', 'Your pick ✓') : L('Sua escolha ✗', 'Your pick ✗')}</span>}
     </motion.button>
@@ -148,7 +183,7 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
   const rounds = useMemo(() => dailyRounds(categories, number), [categories, number])
   const { state, status, setState, finish } = useDailyGame<State>({
     slug: ctx.stateKey,
-    version: 2,
+    version: 3,
     date,
     isArchive: ctx.isArchive,
     init: () => ({ choices: [] }),
@@ -164,6 +199,7 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
   const choice = state.choices[viewing]
   const showIntro = !answered && round.duel === 0 && !introDone.has(round.categoryIndex)
   const icons = categories.slice(0, CATEGORIES).map((c) => c.icon)
+  usePreload(rounds, Math.floor(viewing / DUELS_PER_CATEGORY) * DUELS_PER_CATEGORY)
 
   const closeIntro = () => setIntroDone((s) => new Set(s).add(round.categoryIndex))
   useEffect(() => {
@@ -187,6 +223,10 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
   const slide = reduce ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } } : { initial: { opacity: 0, x: 48 }, animate: { opacity: 1, x: 0 }, exit: { opacity: 0, x: -48 } }
   const lastOfCategory = round.duel === DUELS_PER_CATEGORY - 1
   const triviaHint = L('população, área, cidades, montanhas ou rios', 'population, area, cities, mountains or rivers')
+  const sides = [
+    ['left', round.left],
+    ['right', round.right],
+  ] as const
 
   return (
     <GameShell
@@ -198,8 +238,8 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
       help={
         <>
           {L(
-            <p>São <strong>5 categorias</strong> com <strong>5 duelos</strong> cada, 25 no total. Em cada duelo, toque no item que tem <strong>mais</strong>.</p>,
-            <p>There are <strong>5 categories</strong> with <strong>5 duels</strong> each, 25 in total. In each duel, tap the one that has <strong>more</strong>.</p>,
+            <p>São <strong>5 categorias</strong> com <strong>5 duelos</strong> cada, 25 no total. Em cada duelo, toque no item que tem <strong>mais</strong>. Quem tem mais continua no próximo duelo (vai para a esquerda) e uma opção nova entra à direita.</p>,
+            <p>There are <strong>5 categories</strong> with <strong>5 duels</strong> each, 25 in total. In each duel, tap the one that has <strong>more</strong>. The one with more stays for the next duel (moving to the left) and a new option comes in on the right.</p>,
           )}
           <ul className="space-y-1.5">
             {categories.map((c) => (
@@ -217,8 +257,8 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
           )}
           <p className="text-muted-foreground">
             {L(
-              'Dados: Wikipédia, Kworb, Wikidata, outro jogo, Natural Earth e IBGE. Imagens: Wikimedia Commons e capas da Apple Music. Veja os créditos completos.',
-              'Data: Wikipedia, Kworb, Wikidata, outro jogo, Natural Earth and IBGE. Images: Wikimedia Commons and Apple Music artwork. See the full credits.',
+              'Dados: Wikipédia, Kworb, IMDb, outro jogo, Natural Earth, IBGE e Wikidata. Imagens: Wikimedia Commons, Open Food Facts e Apple. Veja os créditos completos.',
+              'Data: Wikipedia, Kworb, IMDb, outro jogo, Natural Earth, IBGE and Wikidata. Images: Wikimedia Commons, Open Food Facts and Apple. See the full credits.',
             )}
           </p>
         </>
@@ -260,14 +300,14 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
         ))}
       </ol>
 
-      <div className="relative mx-auto w-full max-w-xl overflow-hidden">
+      <div className="relative mx-auto w-full max-w-3xl">
         <AnimatePresence mode="wait" initial={false}>
           {showIntro ? (
             <motion.button
               key={`intro-${round.categoryIndex}`}
               type="button"
               {...slide}
-              transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+              transition={{ duration: 0.3, ease: EASE }}
               onClick={closeIntro}
               className="flex w-full flex-col items-center gap-3 rounded-3xl bg-card px-6 py-10 text-center sticker"
             >
@@ -283,22 +323,37 @@ function Play({ ctx, categories }: { ctx: GameContext; categories: Category[] })
                 {L('Categoria', 'Category')} {round.categoryIndex + 1} {L('de', 'of')} {CATEGORIES}
               </span>
               <span className="font-heading text-3xl font-semibold">{round.category.name}</span>
-              <span className="text-muted-foreground">{round.category.groups ? displayName(triviaHint) : round.category.question}</span>
+              <span className="text-muted-foreground">{round.question}</span>
               <span className="mt-2 rounded-full bg-ink px-5 py-2 font-semibold text-background">{L('Começar', 'Start')} →</span>
             </motion.button>
           ) : (
-            <motion.div key={`duel-${viewing}`} {...slide} transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}>
+            <motion.div key={`cat-${round.categoryIndex}`} {...slide} transition={{ duration: 0.3, ease: EASE }}>
               <p className="flex items-center justify-center gap-1.5 text-center text-sm font-semibold text-muted-foreground uppercase">
                 <CategoryBadge icon={round.category.icon} className="size-4" />
                 {round.category.name} · {L('duelo', 'duel')} {round.duel + 1}/{DUELS_PER_CATEGORY}
               </p>
-              <h2 className="mb-4 text-center font-heading text-2xl font-semibold">{round.question}</h2>
-              <div className="flex items-stretch gap-2 sm:gap-3">
-                <ItemCard item={round.left} round={round} revealed={answered} chosen={choice === 'left'} correct={results[viewing]} onPick={() => pick('left')} />
-                <div className="grid place-items-center font-heading text-sm font-bold text-muted-foreground sm:text-lg" aria-hidden>
+              <h2 className="mb-3 text-center font-heading text-xl font-semibold sm:text-2xl">{round.question}</h2>
+              <div className="relative grid grid-cols-2 items-start gap-2 sm:gap-4">
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {sides.map(([side, item]) => (
+                    <ItemCard
+                      key={`${round.categoryIndex}:${item.name}`}
+                      item={item}
+                      round={round}
+                      showValue={answered || (side === 'left' && round.duel > 0)}
+                      revealed={answered}
+                      chosen={choice === side}
+                      correct={results[viewing]}
+                      onPick={() => pick(side)}
+                    />
+                  ))}
+                </AnimatePresence>
+                <span
+                  className="pointer-events-none absolute top-[calc(50%-4rem)] left-1/2 z-10 grid size-10 -translate-x-1/2 place-items-center rounded-full border-2 border-ink bg-background font-heading text-xs font-bold sm:size-12 sm:text-sm"
+                  aria-hidden
+                >
                   {L('OU', 'OR')}
-                </div>
-                <ItemCard item={round.right} round={round} revealed={answered} chosen={choice === 'right'} correct={results[viewing]} onPick={() => pick('right')} />
+                </span>
               </div>
               <p className="mt-3 text-center text-xs text-muted-foreground">
                 {L('Fonte', 'Source')}: {round.category.fonte}

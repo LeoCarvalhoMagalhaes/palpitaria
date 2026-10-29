@@ -2,14 +2,17 @@
 // outro jogo (outro jogo). Cada item tem nome em português e inglês e, quando existe, uma imagem livre do
 // Wikimedia Commons (via Wikidata P18/P41). Fontes:
 //  1. Popularidade na internet — visualizações na Wikipédia (pt para a versão pt, en para a versão en)
-//  2. Streams no Spotify — Kworb (capas vêm da Apple na hora de jogar)
-//  3. Nota dos filmes — Metacritic via Wikidata
-//  4. Preços — base MIT do outro jogo, só produtos que têm foto (ver na-etiqueta/images.ts)
+//  2. Streams no Spotify — Kworb, com a capa do álbum (Apple, /lookup em lote)
+//  3. Nota dos filmes — nota do IMDb (conjunto de dados oficial, uso não comercial), ligada ao filme pelo
+//     Wikidata (P345); pôster oficial da Apple (Wikidata P6398 + /lookup em lote)
+//  4. Preços — base MIT do outro jogo, só produtos que têm foto (ver na-etiqueta)
 //  5. Curiosidades — Natural Earth (população/área + bandeiras), IBGE (cidades), Wikidata (montanhas, rios)
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import * as turf from '@turf/turf'
+import zlib from 'node:zlib'
 import { ROOT, cachedFetchJson, chunk, fileFromCommonsUrl, imageRef, sparql } from '../lib/wikimedia.mjs'
+import { appleLookup, artwork } from '../lib/apple.mjs'
 
 const today = new Date().toISOString().slice(0, 10)
 const img = (r, key = 'img') => (r[key] ? imageRef(fileFromCommonsUrl(r[key].value)) : null)
@@ -81,30 +84,68 @@ async function topPages(lang) {
 
 async function spotifyStreams() {
   const { songs } = JSON.parse(await fs.readFile(path.join(ROOT, 'public/data/musicas/songs.json'), 'utf8'))
-  return songs.map((s) => ({ name: `${s.title} — ${s.artist}`, nameEn: `${s.title} — ${s.artist}`, value: s.streams, emoji: '🎧', appleId: s.appleId }))
+  const withId = songs.filter((s) => s.appleId)
+  const found = await appleLookup(withId.map((s) => s.appleId), 'songs')
+  return withId
+    .map((s) => {
+      const r = found.get(String(s.appleId))
+      const src = artwork(r?.artworkUrl100, '400x400')
+      return { name: `${s.title} — ${s.artist}`, nameEn: `${s.title} — ${s.artist}`, value: s.streams, emoji: '🎧', image: src ? { src, page: r.trackViewUrl } : null }
+    })
 }
 
 async function movieScores() {
-  const rows = await sparql(
-    `SELECT ?f ?fLabel ?en ?ptTitle ?score ?img ?links WHERE {
-      ?f wdt:P31 wd:Q11424; p:P444 ?st; wikibase:sitelinks ?links.
-      ?st ps:P444 ?score; pq:P447 wd:Q150248.
-      FILTER(?links > 40)
-      OPTIONAL { ?ptw schema:about ?f; schema:isPartOf <https://pt.wikipedia.org/>; schema:name ?ptTitle. }
-      OPTIONAL { ?f rdfs:label ?en. FILTER(LANG(?en) = "en") }
-      OPTIONAL { ?f wdt:P18 ?img. }
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "pt-br,pt,en". }
-    } ORDER BY DESC(?links) LIMIT 600`,
-    'metacritic-films-v2',
-  )
-  const byFilm = new Map()
+  // Filmes com ID do IMDb (P345) e ID de filme da Apple (P6398) no Wikidata.
+  const rows = await sparql(`SELECT ?f ?imdb ?it WHERE { ?f wdt:P6398 ?it; wdt:P345 ?imdb; wdt:P31 wd:Q11424. }`, 'films-imdb-itunes')
+  const films = new Map()
   for (const r of rows) {
-    const m = /^(\d+)\s*\/\s*100$/.exec(r.score.value.trim())
-    if (!m || byFilm.has(r.f.value)) continue
-    const pt = r.ptTitle ? r.ptTitle.value.replace(/\s*\((filme|filme de \d{4}|\d{4})\)$/, '') : r.fLabel.value
-    byFilm.set(r.f.value, { name: pt, nameEn: r.en?.value ?? pt, value: Number(m[1]), emoji: '🎬', image: img(r) })
+    const f = films.get(r.f.value) ?? { qid: r.f.value.split('/').pop(), imdb: r.imdb.value, apple: [] }
+    f.apple.push(r.it.value)
+    films.set(r.f.value, f)
   }
-  return dedupe([...byFilm.values()]).slice(0, 300)
+  // Nota e número de votos: title.ratings.tsv.gz (https://datasets.imdbws.com/, uso pessoal e não comercial).
+  const tsv = zlib.gunzipSync(await fs.readFile(path.join(ROOT, 'scripts/.cache/imdb/title.ratings.tsv.gz'))).toString()
+  const ratings = new Map(tsv.split('\n').slice(1).map((l) => l.split('\t')).map(([id, avg, votes]) => [id, { avg: Number(avg), votes: Number(votes) }]))
+  const popular = [...films.values()]
+    .map((f) => ({ ...f, rating: ratings.get(f.imdb) }))
+    .filter((f) => f.rating && f.rating.votes >= 200000)
+    .sort((a, b) => b.rating.votes - a.rating.votes)
+  // Só entram filmes cujo pôster existe na loja da Apple.
+  const found = await appleLookup(popular.flatMap((f) => f.apple), 'films')
+  const withPoster = popular
+    .map((f) => ({ ...f, poster: f.apple.map((id) => found.get(id)).find((r) => r?.artworkUrl100) }))
+    .filter((f) => f.poster)
+    .slice(0, 400)
+  // Títulos: artigo da Wikipédia em português (ou rótulo pt) e rótulo em inglês.
+  const names = new Map()
+  for (const [i, batch] of chunk(withPoster.map((f) => f.qid), 150).entries()) {
+    const res = await sparql(
+      `SELECT ?f ?ptTitle ?pt ?en WHERE {
+        VALUES ?f { ${batch.map((q) => `wd:${q}`).join(' ')} }
+        OPTIONAL { ?ptw schema:about ?f; schema:isPartOf <https://pt.wikipedia.org/>; schema:name ?ptTitle. }
+        OPTIONAL { ?f rdfs:label ?pt. FILTER(LANG(?pt) = "pt-br" || LANG(?pt) = "pt") }
+        OPTIONAL { ?f rdfs:label ?en. FILTER(LANG(?en) = "en") }
+      }`,
+      `films-names-${i}-${batch.length}`,
+    )
+    for (const r of res) {
+      const q = r.f.value.split('/').pop()
+      if (names.has(q)) continue
+      const pt = r.ptTitle?.value.replace(/\s*\((filme|filme de \d{4}|\d{4})\)$/, '') ?? r.pt?.value ?? r.en?.value
+      names.set(q, { pt, en: r.en?.value ?? pt })
+    }
+  }
+  return dedupe(
+    withPoster
+      .filter((f) => names.get(f.qid)?.pt)
+      .map((f) => ({
+        name: names.get(f.qid).pt,
+        nameEn: names.get(f.qid).en,
+        value: f.rating.avg,
+        emoji: '🎬',
+        image: { src: artwork(f.poster.artworkUrl100, '400x600'), page: `https://www.imdb.com/title/${f.imdb}/` },
+      })),
+  )
 }
 
 async function prices() {
@@ -151,7 +192,7 @@ async function trivia() {
   const cities = series
     .map((s) => ({ code: s.localidade.id, name: s.localidade.nome.replace(/ - ([A-Z]{2})$/, ' ($1)'), value: Number(s.serie[year]) }))
     .sort((a, b) => b.value - a.value)
-    .slice(0, 250)
+    .slice(0, 150)
   const cityImg = new Map()
   for (const [i, batch] of chunk(cities, 125).entries()) {
     const rows = await sparql(
@@ -182,7 +223,7 @@ async function trivia() {
       if (group === 'rios' && (value < 50 || value >= 8000)) continue
       out.push({ name: r.pt.value, nameEn: r.en?.value ?? r.pt.value, value, emoji, group, image: img(r) })
     }
-    return dedupe(out).slice(0, 280)
+    return dedupe(out).slice(0, 180)
   }
   items.push(...(await geo('Q8502', 'P2044', 'montanhas', '⛰️', 25, 'montanhas-v2')))
   items.push(...(await geo('Q4022', 'P2043', 'rios', '🌊', 30, 'rios-v2')))
@@ -218,12 +259,17 @@ function build(lang, wiki, spotify, films, priceItems, t) {
       id: 'filmes',
       name: L('Nota dos filmes', 'Movie ratings'),
       icon: 'film',
-      question: L('Qual filme tem a nota maior no Metacritic?', 'Which movie has the higher Metacritic score?'),
-      unit: L('pontos (de 100)', 'points (out of 100)'),
+      question: L('Qual filme tem a nota maior no IMDb?', 'Which movie has the higher IMDb rating?'),
+      unit: '/ 10',
+      decimals: 1,
+      minDiff: 0.3,
       items: films,
-      fonte: L('Nota do Metacritic registrada no Wikidata', 'Metacritic score recorded on Wikidata'),
-      licenca: 'CC0',
-      url: 'https://www.wikidata.org/',
+      fonte: L(
+        'Notas: IMDb (informação cedida pelo IMDb, https://www.imdb.com, uso não comercial). Pôsteres: Apple TV',
+        'Ratings: IMDb (information courtesy of IMDb, https://www.imdb.com, non-commercial use). Posters: Apple TV',
+      ),
+      licenca: L('Uso pessoal e não comercial (IMDb)', 'Personal, non-commercial use (IMDb)'),
+      url: 'https://developer.imdb.com/non-commercial-datasets/',
     },
     {
       id: 'precos',
@@ -234,7 +280,7 @@ function build(lang, wiki, spotify, films, priceItems, t) {
       prefix: 'US$ ',
       decimals: 2,
       items: priceItems,
-      fonte: L('Base de preços do outro jogo (atacado dos EUA, 2022–2023); fotos do Wikimedia Commons', 'outro jogo price data (US warehouse store, 2022–2023); photos from Wikimedia Commons'),
+      fonte: L('Base de preços do outro jogo (atacado dos EUA, 2022–2023); fotos do Open Food Facts (CC BY-SA)', 'outro jogo price data (US warehouse store, 2022–2023); photos from Open Food Facts (CC BY-SA)'),
       licenca: 'MIT',
       url: 'https://github.com/KermWasTaken',
     },
@@ -263,7 +309,7 @@ function build(lang, wiki, spotify, films, priceItems, t) {
     ...c,
     // Toda opção mostra uma imagem: só entram itens com foto (ou capa da Apple, no caso das músicas).
     items: c.items
-      .filter((i) => i.image || i.appleId)
+      .filter((i) => i.image)
       .map(({ nameEn, ...i }) => ({ ...i, name: lang === 'en' ? nameEn ?? i.name : i.name })),
   }))
 }
@@ -283,7 +329,7 @@ async function main() {
     const categories = build(lang, lang === 'pt' ? wikiPt : wikiEn, spotify, films, priceItems, t)
     await fs.writeFile(path.join(out, lang === 'pt' ? 'categories.json' : 'categories-en.json'), JSON.stringify({ obtido_em: today, categories }))
     for (const c of categories) {
-      const withImg = c.items.filter((i) => i.image || i.appleId).length
+      const withImg = c.items.filter((i) => i.image).length
       console.log(`[${lang}] ${c.name}: ${c.items.length} itens, ${withImg} com imagem · ex.: ${c.items.slice(0, 2).map((i) => i.name).join(' | ')}`)
     }
   }

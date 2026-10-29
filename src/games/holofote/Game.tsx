@@ -7,7 +7,7 @@ import { ShareButton } from '@/components/ShareButton'
 import { Autocomplete, type Option } from '@/components/Autocomplete'
 import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
-import { fetchData, useData } from '@/core/data'
+import { fetchData, imageUrl, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
 import { useL, useLang, useSettings } from '@/core/settings'
 import { ClipPlayer, getPreview, unlockAudio, type PreviewInfo } from '@/core/preview'
@@ -56,10 +56,10 @@ function Cell({ label, value, match, arrow, delay }: { label: string; value: str
 function ArtistPhoto({ artist, className }: { artist: Artist; className?: string }) {
   const L = useL()
   const [failed, setFailed] = useState(false)
-  const base = `shrink-0 overflow-hidden rounded-full border-2 border-ink/15 bg-muted ${className ?? ''}`
+  const base = `shrink-0 overflow-hidden rounded-2xl border-2 border-ink/15 bg-muted ${className ?? ''}`
   if (!artist.image || failed) {
     return (
-      <span className={`grid place-items-center font-heading text-lg font-semibold ${base}`} aria-hidden>
+      <span className={`grid place-items-center font-heading text-4xl font-semibold ${base}`} aria-hidden>
         {artist.name[0]}
       </span>
     )
@@ -73,9 +73,8 @@ function ArtistPhoto({ artist, className }: { artist: Artist; className?: string
       title={L('Foto: Wikimedia Commons (ver licença)', 'Photo: Wikimedia Commons (see license)')}
     >
       <img
-        src={artist.image.src}
+        src={imageUrl(artist.image.src)}
         alt={L(`Foto de ${artist.name}`, `Photo of ${artist.name}`)}
-        loading="lazy"
         className="size-full object-cover object-top"
         onError={() => setFailed(true)}
       />
@@ -227,7 +226,7 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
       )}
       result={
         <>
-          <ArtistPhoto artist={answer} className="mx-auto size-28" />
+          <ArtistPhoto artist={answer} className="mx-auto aspect-[4/5] w-44" />
           <p className="text-center text-base">
             {L('Era', 'It was')} <strong className="font-heading text-xl">{answer.name}</strong> {flagEmoji(answer.country)}
           </p>
@@ -272,7 +271,7 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
 
       {finished && (
         <div className="mx-auto mb-4 w-full max-w-sm space-y-2 text-center">
-          <ArtistPhoto artist={answer} className="mx-auto size-32" />
+          <ArtistPhoto artist={answer} className="mx-auto aspect-[4/5] w-48 sm:w-56" />
           <p className="font-heading text-xl">
             {won ? L(`Acertou! Era ${answer.name} 🎤`, `You got it! It was ${answer.name} 🎤`) : L(`Era ${answer.name}. Amanhã tem mais!`, `It was ${answer.name}. More tomorrow!`)}
           </p>
@@ -294,19 +293,21 @@ function Play({ ctx, artists }: { ctx: GameContext; artists: Artist[] }) {
               className={`rounded-2xl border-2 p-2 ${isAnswer ? 'border-hit' : 'border-ink/10'} bg-card`}
             >
               {state.hintAt !== null && state.hintAt === i + 1 && <p className="mb-2 rounded-lg bg-sun/40 px-2 py-1 text-sm">💡 {hintFor(answer, lang)}</p>}
-              <div className="mb-1.5 flex items-center gap-2 px-1">
-                <ArtistPhoto artist={g} className="size-11" />
-                <p className="font-heading text-lg font-semibold">
-                  {g.name} {isAnswer && '🎯'}
-                </p>
-              </div>
-              <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-6">
+              <div className="flex gap-2 sm:gap-3">
+                <ArtistPhoto artist={g} className="w-24 self-stretch sm:w-36" />
+                <div className="min-w-0 flex-1">
+                  <p className="mb-1.5 px-1 font-heading text-lg leading-tight font-semibold sm:text-xl">
+                    {g.name} {isAnswer && '🎯'}
+                  </p>
+                  <div className="grid grid-cols-3 gap-1.5">
                 <Cell label={L('Estreia', 'Debut')} value={String(g.debut)} match={c.debut.match} arrow={c.debut.arrow} delay={0} />
                 <Cell label={L('Integrantes', 'Members')} value={g.members === 1 ? 'Solo' : String(g.members)} match={c.members.match} delay={0.08} />
                 <Cell label={L('Popularidade', 'Popularity')} value={`#${g.rank}`} match={c.popularity.match} arrow={c.popularity.arrow} delay={0.16} />
                 <Cell label={L('Gênero', 'Gender')} value={attr(g.gender, lang)} match={c.gender.match} delay={0.24} />
                 <Cell label={L('Estilo', 'Genre')} value={attr(g.genre, lang)} match={c.genre.match} delay={0.32} />
                 <Cell label={L('País', 'Country')} value={`${flagEmoji(g.country)} ${countryName(g, lang)}`} match={c.country.match} delay={0.4} />
+                  </div>
+                </div>
               </div>
             </motion.li>
           )

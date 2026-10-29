@@ -35,3 +35,8 @@ export function useData<T>(loader: () => Promise<T>, deps: unknown[] = []): Load
   }, [attempt, ...deps])
   return state
 }
+
+/** Imagens próprias ficam em public/ (caminho relativo); as externas (Apple, Open Food Facts) vêm com URL completa. */
+export function imageUrl(src: string): string {
+  return /^https?:/.test(src) ? src : `${import.meta.env.BASE_URL}${src}`
+}

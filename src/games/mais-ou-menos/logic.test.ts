@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { DUELS_PER_CATEGORY, MIN_RATIO, ROUNDS, dailyRounds, displayName, formatValue, isRight, scoreBucket, shareText, type Category } from './logic'
+import { DUELS_PER_CATEGORY, ROUNDS, dailyRounds, distinct, winnerOf, displayName, formatValue, isRight, scoreBucket, shareText, type Category } from './logic'
 
 const load = (file: string): Category[] =>
   JSON.parse(fs.readFileSync(path.resolve(__dirname, `../../../public/data/mais-ou-menos/${file}`), 'utf8')).categories
@@ -20,26 +20,26 @@ describe.each([
       expect(c.licenca).toBeTruthy()
       for (const i of c.items) {
         expect(i.value).toBeGreaterThan(0)
-        expect(Boolean(i.image?.src || i.appleId)).toBe(true)
+        expect(Boolean(i.image?.src)).toBe(true)
       }
     }
     const trivia = categories.find((c) => c.groups)!
     for (const g of Object.keys(trivia.groups!)) expect(trivia.items.filter((i) => i.group === g).length).toBeGreaterThan(20)
   })
 
-  it('25 duelos por dia, 5 por categoria, sem repetir item na categoria e sem empate apertado', () => {
+  it('25 duelos por dia; quem tem mais continua e uma opção nova entra, sem empate apertado', () => {
     for (let n = 1; n <= 365; n++) {
       const rounds = dailyRounds(categories, n)
       expect(rounds).toHaveLength(ROUNDS)
       for (let c = 0; c < 5; c++) {
         const block = rounds.slice(c * DUELS_PER_CATEGORY, (c + 1) * DUELS_PER_CATEGORY)
         expect(new Set(block.map((r) => r.category.id)).size).toBe(1)
-        const names = block.flatMap((r) => [r.left.name, r.right.name])
+        const names = [block[0].left.name, ...block.map((r) => r.right.name)]
         expect(new Set(names).size).toBe(names.length)
+        for (let d = 1; d < block.length; d++) expect(block[d].left).toBe(winnerOf(block[d - 1]))
       }
       for (const r of rounds) {
-        const ratio = Math.max(r.left.value, r.right.value) / Math.min(r.left.value, r.right.value)
-        expect(ratio).toBeGreaterThanOrEqual(MIN_RATIO)
+        expect(distinct(r.left.value, r.right.value, r.category)).toBe(true)
         expect(r.left.group).toBe(r.right.group)
         expect(r.question).toBeTruthy()
       }

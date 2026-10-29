@@ -284,6 +284,14 @@ function Board({
     const pick = already >= 0 && containing.length > 1 && cx === x && cy === y ? containing[(already + 1) % containing.length] : containing[Math.max(already, 0)]
     setActive(pick.i)
     setCursor(cellsOf(pick.w).findIndex(([a, b]) => a === x && b === y))
+    return pick.i
+  }
+
+  /** Como no outro jogo: clicar na grade seleciona a palavra e toca o trecho dela (sem pausar se já estiver tocando). */
+  const clickCell = (x: number, y: number) => {
+    const i = selectCell(x, y)
+    if (i === undefined || !state.started || finished) return
+    if (playingIdx !== i && loadingIdx !== i) toggleClue(i)
   }
 
   const nextWord = (dir = 1) => {
@@ -523,7 +531,7 @@ function Board({
                     key={k}
                     type="button"
                     role="gridcell"
-                    onClick={() => selectCell(x, y)}
+                    onClick={() => clickCell(x, y)}
                     aria-label={`${L('Linha', 'Row')} ${y + 1}, ${L('coluna', 'column')} ${x + 1}${letter ? `: ${letter}` : ''}`}
                     className={`relative grid aspect-square place-items-center rounded-[4px] border font-heading text-[clamp(0.8rem,4vw,1.4rem)] font-bold uppercase ${
                       isCursor ? 'border-2 border-ink' : 'border-ink/30'

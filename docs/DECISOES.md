@@ -46,3 +46,8 @@ Origem: **observada** = extraída do código público do jogo original em 27/10/
 | Refrão Cruzado | Tocar | Clicar na linha da pista seleciona e toca; o botão colorido e a barra da pista atual tocam/pausam | Pedido do dono do projeto |
 | Geral | Idiomas | Português e inglês (padrão: idioma do navegador); jogos de palavras têm conteúdo próprio em inglês e progresso separado por idioma | Pedido do dono do projeto |
 | Geral | Tema | Claro, escuro ou do sistema, com alto contraste opcional | Pedido do dono do projeto |
+| Mais ou Menos | Fluxo dos duelos | Como no outro jogo: quem tem mais continua (desliza para a esquerda) e uma opção nova entra pela direita; 6 itens por categoria; o valor de quem continuou fica visível | Observada |
+| Mais ou Menos | Nota dos filmes | Nota do IMDb (1 casa decimal); duelo só com diferença de 0,3 ou mais; 400 filmes com 200 mil votos ou mais e pôster confirmado | Pedido do dono do projeto |
+| Mais ou Menos | Imagens | Quadro 4:5 com a imagem inteira (sem corte) sobre fundo desfocado; pré-carregamento dos duelos do dia | Pedido do dono do projeto |
+| Na Etiqueta | Fotos | Foto real da embalagem (Open Food Facts); o produto do dia sai só entre os 1.652 com foto | Pedido do dono do projeto |
+| Refrão Cruzado | Grade | Clicar numa casa seleciona a palavra e toca o trecho dela (como no outro jogo) | Observada |

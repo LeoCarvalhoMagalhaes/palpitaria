@@ -73,8 +73,10 @@ export function parsePrice(input: string): number | null {
   return Number.isFinite(n) && n > 0 ? n : null
 }
 
+/** O produto do dia sai só entre os que têm foto da embalagem (se houver algum). */
 export function dailyProduct(products: Product[], number: number): Product {
-  const sorted = [...products].sort((a, b) => a.id.localeCompare(b.id))
+  const withPhoto = products.filter((p) => p.image)
+  const sorted = [...(withPhoto.length ? withPhoto : products)].sort((a, b) => a.id.localeCompare(b.id))
   return pickDaily(sorted, number, 'na-etiqueta')
 }
 
