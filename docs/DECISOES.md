@@ -34,7 +34,8 @@ Origem: **regra base** = regra do formato do jogo; **proposta** = escolha nossa,
 | Holofote | Gêneros | Lista fechada de 13 + MPB, Sertanejo e Funk (nenhum artista brasileiro desses estilos está no top 1.000 global) | Proposta |
 | Holofote | Dica | Após o 6º palpite: primeira letra e número de palavras do nome | Proposta |
 | Holofote | Áudio | No fim, prévia da música mais ouvida do artista, se ele estiver no top 1.000 | Regra base |
-| Refrão Cruzado | Grade | 12×10, 5 a 8 palavras; 60 tentativas por dia e fica a de mais palavras, mais cruzamentos e equilíbrio entre horizontais e verticais; uma música e uma resposta por palavra | Pedido do dono do projeto |
+| Refrão Cruzado | Grade | 12×10, 5 a 8 palavras; várias tentativas por dia, cada passo encaixa a palavra que mais cruza; fica a grade de mais palavras, cruzamentos, tipos de pergunta e equilíbrio entre horizontais e verticais; uma música e uma resposta por palavra | Pedido do dono do projeto |
+| Refrão Cruzado | Variedade de perguntas | 14 tipos (título, palavra que falta, primeira/última palavra, quem canta, banda, completar o nome, primeiro nome, sobrenome, gênero, país, continente, idioma do título, integrantes), cada um com 2 a 6 formas de perguntar; cada tipo no máximo 2 vezes por grade (3 só se a grade não fechar com 7+ palavras) e nenhuma frase repetida; nos temas de palavras a pergunta é a palavra do tema que falta, com frases e títulos diferentes | Pedido do dono do projeto |
 | Refrão Cruzado | Trecho | 8 s do início da prévia da Apple; ouvir de novo à vontade | Proposta |
 | Mais ou Menos | Rodadas | 5 categorias × 5 duelos (25), sem repetir item dentro da categoria; vitória com 15+; tela de abertura por categoria (fecha sozinha em 2,2 s) | Regra base (5 × 5); limiar proposto |
 | Mais ou Menos | Imagens | Todo item tem imagem: Commons (Wikidata) ou capa da Apple Music para as músicas | Pedido do dono do projeto |

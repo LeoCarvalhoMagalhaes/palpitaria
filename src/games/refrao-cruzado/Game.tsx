@@ -54,6 +54,7 @@ interface HolofoteArtist {
   members: number
   country: string
   countryName: string
+  continent?: string
 }
 
 const fold = (s: string) =>
@@ -104,7 +105,8 @@ export default function RefraoCruzadoGame(ctx: GameContext) {
   )
   const daily = useDailyGame<State>({
     slug: ctx.stateKey,
-    version: 4,
+    // 5: perguntas variadas (a grade salva de hoje tinha perguntas repetidas).
+    version: 5,
     date,
     isArchive: ctx.isArchive,
     init: () => ({ started: false, elapsed: 0, letters: {}, revealed: [], helps: 0, words: null, theme: null }),

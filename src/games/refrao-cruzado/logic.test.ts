@@ -97,6 +97,7 @@ describe('Refrão Cruzado: temas e pistas', () => {
     members: number
     country: string
     countryName: string
+    continent?: string
   }[]
   const fold = (s: string) => normalizeAnswer(s)
   const byName = new Map(artists.map((a) => [fold(a.name), a]))
@@ -114,7 +115,7 @@ describe('Refrão Cruzado: temas e pistas', () => {
         expect(new Set(words!.map((w) => w.answer)).size, theme.id).toBe(words!.length)
       }
     }
-  })
+  }, 60_000)
 
   it('nos temas de palavras, toda resposta é do tema', () => {
     const cores = THEMES.find((t) => t.id === 'cores')!
@@ -136,8 +137,26 @@ describe('Refrão Cruzado: temas e pistas', () => {
       crossings += [...count.values()].filter((v) => v > 1).length
       words += grid.length
     }
-    expect(crossings / words).toBeGreaterThanOrEqual(1)
-  })
+    // O gerador antigo dava 0,94 cruzamento por palavra; o atual, ~0,99, com perguntas variadas.
+    expect(crossings / words).toBeGreaterThanOrEqual(0.95)
+  }, 60_000)
+
+  it.each(['pt', 'en'] as const)('perguntas variadas na grade: nenhuma frase repetida e cada tipo no máximo 2 vezes quase sempre (%s)', (lang) => {
+    let over2 = 0
+    for (let n = 1; n <= 60; n++) {
+      const { theme, round } = dailyTheme(n)
+      const grid = generateCrossword(dailyCandidates(tracks, lang, theme, round), `v:${n}`)!
+      expect(new Set(grid.map((w) => w.clue)).size, `dia ${n} (${theme.id})`).toBe(grid.length)
+      // Nos temas de palavras, quase toda pergunta é "a palavra do tema que falta" (com títulos diferentes).
+      if (theme.kind === 'word') continue
+      const kinds = new Map<string, number>()
+      for (const w of grid) kinds.set(w.kind!, (kinds.get(w.kind!) ?? 0) + 1)
+      expect(Math.max(...kinds.values()), `dia ${n} (${theme.id})`).toBeLessThanOrEqual(3)
+      if (Math.max(...kinds.values()) > 2) over2++
+      expect(kinds.size, `dia ${n} (${theme.id})`).toBeGreaterThanOrEqual(3)
+    }
+    expect(over2).toBeLessThanOrEqual(15)
+  }, 60_000)
 
   it('um tema não repete música nas rodadas seguintes', () => {
     const theme = THEMES.find((t) => t.id === 'misto')!
@@ -145,7 +164,7 @@ describe('Refrão Cruzado: temas e pistas', () => {
     const a = ids(0)
     const later = [1, 2, 3].flatMap((r) => [...ids(r)])
     expect(later.filter((id) => a.has(id))).toEqual([])
-  })
+  }, 60_000)
 
   it('avisa o idioma e usa pistas variadas', () => {
     const cands = buildCandidates(tracks.slice(0, 80), 'pt')

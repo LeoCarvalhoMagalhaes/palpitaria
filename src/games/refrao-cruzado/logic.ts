@@ -14,6 +14,10 @@ export interface Candidate {
   clue: string
   /** ID da faixa no Spotify (para tocar o trecho). */
   trackId: string
+  /** Tipo de pergunta (título, quem canta, país…): a grade limita quantas vezes cada tipo aparece. */
+  kind?: string
+  /** Outras formas de fazer a mesma pergunta, para a grade não repetir a frase. */
+  variants?: string[]
 }
 
 export interface PlacedWord extends Candidate {
@@ -46,7 +50,7 @@ export interface TrackMeta {
   genre?: string | null
   titleLang?: string
   /** Dados do artista principal vindos do Holofote (quando ele está lá). */
-  info?: { gender: string; members: number; country: string; countryName: string } | null
+  info?: { gender: string; members: number; country: string; countryName: string; continent?: string } | null
 }
 
 /**
@@ -67,6 +71,8 @@ export interface Theme {
   kind: 'word' | 'mix' | 'names' | 'titles' | 'world' | 'bands' | 'artist'
   /** Palavras do tema (já normalizadas), para os temas "word" e "world". */
   words?: Set<string>
+  /** O que a palavra escondida é, para a pista ("Que cor falta no título…?"). */
+  noun?: [string, string]
   artist?: string
 }
 
@@ -123,15 +129,15 @@ const WORDS = {
 
 const THEME_LIST: Theme[] = [
   { id: 'misto', pt: 'Miscelânea', en: 'Grab bag', kind: 'mix' },
-  { id: 'cores', pt: 'Cores', en: 'Colors', kind: 'word', words: WORDS.cores },
-  { id: 'numeros', pt: 'Números', en: 'Numbers', kind: 'word', words: WORDS.numeros },
-  { id: 'corpo', pt: 'Corpo humano', en: 'The human body', kind: 'word', words: WORDS.corpo },
-  { id: 'natureza', pt: 'Natureza e clima', en: 'Nature and weather', kind: 'word', words: WORDS.natureza },
-  { id: 'tempo', pt: 'Dias, noites e tempo', en: 'Days, nights and time', kind: 'word', words: WORDS.tempo },
-  { id: 'sentimentos', pt: 'Amor e sentimentos', en: 'Love and feelings', kind: 'word', words: WORDS.sentimentos },
-  { id: 'gente', pt: 'Gente: família, amigos e realeza', en: 'People: family, friends and royalty', kind: 'word', words: WORDS.gente },
-  { id: 'movimento', pt: 'Dança e movimento', en: 'Dance and motion', kind: 'word', words: WORDS.movimento },
-  { id: 'mundo', pt: 'Pelo mundo', en: 'Around the world', kind: 'world', words: WORDS.lugares },
+  { id: 'cores', pt: 'Cores', en: 'Colors', kind: 'word', words: WORDS.cores, noun: ['cor', 'color'] },
+  { id: 'numeros', pt: 'Números', en: 'Numbers', kind: 'word', words: WORDS.numeros, noun: ['número', 'number'] },
+  { id: 'corpo', pt: 'Corpo humano', en: 'The human body', kind: 'word', words: WORDS.corpo, noun: ['parte do corpo', 'body part'] },
+  { id: 'natureza', pt: 'Natureza e clima', en: 'Nature and weather', kind: 'word', words: WORDS.natureza, noun: ['palavra da natureza', 'nature word'] },
+  { id: 'tempo', pt: 'Dias, noites e tempo', en: 'Days, nights and time', kind: 'word', words: WORDS.tempo, noun: ['palavra de tempo', 'time word'] },
+  { id: 'sentimentos', pt: 'Amor e sentimentos', en: 'Love and feelings', kind: 'word', words: WORDS.sentimentos, noun: ['sentimento', 'feeling'] },
+  { id: 'gente', pt: 'Gente: família, amigos e realeza', en: 'People: family, friends and royalty', kind: 'word', words: WORDS.gente, noun: ['pessoa', 'person'] },
+  { id: 'movimento', pt: 'Dança e movimento', en: 'Dance and motion', kind: 'word', words: WORDS.movimento, noun: ['movimento', 'motion word'] },
+  { id: 'mundo', pt: 'Pelo mundo', en: 'Around the world', kind: 'world', words: WORDS.lugares, noun: ['lugar', 'place'] },
   { id: 'nomes', pt: 'Quem canta?', en: 'Who sings it?', kind: 'names' },
   { id: 'titulos', pt: 'Nomes de músicas', en: 'Song titles', kind: 'titles' },
   { id: 'bandas', pt: 'Bandas', en: 'Bands', kind: 'bands' },
@@ -254,58 +260,148 @@ const NOT_FIRST_LAST = new Set(
   ].map(normalizeAnswer),
 )
 
-const T = {
-  title: { pt: 'Nome desta música', en: 'Title of this song' },
-  word: { pt: 'Complete o título', en: 'Fill in the title' },
-  artistWord: { pt: 'Complete o nome de quem canta', en: "Fill in the artist's name" },
-  bandWord: { pt: 'Complete o nome da banda', en: "Fill in the band's name" },
-  artist: { pt: 'Quem canta este trecho?', en: 'Who sings this?' },
-  band: { pt: 'Que banda é esta?', en: 'Which band is this?' },
-  first: { pt: 'Primeiro nome de quem canta', en: "The singer's first name" },
-  last: { pt: 'Sobrenome de quem canta', en: "The singer's last name" },
-  genre: { pt: 'Gênero musical desta faixa', en: 'Music genre of this track' },
-  country: { pt: 'País de origem de quem canta', en: 'Home country of this artist' },
-  countryAbbr: { pt: 'País de origem de quem canta (sigla)', en: 'Home country of this artist (abbreviation)' },
-  members: { pt: 'Quantos integrantes tem esta banda? (por extenso)', en: 'How many members does this band have? (spelled out)' },
+type Phrases = Record<Lang, string[]>
+
+/** Cada tipo de pergunta tem várias formas; `{s}` é o título ou nome com a lacuna. */
+const Q: Record<string, Phrases> = {
+  title: {
+    pt: ['Nome desta música', 'Qual é esta música?', 'Título desta faixa', 'Que música está tocando?'],
+    en: ['Title of this song', 'Name this song', 'Which song is this?', 'Title of this track'],
+  },
+  fill: {
+    pt: ['Complete o título: “{s}”', 'Qual palavra falta no título “{s}”?', 'Falta uma palavra: “{s}”', 'Termine o título: “{s}”'],
+    en: ['Fill in the title: “{s}”', 'Which word is missing from “{s}”?', 'Missing word: “{s}”', 'Finish the title: “{s}”'],
+  },
+  firstWord: {
+    pt: ['Primeira palavra do título desta música', 'Como começa o título desta música? (1ª palavra)'],
+    en: ['First word of this song’s title', 'How does this title start? (first word)'],
+  },
+  lastWord: {
+    pt: ['Última palavra do título desta música', 'Como termina o título desta música? (última palavra)'],
+    en: ['Last word of this song’s title', 'How does this title end? (last word)'],
+  },
+  artist: {
+    pt: ['Quem canta este trecho?', 'De quem é esta voz?', 'Quem está cantando?', 'Artista desta faixa'],
+    en: ['Who sings this?', 'Whose voice is this?', 'Who is singing?', 'Artist on this track'],
+  },
+  band: {
+    pt: ['Que banda é esta?', 'Nome da banda deste trecho', 'Que grupo toca esta música?', 'Banda desta faixa'],
+    en: ['Which band is this?', 'Name the band', 'Which group plays this?', 'Band behind this track'],
+  },
+  nameFill: {
+    pt: ['Complete o nome de quem canta: “{s}”', 'Falta uma palavra no nome: “{s}”', 'Que palavra completa o nome “{s}”?'],
+    en: ["Fill in the artist's name: “{s}”", 'Missing word in the name: “{s}”', 'Which word completes “{s}”?'],
+  },
+  bandFill: {
+    pt: ['Complete o nome da banda: “{s}”', 'Falta uma palavra no nome da banda: “{s}”', 'Que palavra completa a banda “{s}”?'],
+    en: ["Fill in the band's name: “{s}”", "Missing word in the band's name: “{s}”", 'Which word completes the band “{s}”?'],
+  },
+  first: {
+    pt: ['Primeiro nome de quem canta', 'Nome (sem o sobrenome) de quem canta', 'Como se chama quem canta? (só o primeiro nome)'],
+    en: ["The singer's first name", "Singer's first name (no surname)", 'What is the singer called? (first name only)'],
+  },
+  last: {
+    pt: ['Sobrenome de quem canta', 'Último nome de quem canta', 'Sobrenome desta voz'],
+    en: ["The singer's last name", "Singer's surname", 'Surname behind this voice'],
+  },
+  genre: {
+    pt: ['Gênero musical desta faixa', 'Estilo desta música', 'Que gênero é este?'],
+    en: ['Music genre of this track', 'Style of this song', 'Which genre is this?'],
+  },
+  country: {
+    pt: [
+      'País de origem de quem canta',
+      'De que país vem quem canta?',
+      'Terra natal de quem canta',
+      'Nacionalidade de quem canta (o país)',
+      'Em que país começou a carreira desta voz?',
+      'Este trecho vem de que país?',
+    ],
+    en: [
+      'Home country of this artist',
+      'Which country is this artist from?',
+      "This artist's homeland",
+      'Country this artist comes from',
+      "Where did this artist's career begin? (country)",
+      'Which country does this track come from?',
+    ],
+  },
+  continent: {
+    pt: ['Continente de origem de quem canta', 'De que continente vem quem canta?', 'Este trecho vem de que continente?'],
+    en: ["This artist's home continent", 'Which continent is this artist from?', 'Which continent does this track come from?'],
+  },
+  language: {
+    pt: ['Em que idioma é o título desta música?', 'Idioma do título desta faixa', 'Língua do título deste trecho'],
+    en: ["Which language is this song's title in?", 'Language of this title', 'Which language is this title?'],
+  },
+  members: {
+    pt: ['Quantos integrantes tem esta banda? (por extenso)', 'Número de membros da banda (por extenso)', 'Quantas pessoas formam esta banda? (por extenso)'],
+    en: ['How many members does this band have? (spelled out)', 'Number of band members (spelled out)', 'How many people are in this band? (spelled out)'],
+  },
+}
+
+const NOTE = {
   english: { pt: ' (em inglês)', en: '' },
   spanish: { pt: ' (em espanhol)', en: ' (in Spanish)' },
   portuguese: { pt: '', en: ' (in Portuguese)' },
+  abbr: { pt: ' (sigla)', en: ' (abbreviation)' },
 }
 
 const fits = (answer: string) => answer.length >= 3 && answer.length <= WIDTH - 2
 
+/** Continentes que cabem na grade ("América do Norte" e "do Sul" não cabem). */
+const CONTINENT: Record<string, Record<Lang, string>> = {
+  Europa: { pt: 'EUROPA', en: 'EUROPE' },
+  'Ásia': { pt: 'ASIA', en: 'ASIA' },
+  Oceania: { pt: 'OCEANIA', en: 'OCEANIA' },
+  'África': { pt: 'AFRICA', en: 'AFRICA' },
+}
+
+const LANGUAGE: Record<string, Record<Lang, string>> = {
+  en: { pt: 'INGLES', en: 'ENGLISH' },
+  es: { pt: 'ESPANHOL', en: 'SPANISH' },
+  pt: { pt: 'PORTUGUES', en: 'PORTUGUESE' },
+}
+
 /** Perguntas que o tema faz sobre uma faixa (pode ser nenhuma). Avisa quando a resposta está em outro idioma. */
-function questionsFor(t: TrackMeta, lang: Lang, theme: Theme): { answer: string; clue: string }[] {
-  const out: { answer: string; clue: string }[] = []
-  const add = (answer: string, clue: string) => {
-    if (fits(answer)) out.push({ answer, clue })
+function questionsFor(t: TrackMeta, lang: Lang, theme: Theme): Omit<Candidate, 'trackId'>[] {
+  const out: Omit<Candidate, 'trackId'>[] = []
+  /** Pergunta do tipo `kind`, com todas as formas dele (a primeira vira a pista padrão). */
+  const add = (answer: string, kind: string, opts: { s?: string; note?: string; extra?: string[] } = {}) => {
+    if (!fits(answer)) return
+    const phrases = [...(opts.extra ?? []), ...Q[kind][lang]].map((f) => f.replace('{s}', opts.s ?? '') + (opts.note ?? ''))
+    out.push({ answer, clue: phrases[0], kind, variants: phrases })
   }
   // Nomes e títulos com algarismos (Maroon 5, blink-182) viram palavra cortada: ficam de fora.
   const word = (raw: string) => (/\d/.test(raw) ? '' : normalizeAnswer(raw))
-  const titleNote = t.titleLang === 'en' ? T.english[lang] : t.titleLang === 'es' ? T.spanish[lang] : t.titleLang === 'pt' ? T.portuguese[lang] : ''
+  const titleNote = t.titleLang === 'en' ? NOTE.english[lang] : t.titleLang === 'es' ? NOTE.spanish[lang] : t.titleLang === 'pt' ? NOTE.portuguese[lang] : ''
   const title = cleanTitle(t.song)
   const artist = mainArtist(t.artist)
   const isBand = (t.info?.members ?? 1) >= 2
   const whole = word(title)
   const words = title.split(/\s+/)
   const artistWords = artist.split(/\s+/)
-  const fillTitle = (idx: number) => `${T.word[lang]}: “${words.map((w, i) => (i === idx ? '___' : w)).join(' ')}”${titleNote}`
+  const gap = (list: string[], idx: number) => list.map((w, i) => (i === idx ? '___' : w)).join(' ')
   const kind = theme.kind
 
   // Palavra do tema no título ou no nome de quem canta.
   if (kind === 'word' || kind === 'world') {
     const lex = theme.words!
-    if (lex.has(whole)) add(whole, T.title[lang] + titleNote)
+    const noun = theme.noun?.[lang === 'en' ? 1 : 0]
+    const Noun = noun ? noun.charAt(0).toUpperCase() + noun.slice(1) : ''
+    const themed = noun
+      ? lang === 'en'
+        ? [`Which ${noun} is missing from “{s}”?`, `${Noun} missing here: “{s}”`]
+        : [`Que ${noun} falta no título “{s}”?`, `${Noun} que falta: “{s}”`]
+      : []
+    if (lex.has(whole)) add(whole, 'title', { note: titleNote })
     else if (words.length >= 2) {
       const idx = words.findIndex((w) => lex.has(word(w)))
-      if (idx >= 0) add(word(words[idx]), fillTitle(idx))
+      if (idx >= 0) add(word(words[idx]), 'fill', { s: gap(words, idx), note: titleNote, extra: themed })
     }
     if (artistWords.length >= 2) {
       const idx = artistWords.findIndex((w) => lex.has(word(w)))
-      if (idx >= 0) {
-        const shown = artistWords.map((w, i) => (i === idx ? '___' : w)).join(' ')
-        add(word(artistWords[idx]), `${(isBand ? T.bandWord : T.artistWord)[lang]}: “${shown}”`)
-      }
+      if (idx >= 0) add(word(artistWords[idx]), isBand ? 'bandFill' : 'nameFill', { s: gap(artistWords, idx) })
     }
     if (kind === 'word') return out
   }
@@ -313,48 +409,77 @@ function questionsFor(t: TrackMeta, lang: Lang, theme: Theme): { answer: string;
   const country = () => {
     if (!t.info) return
     const c = countryAnswer(t.info.country, t.info.countryName, lang)
-    if (c) add(c.answer, (c.abbr ? T.countryAbbr : T.country)[lang])
+    if (c) add(c.answer, 'country', { note: c.abbr ? NOTE.abbr[lang] : '' })
+  }
+  const continent = () => {
+    const c = t.info?.continent ? CONTINENT[t.info.continent] : undefined
+    if (c) add(c[lang], 'continent')
+  }
+  const language = () => {
+    const l = t.titleLang ? LANGUAGE[t.titleLang] : undefined
+    if (l) add(l[lang], 'language')
   }
   if (kind === 'world') {
     country()
+    continent()
+    language()
     return out
   }
 
-  const titleQs = () => {
-    add(whole, T.title[lang] + titleNote)
+  const titleQs = (edges: boolean) => {
+    add(whole, 'title', { note: titleNote })
     if (words.length >= 2) {
       const idx = words
         .map((w, i) => ({ i, a: word(w) }))
         .filter((x) => x.a.length >= 4)
         .sort((a, b) => b.a.length - a.a.length)[0]?.i
-      if (idx !== undefined) add(word(words[idx]), fillTitle(idx))
+      if (idx !== undefined) add(word(words[idx]), 'fill', { s: gap(words, idx), note: titleNote })
+    }
+    if (edges && words.length >= 3) {
+      add(word(words[0]), 'firstWord', { note: titleNote })
+      add(word(words[words.length - 1]), 'lastWord', { note: titleNote })
     }
   }
   const full = word(artist)
   const nameQs = () => {
-    add(full, (isBand ? T.band : T.artist)[lang])
+    add(full, isBand ? 'band' : 'artist')
     if (!isBand && artistWords.length === 2 && t.info && !NOT_FIRST_LAST.has(full)) {
-      add(word(artistWords[0]), T.first[lang])
-      add(word(artistWords[1]), T.last[lang])
+      add(word(artistWords[0]), 'first')
+      add(word(artistWords[1]), 'last')
+    }
+    // Nome com 2+ palavras (bandas) ou 3+ (artistas): esconde a palavra mais comprida.
+    if (artistWords.length >= (isBand ? 2 : 3)) {
+      const idx = artistWords
+        .map((w, i) => ({ i, a: word(w) }))
+        .filter((x) => x.a.length >= 3)
+        .sort((a, b) => b.a.length - a.a.length)[0]?.i
+      if (idx !== undefined) add(word(artistWords[idx]), isBand ? 'bandFill' : 'nameFill', { s: gap(artistWords, idx) })
     }
   }
   const members = () => {
-    if (isBand && t.info && t.info.members <= 10) add(NUMBERS[lang][t.info.members], T.members[lang])
+    if (isBand && t.info && t.info.members <= 10) add(NUMBERS[lang][t.info.members], 'members')
+  }
+  const genre = () => {
+    const g = t.genre ? GENRE_ANSWER[t.genre] : undefined
+    if (g) add(g[lang], 'genre')
   }
 
-  if (kind === 'titles') titleQs()
-  else if (kind === 'names') nameQs()
-  else if (kind === 'bands') {
+  if (kind === 'titles') titleQs(true)
+  else if (kind === 'names') {
+    nameQs()
+    country()
+  } else if (kind === 'bands') {
     if (!isBand) return out
-    add(full, T.band[lang])
+    nameQs()
     members()
     country()
+    titleQs(false)
+    genre()
   } else {
     // Miscelânea e especial de artista: perguntas de todo tipo.
-    titleQs()
+    titleQs(true)
     nameQs()
-    const genre = t.genre ? GENRE_ANSWER[t.genre] : undefined
-    if (genre) add(genre[lang], T.genre[lang])
+    genre()
     country()
     members()
   }
@@ -464,12 +589,18 @@ function place(grid: Cell[][], word: string, x: number, y: number, dir: Directio
 
 type Placed = Omit<PlacedWord, 'number' | 'color'>
 
-/** Uma tentativa de montar a grade, com uma ordem de candidatos sorteada. Cada música e cada resposta entram uma vez só. */
-function buildGrid(candidates: Candidate[], rand: () => number): { placed: Placed[]; crossings: number } {
+/**
+ * Uma tentativa de montar a grade, com uma ordem de candidatos sorteada. Cada música e cada resposta entram uma
+ * vez só, e cada tipo de pergunta no máximo `maxPerKind` vezes.
+ */
+function buildGrid(candidates: Candidate[], rand: () => number, maxPerKind: number): { placed: Placed[]; crossings: number } {
   const grid = emptyGrid()
   const placed: Placed[] = []
   const usedTracks = new Set<string>()
   const usedAnswers = new Set<string>()
+  const kinds = new Map<string, number>()
+  const kindFull = (c: Candidate) => !!c.kind && (kinds.get(c.kind) ?? 0) >= maxPerKind
+  const useKind = (c: Candidate) => c.kind && kinds.set(c.kind, (kinds.get(c.kind) ?? 0) + 1)
   const count = { across: 0, down: 0 }
   let crossings = 0
   // Começa por uma palavra comprida (rende mais cruzamentos), no meio da grade.
@@ -485,13 +616,13 @@ function buildGrid(candidates: Candidate[], rand: () => number): { placed: Place
   placed.push({ ...head, x: x0, y: y0, direction: 'across' })
   usedTracks.add(head.trackId)
   usedAnswers.add(head.answer)
+  useKind(head)
   count.across++
-  // Duas passadas: uma palavra que não cabia pode cruzar com as que entraram depois.
-  for (let pass = 0; pass < 2; pass++) {
+  // A cada passo entra, entre todas as candidatas, a que cruza mais (com um pouco de sorteio para variar).
+  while (placed.length < MAX_WORDS) {
+    let best: { cand: Candidate; x: number; y: number; dir: Direction; score: number; c: number } | null = null
     for (const cand of order) {
-      if (placed.length >= MAX_WORDS) break
-      if (usedTracks.has(cand.trackId) || usedAnswers.has(cand.answer)) continue
-      let best: { x: number; y: number; dir: Direction; score: number; c: number } | null = null
+      if (usedTracks.has(cand.trackId) || usedAnswers.has(cand.answer) || kindFull(cand)) continue
       for (let y = 0; y < HEIGHT; y++) {
         for (let x = 0; x < WIDTH; x++) {
           for (const dir of ['across', 'down'] as Direction[]) {
@@ -500,46 +631,71 @@ function buildGrid(candidates: Candidate[], rand: () => number): { placed: Place
             // Mais cruzamentos primeiro; depois, a direção que está em falta.
             const mine = count[dir]
             const other = dir === 'across' ? count.down : count.across
-            const score = c * 10 + (mine < other ? 6 : mine > other ? -4 : 0) + rand() * 2
-            if (!best || score > best.score) best = { x, y, dir, score, c }
+            const score = c * 10 + (mine < other ? 6 : mine > other ? -4 : 0) + rand() * 5
+            if (!best || score > best.score) best = { cand, x, y, dir, score, c }
           }
         }
       }
-      if (best) {
-        place(grid, cand.answer, best.x, best.y, best.dir)
-        placed.push({ ...cand, x: best.x, y: best.y, direction: best.dir })
-        usedTracks.add(cand.trackId)
-        usedAnswers.add(cand.answer)
-        crossings += best.c
-        count[best.dir]++
-      }
     }
+    if (!best) break
+    place(grid, best.cand.answer, best.x, best.y, best.dir)
+    placed.push({ ...best.cand, x: best.x, y: best.y, direction: best.dir })
+    usedTracks.add(best.cand.trackId)
+    usedAnswers.add(best.cand.answer)
+    useKind(best.cand)
+    crossings += best.c
+    count[best.dir]++
   }
   return { placed, crossings }
 }
 
-/** Nota de uma grade: mais palavras, mais cruzamentos e equilíbrio entre horizontais e verticais. */
+/** Nota de uma grade: mais palavras, mais cruzamentos, mais tipos de pergunta e equilíbrio entre horizontais e verticais. */
 export function gridScore(placed: Placed[], crossings: number): number {
   const across = placed.filter((w) => w.direction === 'across').length
   const down = placed.length - across
-  return placed.length * 10 + crossings * 10 - Math.abs(across - down) * 8
+  const kinds = new Set(placed.map((w) => w.kind)).size
+  return placed.length * 10 + crossings * 10 + kinds * 6 - Math.abs(across - down) * 8
 }
+
+/** Troca a pista de cada palavra por uma forma ainda não usada na grade (mesmo tipo de pergunta, outra frase). */
+function varyClues(placed: Placed[], seed: string): Placed[] {
+  const rand = seededRandom(`${seed}#frases`)
+  const used = new Map<string, number>()
+  const offset = new Map<string, number>()
+  return placed.map(({ variants, ...w }) => {
+    if (!variants?.length || !w.kind) return w
+    if (!offset.has(w.kind)) offset.set(w.kind, Math.floor(rand() * variants.length))
+    const n = used.get(w.kind) ?? 0
+    used.set(w.kind, n + 1)
+    return { ...w, clue: variants[(offset.get(w.kind)! + n) % variants.length] }
+  })
+}
+
+/** Quantas vezes o mesmo tipo de pergunta pode aparecer numa grade (sobe só se a grade não fechar). */
+export const KIND_LIMITS = [2, 3, Infinity]
 
 /**
  * Gera a cruzadinha do dia: determinística para a mesma lista de candidatos e semente.
- * Faz várias tentativas e fica com a grade de melhor nota.
+ * Faz várias tentativas e fica com a grade de melhor nota; cada tipo de pergunta aparece no máximo 2 vezes
+ * (3 ou sem limite só quando o tema não tem variedade suficiente) e nenhuma frase se repete.
  */
 export function generateCrossword(candidates: Candidate[], seed: string): PlacedWord[] | null {
-  let best: { placed: Placed[]; crossings: number; score: number } | null = null
-  for (let attempt = 0; attempt < 60; attempt++) {
-    const rand = seededRandom(`${seed}#${attempt}`)
-    const pool = seededShuffle(candidates, `${seed}#${attempt}`).slice(0, 60)
-    const { placed, crossings } = buildGrid(pool, rand)
-    if (placed.length < MIN_WORDS) continue
-    const score = gridScore(placed, crossings)
-    if (!best || score > best.score) best = { placed, crossings, score }
+  let fallback: { placed: Placed[]; score: number } | null = null
+  for (const limit of KIND_LIMITS) {
+    let best: { placed: Placed[]; score: number } | null = null
+    for (let attempt = 0; attempt < 40; attempt++) {
+      const rand = seededRandom(`${seed}#${attempt}`)
+      const pool = seededShuffle(candidates, `${seed}#${attempt}`).slice(0, 40)
+      const { placed, crossings } = buildGrid(pool, rand, limit)
+      if (placed.length < MIN_WORDS) continue
+      const score = gridScore(placed, crossings)
+      if (!best || score > best.score) best = { placed, score }
+    }
+    // Fica com o menor limite que já rende uma grade boa (7+ palavras).
+    if (best && best.placed.length >= MAX_WORDS - 1) return numberWords(varyClues(best.placed, seed))
+    if (best && (!fallback || best.placed.length > fallback.placed.length)) fallback = best
   }
-  return best ? numberWords(best.placed) : null
+  return fallback ? numberWords(varyClues(fallback.placed, seed)) : null
 }
 
 function numberWords(words: Omit<PlacedWord, 'number' | 'color'>[]): PlacedWord[] {
