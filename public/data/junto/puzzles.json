@@ -1,246 +1,1529 @@
 {
-  "fonte": "Quebra-cabeças autorais da Palpitaria (rascunhos gerados com apoio de IA, aguardando revisão humana)",
-  "licenca": "Conteúdo próprio",
-  "puzzles": [
-    { "id": "j001", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Frutas", "palavras": ["maçã", "banana", "uva", "laranja"] },
-      { "nivel": 2, "categoria": "Cores", "palavras": ["verde", "azul", "roxo", "amarelo"] },
-      { "nivel": 3, "categoria": "Flores", "palavras": ["margarida", "tulipa", "girassol", "rosa"] },
-      { "nivel": 4, "categoria": "Signos", "palavras": ["leão", "touro", "peixes", "áries"] }
-    ], "ambiguas": { "laranja": ["Cores"], "rosa": ["Cores"] } },
-    { "id": "j002", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Partes do corpo", "palavras": ["braço", "perna", "joelho", "ombro"] },
-      { "nivel": 2, "categoria": "Instrumentos musicais", "palavras": ["violão", "piano", "flauta", "bateria"] },
-      { "nivel": 3, "categoria": "Peças de xadrez", "palavras": ["rei", "rainha", "torre", "cavalo"] },
-      { "nivel": 4, "categoria": "Peças de carro", "palavras": ["volante", "pneu", "motor", "freio"] }
-    ], "ambiguas": { "bateria": ["Peças de carro"] } },
-    { "id": "j003", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Animais da fazenda", "palavras": ["vaca", "porco", "galinha", "ovelha"] },
-      { "nivel": 2, "categoria": "Meses", "palavras": ["março", "maio", "junho", "agosto"] },
-      { "nivel": 3, "categoria": "Planetas", "palavras": ["mercúrio", "terra", "marte", "netuno"] },
-      { "nivel": 4, "categoria": "Metais", "palavras": ["ouro", "prata", "ferro", "cobre"] }
-    ], "ambiguas": { "mercúrio": ["Metais"] } },
-    { "id": "j004", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Esportes com bola", "palavras": ["futebol", "vôlei", "basquete", "handebol"] },
-      { "nivel": 2, "categoria": "Posições do futebol", "palavras": ["goleiro", "zagueiro", "lateral", "atacante"] },
-      { "nivel": 3, "categoria": "Pedras preciosas", "palavras": ["esmeralda", "rubi", "diamante", "safira"] },
-      { "nivel": 4, "categoria": "Naipes do baralho", "palavras": ["copas", "espadas", "ouros", "paus"] }
-    ], "ambiguas": {} },
-    { "id": "j005", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Utensílios de cozinha", "palavras": ["garfo", "faca", "colher", "concha"] },
-      { "nivel": 2, "categoria": "Animais marinhos", "palavras": ["polvo", "lula", "baleia", "tubarão"] },
-      { "nivel": 3, "categoria": "Coisas que têm dentes", "palavras": ["pente", "serrote", "zíper", "engrenagem"] },
-      { "nivel": 4, "categoria": "Gírias para dinheiro", "palavras": ["grana", "bufunfa", "tutu", "dindin"] }
-    ], "ambiguas": { "tubarão": ["Coisas que têm dentes"] } },
-    { "id": "j006", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Profissões", "palavras": ["médico", "professor", "bombeiro", "padeiro"] },
-      { "nivel": 2, "categoria": "Material escolar", "palavras": ["lápis", "caderno", "borracha", "régua"] },
-      { "nivel": 3, "categoria": "Doces de festa junina", "palavras": ["pamonha", "canjica", "paçoca", "cocada"] },
-      { "nivel": 4, "categoria": "Gírias para \"legal\"", "palavras": ["massa", "irado", "sinistro", "maneiro"] }
-    ], "ambiguas": {} },
-    { "id": "j007", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Cômodos da casa", "palavras": ["sala", "cozinha", "quarto", "banheiro"] },
-      { "nivel": 2, "categoria": "Móveis", "palavras": ["sofá", "mesa", "cadeira", "armário"] },
-      { "nivel": 3, "categoria": "Eletrodomésticos", "palavras": ["geladeira", "fogão", "liquidificador", "batedeira"] },
-      { "nivel": 4, "categoria": "Ritmos brasileiros", "palavras": ["samba", "forró", "frevo", "axé"] }
-    ], "ambiguas": {} },
-    { "id": "j008", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Bebidas", "palavras": ["chá", "suco", "refrigerante", "água"] },
-      { "nivel": 2, "categoria": "Grãos", "palavras": ["arroz", "feijão", "milho", "trigo"] },
-      { "nivel": 3, "categoria": "Pães", "palavras": ["baguete", "brioche", "ciabatta", "bisnaga"] },
-      { "nivel": 4, "categoria": "Coisas que se torram", "palavras": ["amendoim", "castanha", "gergelim", "café"] }
-    ], "ambiguas": { "café": ["Bebidas"] } },
-    { "id": "j009", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Animais que voam", "palavras": ["águia", "coruja", "morcego", "pardal"] },
-      { "nivel": 2, "categoria": "Insetos", "palavras": ["formiga", "abelha", "besouro", "grilo"] },
-      { "nivel": 3, "categoria": "Botam ovos e não voam", "palavras": ["tartaruga", "jacaré", "ornitorrinco", "avestruz"] },
-      { "nivel": 4, "categoria": "Folclore brasileiro", "palavras": ["saci", "curupira", "boitatá", "iara"] }
-    ], "ambiguas": { "abelha": ["Animais que voam"], "besouro": ["Animais que voam"] } },
-    { "id": "j010", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Países da América do Sul", "palavras": ["Chile", "Peru", "Bolívia", "Equador"] },
-      { "nivel": 2, "categoria": "Capitais sul-americanas", "palavras": ["Lima", "Quito", "Santiago", "Bogotá"] },
-      { "nivel": 3, "categoria": "Comidas típicas brasileiras", "palavras": ["feijoada", "moqueca", "acarajé", "coxinha"] },
-      { "nivel": 4, "categoria": "Aves", "palavras": ["tucano", "arara", "papagaio", "sabiá"] }
-    ], "ambiguas": { "Peru": ["Aves"] } },
-    { "id": "j011", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Sabores de sorvete", "palavras": ["chocolate", "morango", "baunilha", "flocos"] },
-      { "nivel": 2, "categoria": "Massas", "palavras": ["lasanha", "espaguete", "nhoque", "ravióli"] },
-      { "nivel": 3, "categoria": "Queijos", "palavras": ["muçarela", "parmesão", "provolone", "gorgonzola"] },
-      { "nivel": 4, "categoria": "Cidades italianas", "palavras": ["Roma", "Milão", "Veneza", "Nápoles"] }
-    ], "ambiguas": {} },
-    { "id": "j012", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Partes da árvore", "palavras": ["raiz", "tronco", "galho", "folha"] },
-      { "nivel": 2, "categoria": "Partes do livro", "palavras": ["capa", "página", "capítulo", "índice"] },
-      { "nivel": 3, "categoria": "Partes do sapato", "palavras": ["sola", "cadarço", "salto", "palmilha"] },
-      { "nivel": 4, "categoria": "Peixes", "palavras": ["tilápia", "sardinha", "salmão", "atum"] }
-    ], "ambiguas": { "folha": ["Partes do livro"] } },
-    { "id": "j013", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Esportes olímpicos", "palavras": ["natação", "judô", "ginástica", "atletismo"] },
-      { "nivel": 2, "categoria": "Artes marciais", "palavras": ["caratê", "capoeira", "taekwondo", "aikidô"] },
-      { "nivel": 3, "categoria": "Danças", "palavras": ["valsa", "tango", "salsa", "forró"] },
-      { "nivel": 4, "categoria": "Molhos", "palavras": ["maionese", "ketchup", "pesto", "shoyu"] }
-    ], "ambiguas": { "salsa": ["Molhos"], "judô": ["Artes marciais"] } },
-    { "id": "j014", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Veículos", "palavras": ["carro", "ônibus", "moto", "bicicleta"] },
-      { "nivel": 2, "categoria": "Coisas com asas", "palavras": ["avião", "borboleta", "anjo", "pinguim"] },
-      { "nivel": 3, "categoria": "Profissões com uniforme", "palavras": ["policial", "soldado", "gari", "carteiro"] },
-      { "nivel": 4, "categoria": "Embarcações", "palavras": ["canoa", "jangada", "iate", "balsa"] }
-    ], "ambiguas": { "avião": ["Veículos"] } },
-    { "id": "j015", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Estados do Nordeste", "palavras": ["Bahia", "Ceará", "Piauí", "Sergipe"] },
-      { "nivel": 2, "categoria": "Rios brasileiros", "palavras": ["Amazonas", "Tocantins", "Xingu", "Tietê"] },
-      { "nivel": 3, "categoria": "Biomas", "palavras": ["cerrado", "caatinga", "pampa", "pantanal"] },
-      { "nivel": 4, "categoria": "Frutas do Norte", "palavras": ["açaí", "cupuaçu", "bacuri", "tucumã"] }
-    ], "ambiguas": {} },
-    { "id": "j016", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Percussão", "palavras": ["tambor", "pandeiro", "cuíca", "triângulo"] },
-      { "nivel": 2, "categoria": "Formas geométricas", "palavras": ["quadrado", "círculo", "losango", "retângulo"] },
-      { "nivel": 3, "categoria": "Cartas do baralho", "palavras": ["valete", "dama", "rei", "coringa"] },
-      { "nivel": 4, "categoria": "Peças de xadrez", "palavras": ["bispo", "peão", "torre", "cavalo"] }
-    ], "ambiguas": { "triângulo": ["Formas geométricas"], "rei": ["Peças de xadrez"] } },
-    { "id": "j017", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Sentimentos", "palavras": ["alegria", "tristeza", "raiva", "medo"] },
-      { "nivel": 2, "categoria": "Fenômenos do tempo", "palavras": ["chuva", "neve", "granizo", "trovão"] },
-      { "nivel": 3, "categoria": "Datas comemorativas", "palavras": ["Natal", "Páscoa", "Carnaval", "Réveillon"] },
-      { "nivel": 4, "categoria": "Coisas que se quebram", "palavras": ["recorde", "gelo", "promessa", "silêncio"] }
-    ], "ambiguas": {} },
-    { "id": "j018", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Mamíferos aquáticos", "palavras": ["golfinho", "baleia", "foca", "lontra"] },
-      { "nivel": 2, "categoria": "Felinos", "palavras": ["leão", "tigre", "onça", "gato"] },
-      { "nivel": 3, "categoria": "Signos", "palavras": ["escorpião", "capricórnio", "gêmeos", "câncer"] },
-      { "nivel": 4, "categoria": "Animais do cerrado", "palavras": ["tatu", "ema", "seriema", "tamanduá"] }
-    ], "ambiguas": { "leão": ["Signos"] } },
-    { "id": "j019", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Peças de roupa", "palavras": ["camisa", "calça", "saia", "vestido"] },
-      { "nivel": 2, "categoria": "Acessórios", "palavras": ["brinco", "colar", "pulseira", "anel"] },
-      { "nivel": 3, "categoria": "Tecidos", "palavras": ["algodão", "seda", "linho", "jeans"] },
-      { "nivel": 4, "categoria": "Coisas que têm botões", "palavras": ["controle", "elevador", "calculadora", "campainha"] }
-    ], "ambiguas": { "camisa": ["Coisas que têm botões"] } },
-    { "id": "j020", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Turma do Sítio do Picapau Amarelo", "palavras": ["Emília", "Narizinho", "Pedrinho", "Visconde"] },
-      { "nivel": 2, "categoria": "Folclore brasileiro", "palavras": ["saci", "iara", "curupira", "Cuca"] },
-      { "nivel": 3, "categoria": "Bichos de rio", "palavras": ["boto", "piranha", "jacaré", "capivara"] },
-      { "nivel": 4, "categoria": "Bebidas típicas", "palavras": ["caipirinha", "chimarrão", "tereré", "quentão"] }
-    ], "ambiguas": { "Cuca": ["Turma do Sítio do Picapau Amarelo"], "boto": ["Folclore brasileiro"] } },
-    { "id": "j021", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Notas musicais", "palavras": ["dó", "ré", "mi", "sol"] },
-      { "nivel": 2, "categoria": "Astros", "palavras": ["lua", "estrela", "cometa", "planeta"] },
-      { "nivel": 3, "categoria": "Moedas", "palavras": ["real", "euro", "dólar", "peso"] },
-      { "nivel": 4, "categoria": "Unidades de medida", "palavras": ["metro", "litro", "quilo", "grama"] }
-    ], "ambiguas": { "sol": ["Astros"], "peso": ["Unidades de medida"] } },
-    { "id": "j022", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Coisas da sala de aula", "palavras": ["lousa", "giz", "apagador", "mochila"] },
-      { "nivel": 2, "categoria": "Coisas que vão na bolsa", "palavras": ["chave", "celular", "batom", "carteira"] },
-      { "nivel": 3, "categoria": "Documentos", "palavras": ["passaporte", "certidão", "diploma", "título"] },
-      { "nivel": 4, "categoria": "Jogos de tabuleiro", "palavras": ["xadrez", "damas", "ludo", "gamão"] }
-    ], "ambiguas": { "carteira": ["Coisas da sala de aula"] } },
-    { "id": "j023", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Coisas redondas", "palavras": ["bola", "moeda", "pneu", "prato"] },
-      { "nivel": 2, "categoria": "Esportes de raquete", "palavras": ["tênis", "badminton", "squash", "frescobol"] },
-      { "nivel": 3, "categoria": "Calçados", "palavras": ["chinelo", "sandália", "bota", "sapato"] },
-      { "nivel": 4, "categoria": "Café da manhã", "palavras": ["pão", "manteiga", "queijo", "mamão"] }
-    ], "ambiguas": { "tênis": ["Calçados"] } },
-    { "id": "j024", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Ferramentas", "palavras": ["martelo", "serrote", "alicate", "furadeira"] },
-      { "nivel": 2, "categoria": "Coisas que abrem portas", "palavras": ["chave", "senha", "cartão", "controle"] },
-      { "nivel": 3, "categoria": "Partes da porta", "palavras": ["maçaneta", "dobradiça", "fechadura", "batente"] },
-      { "nivel": 4, "categoria": "Coisas do banheiro", "palavras": ["sabonete", "toalha", "escova", "xampu"] }
-    ], "ambiguas": { "chave": ["Ferramentas"] } },
-    { "id": "j025", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Pássaros", "palavras": ["sabiá", "canário", "pardal", "andorinha"] },
-      { "nivel": 2, "categoria": "Profissões artísticas", "palavras": ["ator", "pintor", "escultor", "cantor"] },
-      { "nivel": 3, "categoria": "Coisas amarelas", "palavras": ["banana", "gema", "girassol", "mostarda"] },
-      { "nivel": 4, "categoria": "Gírias para comida", "palavras": ["rango", "boia", "gororoba", "papa"] }
-    ], "ambiguas": { "canário": ["Coisas amarelas"] } },
-    { "id": "j026", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Instrumentos de sopro", "palavras": ["flauta", "saxofone", "trompete", "clarinete"] },
-      { "nivel": 2, "categoria": "Coisas do jardim", "palavras": ["regador", "ancinho", "vaso", "tesoura"] },
-      { "nivel": 3, "categoria": "Árvores brasileiras", "palavras": ["ipê", "jacarandá", "jequitibá", "mangueira"] },
-      { "nivel": 4, "categoria": "Coisas que têm agulha", "palavras": ["seringa", "bússola", "pinheiro", "vitrola"] }
-    ], "ambiguas": { "mangueira": ["Coisas do jardim"], "pinheiro": ["Árvores brasileiras"] } },
-    { "id": "j027", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Coisas quentes", "palavras": ["forno", "febre", "pimenta", "verão"] },
-      { "nivel": 2, "categoria": "Flores", "palavras": ["orquídea", "lírio", "cravo", "primavera"] },
-      { "nivel": 3, "categoria": "Coisas de Carnaval", "palavras": ["confete", "serpentina", "fantasia", "marchinha"] },
-      { "nivel": 4, "categoria": "Instrumentos de corda", "palavras": ["violino", "cavaquinho", "harpa", "viola"] }
-    ], "ambiguas": { "cravo": ["Instrumentos de corda"] } },
-    { "id": "j028", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Família", "palavras": ["tio", "primo", "avó", "sogra"] },
-      { "nivel": 2, "categoria": "Gírias para amigo", "palavras": ["parça", "mano", "chegado", "brother"] },
-      { "nivel": 3, "categoria": "Títulos de nobreza", "palavras": ["rei", "duque", "conde", "barão"] },
-      { "nivel": 4, "categoria": "Sabores de pizza", "palavras": ["calabresa", "marguerita", "portuguesa", "muçarela"] }
-    ], "ambiguas": {} },
-    { "id": "j029", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Frutas vermelhas", "palavras": ["morango", "framboesa", "amora", "cereja"] },
-      { "nivel": 2, "categoria": "Coisas que iluminam", "palavras": ["lâmpada", "vela", "lanterna", "farol"] },
-      { "nivel": 3, "categoria": "Partes do olho", "palavras": ["íris", "pupila", "córnea", "retina"] },
-      { "nivel": 4, "categoria": "Coisas que piscam", "palavras": ["olho", "vagalume", "semáforo", "cursor"] }
-    ], "ambiguas": { "farol": ["Coisas que piscam"] } },
-    { "id": "j030", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Capitais brasileiras", "palavras": ["Recife", "Salvador", "Manaus", "Curitiba"] },
-      { "nivel": 2, "categoria": "Frutas cítricas", "palavras": ["limão", "laranja", "tangerina", "lima"] },
-      { "nivel": 3, "categoria": "Comidas de boteco", "palavras": ["torresmo", "pastel", "coxinha", "bolinho"] },
-      { "nivel": 4, "categoria": "Cartões-postais do Rio", "palavras": ["Corcovado", "Maracanã", "Lapa", "Urca"] }
-    ], "ambiguas": {} },
-    { "id": "j031", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Gêneros de filme", "palavras": ["terror", "comédia", "drama", "ação"] },
-      { "nivel": 2, "categoria": "Gêneros musicais", "palavras": ["rock", "funk", "samba", "pagode"] },
-      { "nivel": 3, "categoria": "Coisas do cinema", "palavras": ["pipoca", "ingresso", "tela", "poltrona"] },
-      { "nivel": 4, "categoria": "Profissões do cinema", "palavras": ["diretor", "roteirista", "figurinista", "dublê"] }
-    ], "ambiguas": {} },
-    { "id": "j032", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Sobremesas", "palavras": ["pudim", "brigadeiro", "mousse", "quindim"] },
-      { "nivel": 2, "categoria": "Salgados", "palavras": ["coxinha", "empada", "esfiha", "quibe"] },
-      { "nivel": 3, "categoria": "Comidas árabes", "palavras": ["homus", "tabule", "coalhada", "falafel"] },
-      { "nivel": 4, "categoria": "Frios", "palavras": ["presunto", "salame", "mortadela", "copa"] }
-    ], "ambiguas": { "esfiha": ["Comidas árabes"], "quibe": ["Comidas árabes"] } },
-    { "id": "j033", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Jogadas do futebol", "palavras": ["chute", "drible", "cabeçada", "passe"] },
-      { "nivel": 2, "categoria": "Partes do campo", "palavras": ["área", "trave", "rede", "escanteio"] },
-      { "nivel": 3, "categoria": "Coisas de pescaria", "palavras": ["anzol", "vara", "isca", "molinete"] },
-      { "nivel": 4, "categoria": "Coisas que se dão", "palavras": ["abraço", "presente", "bronca", "palpite"] }
-    ], "ambiguas": { "rede": ["Coisas de pescaria"] } },
-    { "id": "j034", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Deuses gregos", "palavras": ["Zeus", "Hera", "Atena", "Apolo"] },
-      { "nivel": 2, "categoria": "Heróis gregos", "palavras": ["Aquiles", "Hércules", "Perseu", "Ulisses"] },
-      { "nivel": 3, "categoria": "Letras gregas", "palavras": ["alfa", "beta", "gama", "delta"] },
-      { "nivel": 4, "categoria": "Constelações", "palavras": ["Órion", "Cassiopeia", "Andrômeda", "Pégaso"] }
-    ], "ambiguas": {} },
-    { "id": "j035", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Partes do computador", "palavras": ["mouse", "teclado", "monitor", "gabinete"] },
-      { "nivel": 2, "categoria": "Coisas com teclas", "palavras": ["piano", "calculadora", "acordeão", "controle"] },
-      { "nivel": 3, "categoria": "Termos de internet", "palavras": ["senha", "link", "perfil", "curtida"] },
-      { "nivel": 4, "categoria": "Bichos que se escondem na casca", "palavras": ["tatu", "tartaruga", "caracol", "caranguejo"] }
-    ], "ambiguas": { "teclado": ["Coisas com teclas"] } },
-    { "id": "j036", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Docinhos de festa", "palavras": ["beijinho", "cajuzinho", "bombom", "pirulito"] },
-      { "nivel": 2, "categoria": "Apelidos carinhosos", "palavras": ["amor", "querido", "fofo", "benzinho"] },
-      { "nivel": 3, "categoria": "Coisas de bebê", "palavras": ["chupeta", "fralda", "mamadeira", "berço"] },
-      { "nivel": 4, "categoria": "Coisas barulhentas", "palavras": ["sirene", "buzina", "apito", "despertador"] }
-    ], "ambiguas": {} },
-    { "id": "j037", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Partes do rosto", "palavras": ["nariz", "boca", "queixo", "testa"] },
-      { "nivel": 2, "categoria": "Formas de relevo", "palavras": ["montanha", "planalto", "planície", "vale"] },
-      { "nivel": 3, "categoria": "Formas de pagamento", "palavras": ["moeda", "cheque", "cartão", "boleto"] },
-      { "nivel": 4, "categoria": "Coisas da prova", "palavras": ["nota", "questão", "gabarito", "rascunho"] }
-    ], "ambiguas": { "nota": ["Formas de pagamento"] } },
-    { "id": "j038", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Bichos de estimação", "palavras": ["cachorro", "gato", "hamster", "calopsita"] },
-      { "nivel": 2, "categoria": "Raças de cachorro", "palavras": ["poodle", "labrador", "pug", "dálmata"] },
-      { "nivel": 3, "categoria": "Raças de gato", "palavras": ["siamês", "persa", "angorá", "birmanês"] },
-      { "nivel": 4, "categoria": "Comandos para cachorro", "palavras": ["senta", "deita", "fica", "pega"] }
-    ], "ambiguas": {} },
-    { "id": "j039", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Coisas que flutuam", "palavras": ["boia", "rolha", "isopor", "jangada"] },
-      { "nivel": 2, "categoria": "Coisas de festa de aniversário", "palavras": ["balão", "bolo", "vela", "docinho"] },
-      { "nivel": 3, "categoria": "Partes do barco", "palavras": ["casco", "leme", "mastro", "âncora"] },
-      { "nivel": 4, "categoria": "Coisas que iluminam", "palavras": ["lanterna", "lâmpada", "abajur", "lustre"] }
-    ], "ambiguas": { "vela": ["Partes do barco", "Coisas que iluminam"] } },
-    { "id": "j040", "status": "rascunho", "grupos": [
-      { "nivel": 1, "categoria": "Esportes radicais", "palavras": ["surfe", "rapel", "skate", "paraquedismo"] },
-      { "nivel": 2, "categoria": "Coisas da academia", "palavras": ["halter", "anilha", "colchonete", "esteira"] },
-      { "nivel": 3, "categoria": "Coisas que cobrem o chão", "palavras": ["tapete", "carpete", "piso", "capacho"] },
-      { "nivel": 4, "categoria": "Partes do skate", "palavras": ["shape", "rodinha", "lixa", "truck"] }
-    ], "ambiguas": { "esteira": ["Coisas que cobrem o chão"] } }
-  ]
+ "fonte": "Quebra-cabeças autorais da Palpitaria (rascunhos gerados com apoio de IA, aguardando revisão humana)",
+ "licenca": "Conteúdo próprio",
+ "puzzles": [
+  {
+   "id": "k001",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Frutas",
+     "palavras": [
+      "caju",
+      "figo",
+      "kiwi",
+      "pera"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm dentes",
+     "palavras": [
+      "pente",
+      "serra",
+      "zíper",
+      "alho"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Pé de ___",
+     "palavras": [
+      "moleque",
+      "cabra",
+      "pato",
+      "meia"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem partes do corpo",
+     "palavras": [
+      "mamão",
+      "repolho",
+      "abraço",
+      "punhal"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "mamão": [
+     "Frutas"
+    ]
+   }
+  },
+  {
+   "id": "k002",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Aves",
+     "palavras": [
+      "coruja",
+      "tucano",
+      "garça",
+      "pombo"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm asa",
+     "palavras": [
+      "xícara",
+      "panela",
+      "avião",
+      "nariz"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Olho de ___",
+     "palavras": [
+      "gato",
+      "sogra",
+      "peixe",
+      "boi"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem cores",
+     "palavras": [
+      "prosa",
+      "azulejo",
+      "medíocre",
+      "pardal"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "pardal": [
+     "Aves"
+    ]
+   }
+  },
+  {
+   "id": "k003",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Instrumentos musicais",
+     "palavras": [
+      "flauta",
+      "tuba",
+      "harpa",
+      "violino"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm teclas",
+     "palavras": [
+      "piano",
+      "calculadora",
+      "notebook",
+      "controle"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Dor de ___",
+     "palavras": [
+      "cotovelo",
+      "cabeça",
+      "barriga",
+      "dente"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem números",
+     "palavras": [
+      "cemitério",
+      "milho",
+      "dezembro",
+      "bronze"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "piano": [
+     "Instrumentos musicais"
+    ]
+   }
+  },
+  {
+   "id": "k004",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Peças de roupa",
+     "palavras": [
+      "blusa",
+      "saia",
+      "colete",
+      "bermuda"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm coroa",
+     "palavras": [
+      "rei",
+      "dente",
+      "abacaxi",
+      "relógio"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Banho de ___",
+     "palavras": [
+      "sol",
+      "loja",
+      "espuma",
+      "cheiro"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem animais",
+     "palavras": [
+      "sapato",
+      "barato",
+      "percurso",
+      "regalo"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "sapato": [
+     "Peças de roupa"
+    ]
+   }
+  },
+  {
+   "id": "k005",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Esportes",
+     "palavras": [
+      "vôlei",
+      "surfe",
+      "judô",
+      "xadrez"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Estampas",
+     "palavras": [
+      "poá",
+      "floral",
+      "oncinha",
+      "listrado"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Mão de ___",
+     "palavras": [
+      "obra",
+      "vaca",
+      "ferro",
+      "tinta"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Gírias para dinheiro",
+     "palavras": [
+      "grana",
+      "bufunfa",
+      "tutu",
+      "cascalho"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "xadrez": [
+     "Estampas"
+    ]
+   }
+  },
+  {
+   "id": "k006",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Cômodos da casa",
+     "palavras": [
+      "sala",
+      "cozinha",
+      "quarto",
+      "varanda"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Frações",
+     "palavras": [
+      "meio",
+      "terço",
+      "quinto",
+      "décimo"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Bola de ___",
+     "palavras": [
+      "neve",
+      "cristal",
+      "gude",
+      "pelo"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Palíndromos",
+     "palavras": [
+      "osso",
+      "radar",
+      "reviver",
+      "arara"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "quarto": [
+     "Frações"
+    ]
+   }
+  },
+  {
+   "id": "k007",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Partes do carro",
+     "palavras": [
+      "volante",
+      "pneu",
+      "freio",
+      "capô"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm pé",
+     "palavras": [
+      "mesa",
+      "montanha",
+      "alface",
+      "página"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Cara de ___",
+     "palavras": [
+      "pau",
+      "tacho",
+      "paisagem",
+      "anjo"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Começam com nota musical",
+     "palavras": [
+      "dominó",
+      "remédio",
+      "soldado",
+      "lápis"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "k008",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Temperos",
+     "palavras": [
+      "cominho",
+      "orégano",
+      "canela",
+      "cravo"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Flores",
+     "palavras": [
+      "rosa",
+      "margarida",
+      "lírio",
+      "violeta"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Peixe-___",
+     "palavras": [
+      "espada",
+      "boi",
+      "voador",
+      "galo"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem metais",
+     "palavras": [
+      "tesouro",
+      "descobre",
+      "cansaço",
+      "ferrolho"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "cravo": [
+     "Flores"
+    ]
+   }
+  },
+  {
+   "id": "k009",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Signos",
+     "palavras": [
+      "leão",
+      "touro",
+      "escorpião",
+      "câncer"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Animais da savana",
+     "palavras": [
+      "zebra",
+      "girafa",
+      "hiena",
+      "rinoceronte"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Casa de ___",
+     "palavras": [
+      "máquinas",
+      "ferreiro",
+      "marimbondo",
+      "praia"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem bebidas",
+     "palavras": [
+      "chave",
+      "regime",
+      "deleite",
+      "rumor"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "leão": [
+     "Animais da savana"
+    ]
+   }
+  },
+  {
+   "id": "k010",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Moedas",
+     "palavras": [
+      "euro",
+      "iene",
+      "rublo",
+      "peso"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm folhas",
+     "palavras": [
+      "caderno",
+      "árvore",
+      "alface",
+      "porta"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Ovo de ___",
+     "palavras": [
+      "páscoa",
+      "colombo",
+      "codorna",
+      "galinha"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Capitais que também são palavras comuns",
+     "palavras": [
+      "natal",
+      "vitória",
+      "palmas",
+      "salvador"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "k011",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Legumes",
+     "palavras": [
+      "cenoura",
+      "abobrinha",
+      "beterraba",
+      "chuchu"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm casca",
+     "palavras": [
+      "ovo",
+      "árvore",
+      "ferida",
+      "noz"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Cabeça de ___",
+     "palavras": [
+      "vento",
+      "bagre",
+      "alho",
+      "prego"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"mar\"",
+     "palavras": [
+      "amargo",
+      "camarão",
+      "amarelo",
+      "amarrar"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "cenoura": [
+     "Têm casca"
+    ]
+   }
+  },
+  {
+   "id": "k012",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Material escolar",
+     "palavras": [
+      "lápis",
+      "borracha",
+      "régua",
+      "estojo"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm ponta",
+     "palavras": [
+      "faca",
+      "agulha",
+      "iceberg",
+      "nariz"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Saco de ___",
+     "palavras": [
+      "pancada",
+      "gatos",
+      "dormir",
+      "pão"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem astros",
+     "palavras": [
+      "martelo",
+      "terraço",
+      "solteiro",
+      "luar"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "lápis": [
+     "Têm ponta"
+    ]
+   }
+  },
+  {
+   "id": "k013",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Doces brasileiros",
+     "palavras": [
+      "brigadeiro",
+      "cocada",
+      "paçoca",
+      "quindim"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Patentes militares",
+     "palavras": [
+      "soldado",
+      "cabo",
+      "sargento",
+      "general"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Chuva de ___",
+     "palavras": [
+      "granizo",
+      "verão",
+      "meteoros",
+      "arroz"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Também são \"eu ___\"",
+     "palavras": [
+      "rio",
+      "canto",
+      "jogo",
+      "selo"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "brigadeiro": [
+     "Patentes militares"
+    ]
+   }
+  },
+  {
+   "id": "k014",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Peixes",
+     "palavras": [
+      "atum",
+      "salmão",
+      "sardinha",
+      "tilápia"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Também são cores",
+     "palavras": [
+      "vinho",
+      "gelo",
+      "creme",
+      "coral"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Rato de ___",
+     "palavras": [
+      "biblioteca",
+      "academia",
+      "praia",
+      "esgoto"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"ano\"",
+     "palavras": [
+      "piano",
+      "engano",
+      "oceano",
+      "tucano"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "salmão": [
+     "Também são cores"
+    ]
+   }
+  },
+  {
+   "id": "k015",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Utensílios de cozinha",
+     "palavras": [
+      "concha",
+      "colher",
+      "panela",
+      "peneira"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Coisas da praia",
+     "palavras": [
+      "areia",
+      "onda",
+      "canga",
+      "boia"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Quebra-___",
+     "palavras": [
+      "cabeça",
+      "mar",
+      "molas",
+      "nozes"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem nomes de gente",
+     "palavras": [
+      "banana",
+      "óleo",
+      "ruído",
+      "motivo"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "concha": [
+     "Coisas da praia"
+    ]
+   }
+  },
+  {
+   "id": "k016",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Animais de fazenda",
+     "palavras": [
+      "cabra",
+      "ovelha",
+      "galinha",
+      "porco"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Horóscopo chinês",
+     "palavras": [
+      "dragão",
+      "macaco",
+      "tigre",
+      "rato"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Linha de ___",
+     "palavras": [
+      "frente",
+      "chegada",
+      "montagem",
+      "pipa"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem países",
+     "palavras": [
+      "incubadora",
+      "malícia",
+      "romã",
+      "perua"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "cabra": [
+     "Horóscopo chinês"
+    ],
+    "porco": [
+     "Horóscopo chinês"
+    ],
+    "perua": [
+     "Animais de fazenda"
+    ]
+   }
+  },
+  {
+   "id": "k017",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Partes da árvore",
+     "palavras": [
+      "raiz",
+      "tronco",
+      "galho",
+      "folha"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm raiz",
+     "palavras": [
+      "dente",
+      "cabelo",
+      "número",
+      "problema"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Boca de ___",
+     "palavras": [
+      "lobo",
+      "siri",
+      "fumo",
+      "urna"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Anagramas entre si",
+     "palavras": [
+      "ramo",
+      "roma",
+      "mora",
+      "armo"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "ramo": [
+     "Partes da árvore"
+    ]
+   }
+  },
+  {
+   "id": "k018",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Esportes olímpicos",
+     "palavras": [
+      "remo",
+      "esgrima",
+      "tiro",
+      "vela"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Coisas que se acendem",
+     "palavras": [
+      "fósforo",
+      "lâmpada",
+      "fogueira",
+      "cigarro"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Pão de ___",
+     "palavras": [
+      "queijo",
+      "ló",
+      "mel",
+      "açúcar"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"cão\"",
+     "palavras": [
+      "falcão",
+      "vulcão",
+      "balcão",
+      "facão"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "vela": [
+     "Coisas que se acendem"
+    ]
+   }
+  },
+  {
+   "id": "k019",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Pratos típicos",
+     "palavras": [
+      "feijoada",
+      "moqueca",
+      "acarajé",
+      "vatapá"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Ritmos brasileiros",
+     "palavras": [
+      "samba",
+      "frevo",
+      "axé",
+      "forró"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Bala de ___",
+     "palavras": [
+      "goma",
+      "coco",
+      "hortelã",
+      "festim"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Siglas que viraram palavras",
+     "palavras": [
+      "laser",
+      "radar",
+      "ovni",
+      "sonar"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "k020",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Profissões",
+     "palavras": [
+      "pedreiro",
+      "padeiro",
+      "carteiro",
+      "pintor"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Peças de xadrez",
+     "palavras": [
+      "torre",
+      "cavalo",
+      "rainha",
+      "peão"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Mesa de ___",
+     "palavras": [
+      "cabeceira",
+      "bilhar",
+      "centro",
+      "jantar"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Mudam de sentido com um acento",
+     "palavras": [
+      "sabia",
+      "coco",
+      "baba",
+      "pais"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "peão": [
+     "Profissões"
+    ]
+   }
+  },
+  {
+   "id": "k021",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Bebidas",
+     "palavras": [
+      "chá",
+      "café",
+      "suco",
+      "vitamina"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Nutrientes",
+     "palavras": [
+      "proteína",
+      "ferro",
+      "cálcio",
+      "fibra"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Ponto de ___",
+     "palavras": [
+      "ônibus",
+      "encontro",
+      "interrogação",
+      "exclamação"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"chá\"",
+     "palavras": [
+      "chácara",
+      "achado",
+      "machado",
+      "chave"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "vitamina": [
+     "Nutrientes"
+    ]
+   }
+  },
+  {
+   "id": "k022",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Partes do rosto",
+     "palavras": [
+      "testa",
+      "queixo",
+      "bochecha",
+      "nariz"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Geografia",
+     "palavras": [
+      "cabo",
+      "golfo",
+      "istmo",
+      "baía"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Categorias do boxe",
+     "palavras": [
+      "pena",
+      "galo",
+      "mosca",
+      "pesado"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"cama\"",
+     "palavras": [
+      "camada",
+      "camaleão",
+      "camarim",
+      "camarada"
+     ]
+    }
+   ],
+   "ambiguas": {}
+  },
+  {
+   "id": "k023",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Sabores de pizza",
+     "palavras": [
+      "calabresa",
+      "portuguesa",
+      "muçarela",
+      "napolitana"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Gentílicos femininos",
+     "palavras": [
+      "carioca",
+      "paulista",
+      "baiana",
+      "mineira"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Água-___",
+     "palavras": [
+      "viva",
+      "marinha",
+      "benta",
+      "sanitária"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Têm todas as vogais",
+     "palavras": [
+      "eucalipto",
+      "sequoia",
+      "aquecido",
+      "reunião"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "portuguesa": [
+     "Gentílicos femininos"
+    ],
+    "napolitana": [
+     "Gentílicos femininos"
+    ]
+   }
+  },
+  {
+   "id": "k024",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Animais da Amazônia",
+     "palavras": [
+      "onça",
+      "boto",
+      "preguiça",
+      "anta"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Pecados capitais",
+     "palavras": [
+      "gula",
+      "inveja",
+      "ira",
+      "soberba"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Cão de ___",
+     "palavras": [
+      "guarda",
+      "caça",
+      "rua",
+      "raça"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"rio\"",
+     "palavras": [
+      "armário",
+      "frio",
+      "cenário",
+      "salário"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "preguiça": [
+     "Pecados capitais"
+    ]
+   }
+  },
+  {
+   "id": "k025",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Partes do computador",
+     "palavras": [
+      "mouse",
+      "teclado",
+      "gabinete",
+      "monitor"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Cargos de escola",
+     "palavras": [
+      "diretor",
+      "coordenador",
+      "inspetor",
+      "reitor"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Chave de ___",
+     "palavras": [
+      "fenda",
+      "cadeia",
+      "ouro",
+      "braço"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"ilha\"",
+     "palavras": [
+      "pilha",
+      "milha",
+      "filha",
+      "armadilha"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "monitor": [
+     "Cargos de escola"
+    ]
+   }
+  },
+  {
+   "id": "k026",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Coisas do banheiro",
+     "palavras": [
+      "toalha",
+      "sabonete",
+      "xampu",
+      "escova"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm cerdas",
+     "palavras": [
+      "pincel",
+      "vassoura",
+      "javali",
+      "porco"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Ano-___",
+     "palavras": [
+      "luz",
+      "novo",
+      "letivo",
+      "bissexto"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Anagramas entre si",
+     "palavras": [
+      "casar",
+      "sacar",
+      "arcas",
+      "sacra"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "escova": [
+     "Têm cerdas"
+    ]
+   }
+  },
+  {
+   "id": "k027",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Sobremesas",
+     "palavras": [
+      "pudim",
+      "mousse",
+      "sorvete",
+      "torta"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Produtos para cabelo",
+     "palavras": [
+      "gel",
+      "condicionador",
+      "pomada",
+      "laquê"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Pedra de ___",
+     "palavras": [
+      "toque",
+      "gelo",
+      "amolar",
+      "isqueiro"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"vela\"",
+     "palavras": [
+      "novela",
+      "caravela",
+      "revelar",
+      "nivelar"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "mousse": [
+     "Produtos para cabelo"
+    ]
+   }
+  },
+  {
+   "id": "k028",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Árvores",
+     "palavras": [
+      "ipê",
+      "pinheiro",
+      "jacarandá",
+      "mangueira"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Equipamentos de bombeiro",
+     "palavras": [
+      "escada",
+      "extintor",
+      "sirene",
+      "capacete"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Coração de ___",
+     "palavras": [
+      "mãe",
+      "pedra",
+      "ouro",
+      "galinha"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"dia\"",
+     "palavras": [
+      "média",
+      "tragédia",
+      "comédia",
+      "cotidiano"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "mangueira": [
+     "Equipamentos de bombeiro"
+    ]
+   }
+  },
+  {
+   "id": "k029",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Naipes",
+     "palavras": [
+      "copas",
+      "espadas",
+      "ouros",
+      "paus"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Armas antigas",
+     "palavras": [
+      "lanças",
+      "adagas",
+      "flechas",
+      "arcos"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Fim de ___",
+     "palavras": [
+      "semana",
+      "papo",
+      "linha",
+      "mundo"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"gol\"",
+     "palavras": [
+      "golfinho",
+      "angola",
+      "gole",
+      "golpe"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "espadas": [
+     "Armas antigas"
+    ]
+   }
+  },
+  {
+   "id": "k030",
+   "status": "rascunho",
+   "grupos": [
+    {
+     "nivel": 1,
+     "categoria": "Folclore brasileiro",
+     "palavras": [
+      "saci",
+      "curupira",
+      "iara",
+      "boitatá"
+     ]
+    },
+    {
+     "nivel": 2,
+     "categoria": "Têm um pé só",
+     "palavras": [
+      "taça",
+      "abajur",
+      "cogumelo",
+      "flamingo"
+     ]
+    },
+    {
+     "nivel": 3,
+     "categoria": "Rabo de ___",
+     "palavras": [
+      "galo",
+      "cavalo",
+      "foguete",
+      "saia"
+     ]
+    },
+    {
+     "nivel": 4,
+     "categoria": "Escondem \"rua\"",
+     "palavras": [
+      "crua",
+      "grua",
+      "arruaça",
+      "carruagem"
+     ]
+    }
+   ],
+   "ambiguas": {
+    "saci": [
+     "Têm um pé só"
+    ]
+   }
+  }
+ ]
 }

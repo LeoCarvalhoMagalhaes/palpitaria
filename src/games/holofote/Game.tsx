@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { fetchData, imageUrl, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
 import { useL, useLang, useSettings } from '@/core/settings'
+import { VolumeControl } from '@/components/VolumeControl'
 import { ClipPlayer, getPreview, unlockAudio, type PreviewInfo } from '@/core/preview'
 import type { Song } from '@/config/music'
 import { HINT_AFTER, MAX_GUESSES, attr, compare, countryName, dailyArtist, flagEmoji, hintFor, shareText, type Artist, type Match } from './logic'
@@ -118,38 +119,41 @@ function ArtistHit({ artist }: { artist: string }) {
 
   if (!song) return null
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-card p-3 text-left sticker">
-      {info?.artworkUrl && <img src={info.artworkUrl} alt="" className="size-14 rounded-lg" />}
-      <div className="min-w-0 flex-1">
-        <p className="truncate font-semibold">{song.title}</p>
-        <p className="text-xs text-muted-foreground">
-          {L('Prévia cedida pela Apple Music', 'Preview provided by Apple Music')}
-          {info && (
-            <>
-              {' · '}
-              <a className="underline" href={info.trackViewUrl} target="_blank" rel="noopener noreferrer">
-                {L('ouvir completa', 'listen in full')}
-              </a>
-            </>
-          )}
-        </p>
+    <div className="space-y-2">
+      <div className="flex items-center gap-3 rounded-2xl bg-card p-3 text-left sticker">
+        {info?.artworkUrl && <img src={info.artworkUrl} alt="" className="size-14 rounded-lg" />}
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-semibold">{song.title}</p>
+          <p className="text-xs text-muted-foreground">
+            {L('Prévia cedida pela Apple Music', 'Preview provided by Apple Music')}
+            {info && (
+              <>
+                {' · '}
+                <a className="underline" href={info.trackViewUrl} target="_blank" rel="noopener noreferrer">
+                  {L('ouvir completa', 'listen in full')}
+                </a>
+              </>
+            )}
+          </p>
+        </div>
+        <Button
+          variant="pop"
+          size="icon-lg"
+          aria-label={playing ? L('Parar', 'Stop') : L(`Ouvir ${song.title}`, `Play ${song.title}`)}
+          onClick={() => {
+            if (playing) {
+              player.current.stop()
+              return
+            }
+            unlockAudio()
+            setPlaying(true)
+            player.current.play(song.appleId!, 0, 30000, settings.volume, () => setPlaying(false)).catch(() => setPlaying(false))
+          }}
+        >
+          {playing ? <Pause /> : <PlayIcon />}
+        </Button>
       </div>
-      <Button
-        variant="pop"
-        size="icon-lg"
-        aria-label={playing ? L('Parar', 'Stop') : L(`Ouvir ${song.title}`, `Play ${song.title}`)}
-        onClick={() => {
-          if (playing) {
-            player.current.stop()
-            return
-          }
-          unlockAudio()
-          setPlaying(true)
-          player.current.play(song.appleId!, 0, 30000, settings.volume, () => setPlaying(false)).catch(() => setPlaying(false))
-        }}
-      >
-        {playing ? <Pause /> : <PlayIcon />}
-      </Button>
+      <VolumeControl className="justify-center" />
     </div>
   )
 }

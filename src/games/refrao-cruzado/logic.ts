@@ -49,24 +49,33 @@ export interface TrackMeta {
   info?: { gender: string; members: number; country: string; countryName: string } | null
 }
 
+/**
+ * Tema do dia: o tema está nas perguntas e respostas, não na escolha das músicas. As faixas vêm do repertório
+ * inteiro; o tema define o que se pergunta sobre elas:
+ *  - "word": a resposta é uma palavra do título (ou do nome de quem canta) que pertence ao tema (cores, números…);
+ *  - "mix": perguntas variadas (título, completar o título, quem canta, gênero, país…);
+ *  - "names": quem canta (nome artístico, primeiro nome, sobrenome, banda);
+ *  - "titles": nomes de músicas (título inteiro ou completar o título);
+ *  - "world": país de origem de quem canta e lugares citados nos títulos;
+ *  - "bands": bandas (nome, número de integrantes, país);
+ *  - "artist": especial de um artista, com perguntas variadas (só de vez em quando).
+ */
 export interface Theme {
   id: string
   pt: string
   en: string
-  filter: (t: TrackMeta) => boolean
-  /** "year": as pistas citam o ano do sucesso (temas de década). */
-  context?: 'year'
+  kind: 'word' | 'mix' | 'names' | 'titles' | 'world' | 'bands' | 'artist'
+  /** Palavras do tema (já normalizadas), para os temas "word" e "world". */
+  words?: Set<string>
+  artist?: string
 }
-
-const inGenres = (list: string[]) => (t: TrackMeta) => !!t.genre && list.includes(t.genre)
-const between = (a: number, b: number) => (t: TrackMeta) => !!t.year && t.year >= a && t.year < b
 
 /** Artista principal: o primeiro nome antes de vírgula, "&", "feat." ou " x ". */
 export function mainArtist(artist: string): string {
   return artist.split(/,| & | feat\.? | ft\. | x | with /i)[0].trim()
 }
 
-/** Artistas com 10+ músicas no top: cada um ganha um dia de "especial". */
+/** Artistas com muitas músicas no repertório: cada um ganha, de tempos em tempos, um dia de "especial". */
 export const SPECIAL_ARTISTS = [
   'The Weeknd',
   'Taylor Swift',
@@ -85,36 +94,98 @@ export const SPECIAL_ARTISTS = [
   'Adele',
 ]
 
-export const THEMES: Theme[] = [
-  { id: 'top', pt: 'As mais tocadas do Spotify', en: "Spotify's most streamed", filter: () => true },
-  { id: 'classicos', pt: 'Clássicos de antes de 1990', en: 'Classics from before 1990', filter: between(0, 1990), context: 'year' },
-  { id: 'anos90', pt: 'Anos 90', en: 'The 90s', filter: between(1990, 2000), context: 'year' },
-  { id: 'anos2000', pt: 'Anos 2000', en: 'The 2000s', filter: between(2000, 2010), context: 'year' },
-  { id: 'anos2010', pt: 'Anos 2010', en: 'The 2010s', filter: between(2010, 2020), context: 'year' },
-  { id: 'anos2020', pt: 'Anos 2020', en: 'The 2020s', filter: between(2020, 2100), context: 'year' },
-  { id: 'hiphop', pt: 'Hip hop e rap', en: 'Hip hop and rap', filter: inGenres(['Hip-Hop/Rap', 'Rap', 'Hip-Hop']) },
-  { id: 'rock', pt: 'Rock e alternativo', en: 'Rock and alternative', filter: inGenres(['Rock', 'Hard Rock', 'Indie Rock', 'Alternative', 'Metal', 'Punk', 'Pop/Rock']) },
-  { id: 'latino', pt: 'Hits latinos', en: 'Latin hits', filter: inGenres(['Latin', 'Urbano latino', 'Pop Latino', 'Música Mexicana', 'Música tropical']) },
-  { id: 'pista', pt: 'Pista de dança', en: 'Dance floor', filter: inGenres(['Dance', 'House', 'Electronic', 'Electronica']) },
-  { id: 'rnb', pt: 'R&B e soul', en: 'R&B and soul', filter: inGenres(['R&B/Soul', 'Contemporary R&B', 'Neo-Soul']) },
-  { id: 'divas', pt: 'Divas do pop', en: 'Pop divas', filter: (t) => t.info?.gender === 'Feminino' && t.info.members === 1 },
-  { id: 'bandas', pt: 'Bandas', en: 'Bands', filter: (t) => (t.info?.members ?? 1) >= 2 },
-  ...SPECIAL_ARTISTS.map((name) => ({
-    id: `artista:${name}`,
-    pt: `Especial ${name}`,
-    en: `${name} special`,
-    filter: (t: TrackMeta) => mainArtist(t.artist) === name,
-  })),
+const lexicon = (text: string) => new Set(text.trim().split(/\s+/).map(normalizeAnswer))
+
+/** Palavras de cada tema em inglês, espanhol e português (os títulos misturam os três). */
+const WORDS = {
+  cores: lexicon(`red blue green yellow black white pink purple gold golden silver orange grey gray brown violet scarlet
+    rojo roja azul verde negro negra blanco blanca amarillo rosa vermelho vermelha preto preta branco branca amarelo dourado`),
+  numeros: lexicon(`one two three four five six seven eight nine ten eleven twelve twenty hundred thousand million billion first
+    uno tres cuatro cinco seis siete ocho nueve diez cien mil dois quatro sete oito nove`),
+  corpo: lexicon(`heart hearts eyes eye hands hand lips head body face skin mind bones blood feet arms hair teeth neck shoulder
+    legs mouth tongue soul corazon ojos boca manos piel cabeza coracao olhos mao cabeca corpo`),
+  natureza: lexicon(`rain sun sunshine moon stars star sky fire ice ocean sea river snow storm thunder lightning wind summer winter
+    spring flowers flower roses rose mountain earth water waves wave rainbow cloud clouds forest island garden paradise
+    lluvia sol luna mar cielo fuego agua chuva lua fogo estrella estrela flor verano`),
+  tempo: lexicon(`night nights tonight day days today tomorrow yesterday forever time times morning midnight sunday monday friday
+    saturday weekend year years now minute hour hours moment noche hoy ayer manana siempre noite hoje sempre agora ahora`),
+  sentimentos: lexicon(`love lover lovers lonely happy crazy sorry cry crying tears smile feel feeling sad happiness jealous hate kiss
+    heartbreak broken alone hurt fear afraid amor feliz saudade loco loca triste beso beijo paixao pasion`),
+  gente: lexicon(`baby girl girls boy boys man men woman women mama mami papi daddy mother father brother sister friend friends
+    lady king queen prince princess senorita chica nena hermano amigo amiga bebe girlfriend boyfriend hero stranger
+    strangers people mamacita`),
+  movimento: lexicon(`dance dancing dancin run running move moving fly flying fall falling walk walking ride drive jump shake
+    swing roll bailar baila bailando perreo danca`),
+  lugares: lexicon(`california paris london havana miami tokyo vegas america rome roma texas brazil brasil mexico africa hollywood
+    manhattan brooklyn jamaica italia spain berlin houston atlanta detroit memphis hawaii tennessee georgia carolina
+    alabama kentucky medellin puerto`),
+}
+
+const THEME_LIST: Theme[] = [
+  { id: 'misto', pt: 'Miscelânea', en: 'Grab bag', kind: 'mix' },
+  { id: 'cores', pt: 'Cores', en: 'Colors', kind: 'word', words: WORDS.cores },
+  { id: 'numeros', pt: 'Números', en: 'Numbers', kind: 'word', words: WORDS.numeros },
+  { id: 'corpo', pt: 'Corpo humano', en: 'The human body', kind: 'word', words: WORDS.corpo },
+  { id: 'natureza', pt: 'Natureza e clima', en: 'Nature and weather', kind: 'word', words: WORDS.natureza },
+  { id: 'tempo', pt: 'Dias, noites e tempo', en: 'Days, nights and time', kind: 'word', words: WORDS.tempo },
+  { id: 'sentimentos', pt: 'Amor e sentimentos', en: 'Love and feelings', kind: 'word', words: WORDS.sentimentos },
+  { id: 'gente', pt: 'Gente: família, amigos e realeza', en: 'People: family, friends and royalty', kind: 'word', words: WORDS.gente },
+  { id: 'movimento', pt: 'Dança e movimento', en: 'Dance and motion', kind: 'word', words: WORDS.movimento },
+  { id: 'mundo', pt: 'Pelo mundo', en: 'Around the world', kind: 'world', words: WORDS.lugares },
+  { id: 'nomes', pt: 'Quem canta?', en: 'Who sings it?', kind: 'names' },
+  { id: 'titulos', pt: 'Nomes de músicas', en: 'Song titles', kind: 'titles' },
+  { id: 'bandas', pt: 'Bandas', en: 'Bands', kind: 'bands' },
 ]
 
+export const ARTIST_THEMES: Theme[] = SPECIAL_ARTISTS.map((name) => ({
+  id: `artista:${name}`,
+  pt: `Especial ${name}`,
+  en: `${name} special`,
+  kind: 'artist',
+  artist: name,
+}))
+
+export const THEMES: Theme[] = [...THEME_LIST, ...ARTIST_THEMES]
+
+/** Temas antigos (de quando o tema escolhia as músicas): só o nome, para cruzadinhas já salvas. */
+const LEGACY: Record<string, [string, string]> = {
+  top: ['As mais tocadas do Spotify', "Spotify's most streamed"],
+  classicos: ['Clássicos de antes de 1990', 'Classics from before 1990'],
+  anos90: ['Anos 90', 'The 90s'],
+  anos2000: ['Anos 2000', 'The 2000s'],
+  anos2010: ['Anos 2010', 'The 2010s'],
+  anos2020: ['Anos 2020', 'The 2020s'],
+  hiphop: ['Hip hop e rap', 'Hip hop and rap'],
+  rock: ['Rock e alternativo', 'Rock and alternative'],
+  latino: ['Hits latinos', 'Latin hits'],
+  pista: ['Pista de dança', 'Dance floor'],
+  rnb: ['R&B e soul', 'R&B and soul'],
+  divas: ['Divas do pop', 'Pop divas'],
+}
+
 export function themeById(id: string | undefined): Theme {
+  const legacy = id ? LEGACY[id] : undefined
+  if (legacy) return { id: id!, pt: legacy[0], en: legacy[1], kind: 'mix' }
   return THEMES.find((t) => t.id === id) ?? THEMES[0]
 }
 
-/** Tema do dia: percorre a lista embaralhada, um tema por dia. */
-export function dailyTheme(number: number): Theme {
-  const order = seededShuffle(THEMES, 'refrao-cruzado:temas')
-  return order[(((number - 1) % order.length) + order.length) % order.length]
+/** A cada quantos dias entra um especial de artista. */
+export const ARTIST_EVERY = 9
+
+/**
+ * Tema do dia e "rodada" (quantas vezes o tema já saiu antes). A rodada faz o tema andar pela lista de
+ * músicas dele, para não repetir faixas até esgotar a lista.
+ */
+export function dailyTheme(number: number): { theme: Theme; round: number } {
+  const n = Math.max(1, number)
+  if (n % ARTIST_EVERY === 0) {
+    const k = n / ARTIST_EVERY - 1
+    const order = seededShuffle(ARTIST_THEMES, 'refrao-cruzado:artistas')
+    return { theme: order[k % order.length], round: Math.floor(k / order.length) }
+  }
+  const k = n - 1 - Math.floor(n / ARTIST_EVERY)
+  const order = seededShuffle(THEME_LIST, 'refrao-cruzado:temas')
+  return { theme: order[k % order.length], round: Math.floor(k / order.length) }
 }
 
 const NUMBERS: Record<Lang, string[]> = {
@@ -186,6 +257,8 @@ const NOT_FIRST_LAST = new Set(
 const T = {
   title: { pt: 'Nome desta música', en: 'Title of this song' },
   word: { pt: 'Complete o título', en: 'Fill in the title' },
+  artistWord: { pt: 'Complete o nome de quem canta', en: "Fill in the artist's name" },
+  bandWord: { pt: 'Complete o nome da banda', en: "Fill in the band's name" },
   artist: { pt: 'Quem canta este trecho?', en: 'Who sings this?' },
   band: { pt: 'Que banda é esta?', en: 'Which band is this?' },
   first: { pt: 'Primeiro nome de quem canta', en: "The singer's first name" },
@@ -199,64 +272,148 @@ const T = {
   portuguese: { pt: '', en: ' (in Portuguese)' },
 }
 
-/**
- * Monta candidatos com pistas variadas: título, completar o título,
- * artista (nome, primeiro nome ou sobrenome), gênero, país e número de integrantes.
- * Avisa quando a resposta está em outro idioma.
- */
+const fits = (answer: string) => answer.length >= 3 && answer.length <= WIDTH - 2
+
+/** Perguntas que o tema faz sobre uma faixa (pode ser nenhuma). Avisa quando a resposta está em outro idioma. */
+function questionsFor(t: TrackMeta, lang: Lang, theme: Theme): { answer: string; clue: string }[] {
+  const out: { answer: string; clue: string }[] = []
+  const add = (answer: string, clue: string) => {
+    if (fits(answer)) out.push({ answer, clue })
+  }
+  // Nomes e títulos com algarismos (Maroon 5, blink-182) viram palavra cortada: ficam de fora.
+  const word = (raw: string) => (/\d/.test(raw) ? '' : normalizeAnswer(raw))
+  const titleNote = t.titleLang === 'en' ? T.english[lang] : t.titleLang === 'es' ? T.spanish[lang] : t.titleLang === 'pt' ? T.portuguese[lang] : ''
+  const title = cleanTitle(t.song)
+  const artist = mainArtist(t.artist)
+  const isBand = (t.info?.members ?? 1) >= 2
+  const whole = word(title)
+  const words = title.split(/\s+/)
+  const artistWords = artist.split(/\s+/)
+  const fillTitle = (idx: number) => `${T.word[lang]}: “${words.map((w, i) => (i === idx ? '___' : w)).join(' ')}”${titleNote}`
+  const kind = theme.kind
+
+  // Palavra do tema no título ou no nome de quem canta.
+  if (kind === 'word' || kind === 'world') {
+    const lex = theme.words!
+    if (lex.has(whole)) add(whole, T.title[lang] + titleNote)
+    else if (words.length >= 2) {
+      const idx = words.findIndex((w) => lex.has(word(w)))
+      if (idx >= 0) add(word(words[idx]), fillTitle(idx))
+    }
+    if (artistWords.length >= 2) {
+      const idx = artistWords.findIndex((w) => lex.has(word(w)))
+      if (idx >= 0) {
+        const shown = artistWords.map((w, i) => (i === idx ? '___' : w)).join(' ')
+        add(word(artistWords[idx]), `${(isBand ? T.bandWord : T.artistWord)[lang]}: “${shown}”`)
+      }
+    }
+    if (kind === 'word') return out
+  }
+
+  const country = () => {
+    if (!t.info) return
+    const c = countryAnswer(t.info.country, t.info.countryName, lang)
+    if (c) add(c.answer, (c.abbr ? T.countryAbbr : T.country)[lang])
+  }
+  if (kind === 'world') {
+    country()
+    return out
+  }
+
+  const titleQs = () => {
+    add(whole, T.title[lang] + titleNote)
+    if (words.length >= 2) {
+      const idx = words
+        .map((w, i) => ({ i, a: word(w) }))
+        .filter((x) => x.a.length >= 4)
+        .sort((a, b) => b.a.length - a.a.length)[0]?.i
+      if (idx !== undefined) add(word(words[idx]), fillTitle(idx))
+    }
+  }
+  const full = word(artist)
+  const nameQs = () => {
+    add(full, (isBand ? T.band : T.artist)[lang])
+    if (!isBand && artistWords.length === 2 && t.info && !NOT_FIRST_LAST.has(full)) {
+      add(word(artistWords[0]), T.first[lang])
+      add(word(artistWords[1]), T.last[lang])
+    }
+  }
+  const members = () => {
+    if (isBand && t.info && t.info.members <= 10) add(NUMBERS[lang][t.info.members], T.members[lang])
+  }
+
+  if (kind === 'titles') titleQs()
+  else if (kind === 'names') nameQs()
+  else if (kind === 'bands') {
+    if (!isBand) return out
+    add(full, T.band[lang])
+    members()
+    country()
+  } else {
+    // Miscelânea e especial de artista: perguntas de todo tipo.
+    titleQs()
+    nameQs()
+    const genre = t.genre ? GENRE_ANSWER[t.genre] : undefined
+    if (genre) add(genre[lang], T.genre[lang])
+    country()
+    members()
+  }
+  return out
+}
+
+/** Candidatos do tema, faixa a faixa, sem repetir resposta. */
 export function buildCandidates(tracks: TrackMeta[], lang: Lang = 'pt', theme: Theme = THEMES[0]): Candidate[] {
   const out: Candidate[] = []
   const seen = new Set<string>()
-  const push = (answer: string, clue: string, trackId: string) => {
-    if (answer.length < 3 || answer.length > WIDTH - 2 || seen.has(answer)) return
-    seen.add(answer)
-    out.push({ answer, clue, trackId })
-  }
   for (const t of tracks) {
-    const prefix = theme.context === 'year' && t.year ? (lang === 'en' ? `${t.year} hit: ` : `Sucesso de ${t.year}: `) : ''
-    const clue = (text: string) => {
-      const c = prefix ? prefix + text.charAt(0).toLowerCase() + text.slice(1) : text
-      return c
-    }
-    const titleNote = t.titleLang === 'en' ? T.english[lang] : t.titleLang === 'es' ? T.spanish[lang] : t.titleLang === 'pt' ? T.portuguese[lang] : ''
-    const title = cleanTitle(t.song)
-    const artist = mainArtist(t.artist)
-    const isBand = (t.info?.members ?? 1) >= 2
-
-    // Título inteiro, ou "complete o título" com uma palavra longa escondida.
-    const whole = normalizeAnswer(title)
-    if (whole.length >= 3 && whole.length <= WIDTH - 2) push(whole, clue(T.title[lang]) + titleNote, t.trackId)
-    const words = title.split(/\s+/)
-    if (words.length >= 2) {
-      const idx = words
-        .map((w, i) => ({ i, a: normalizeAnswer(w) }))
-        .filter((x) => x.a.length >= 4)
-        .sort((a, b) => b.a.length - a.a.length)[0]?.i
-      if (idx !== undefined) {
-        const shown = words.map((w, i) => (i === idx ? '___' : w)).join(' ')
-        push(normalizeAnswer(words[idx]), `${clue(T.word[lang])}: “${shown}”${titleNote}`, t.trackId)
-      }
-    }
-
-    // Artista (no especial de um artista, só uma vez: o `seen` evita repetir a resposta).
-    const full = normalizeAnswer(artist)
-    if (full.length <= WIDTH - 2) push(full, clue((isBand ? T.band : T.artist)[lang]), t.trackId)
-    const parts = artist.split(/\s+/)
-    if (!isBand && parts.length === 2 && t.info && !NOT_FIRST_LAST.has(full)) {
-      push(normalizeAnswer(parts[0]), clue(T.first[lang]), t.trackId)
-      push(normalizeAnswer(parts[1]), clue(T.last[lang]), t.trackId)
-    }
-
-    // Metadados: gênero, país e integrantes.
-    const genre = t.genre ? GENRE_ANSWER[t.genre] : undefined
-    if (genre) push(genre[lang], clue(T.genre[lang]), t.trackId)
-    if (t.info) {
-      const c = countryAnswer(t.info.country, t.info.countryName, lang)
-      if (c) push(c.answer, clue((c.abbr ? T.countryAbbr : T.country)[lang]), t.trackId)
-      if (isBand && t.info.members <= 10) push(NUMBERS[lang][t.info.members], clue(T.members[lang]), t.trackId)
+    if (theme.kind === 'artist' && mainArtist(t.artist) !== theme.artist) continue
+    for (const q of questionsFor(t, lang, theme)) {
+      if (seen.has(q.answer)) continue
+      seen.add(q.answer)
+      out.push({ ...q, trackId: t.trackId })
     }
   }
   return out
+}
+
+/** Mínimo de faixas e de respostas diferentes no sorteio de palavras de cada dia. */
+export const DAILY_TRACKS = 20
+
+/**
+ * Candidatos do dia: as faixas que rendem pergunta no tema, numa ordem fixa por tema, divididas em blocos de
+ * pelo menos 20 faixas e 20 respostas diferentes (um bloco por rodada). Assim o tema só repete música depois
+ * de passar pela lista toda. A mesma resposta pode vir de faixas diferentes; a grade usa só uma delas.
+ */
+export function dailyCandidates(tracks: TrackMeta[], lang: Lang, theme: Theme, round: number): Candidate[] {
+  const blocks: Candidate[][] = []
+  let block: Candidate[] = []
+  let answers = new Set<string>()
+  let count = 0
+  for (const t of seededShuffle(tracks, `refrao-cruzado:${theme.id}`)) {
+    if (theme.kind === 'artist' && mainArtist(t.artist) !== theme.artist) continue
+    const qs = questionsFor(t, lang, theme)
+    if (!qs.length) continue
+    const mine = new Set<string>()
+    for (const q of qs) {
+      if (mine.has(q.answer)) continue
+      mine.add(q.answer)
+      answers.add(q.answer)
+      block.push({ ...q, trackId: t.trackId })
+    }
+    count++
+    if (count >= DAILY_TRACKS && answers.size >= DAILY_TRACKS) {
+      blocks.push(block)
+      block = []
+      answers = new Set()
+      count = 0
+    }
+  }
+  // Sobra pequena vai para o último bloco.
+  if (block.length) {
+    if (blocks.length && count < DAILY_TRACKS / 2) blocks[blocks.length - 1].push(...block)
+    else blocks.push(block)
+  }
+  return blocks.length ? blocks[round % blocks.length] : []
 }
 
 type Cell = { letter: string; across: boolean; down: boolean } | null
@@ -305,35 +462,46 @@ function place(grid: Cell[][], word: string, x: number, y: number, dir: Directio
   }
 }
 
-/** Gera a cruzadinha do dia: determinística para a mesma lista de candidatos e semente. */
-export function generateCrossword(candidates: Candidate[], seed: string): PlacedWord[] | null {
-  for (let attempt = 0; attempt < 30; attempt++) {
-    const rand = seededRandom(`${seed}#${attempt}`)
-    const pool = seededShuffle(candidates, `${seed}#${attempt}`).slice(0, 40)
-    pool.sort((a, b) => b.answer.length - a.answer.length || 0)
-    const grid = emptyGrid()
-    const placed: Omit<PlacedWord, 'number' | 'color'>[] = []
-    const usedTracks = new Set<string>()
-    for (const cand of pool) {
+type Placed = Omit<PlacedWord, 'number' | 'color'>
+
+/** Uma tentativa de montar a grade, com uma ordem de candidatos sorteada. Cada música e cada resposta entram uma vez só. */
+function buildGrid(candidates: Candidate[], rand: () => number): { placed: Placed[]; crossings: number } {
+  const grid = emptyGrid()
+  const placed: Placed[] = []
+  const usedTracks = new Set<string>()
+  const usedAnswers = new Set<string>()
+  const count = { across: 0, down: 0 }
+  let crossings = 0
+  // Começa por uma palavra comprida (rende mais cruzamentos), no meio da grade.
+  const order = [...candidates]
+  const first = order
+    .map((c, i) => ({ i, score: c.answer.length + rand() * 3 }))
+    .sort((a, b) => b.score - a.score)[0]
+  if (!first) return { placed, crossings }
+  const [head] = order.splice(first.i, 1)
+  const x0 = Math.floor((WIDTH - head.answer.length) / 2)
+  const y0 = Math.floor(HEIGHT / 2) - 1
+  place(grid, head.answer, x0, y0, 'across')
+  placed.push({ ...head, x: x0, y: y0, direction: 'across' })
+  usedTracks.add(head.trackId)
+  usedAnswers.add(head.answer)
+  count.across++
+  // Duas passadas: uma palavra que não cabia pode cruzar com as que entraram depois.
+  for (let pass = 0; pass < 2; pass++) {
+    for (const cand of order) {
       if (placed.length >= MAX_WORDS) break
-      if (usedTracks.has(cand.trackId) && placed.length > 0 && rand() < 0.7) continue
-      if (placed.length === 0) {
-        const x = Math.floor((WIDTH - cand.answer.length) / 2)
-        const y = Math.floor(HEIGHT / 2) - 1
-        place(grid, cand.answer, x, y, 'across')
-        placed.push({ ...cand, x, y, direction: 'across' })
-        usedTracks.add(cand.trackId)
-        continue
-      }
-      let best: { x: number; y: number; dir: Direction; score: number } | null = null
+      if (usedTracks.has(cand.trackId) || usedAnswers.has(cand.answer)) continue
+      let best: { x: number; y: number; dir: Direction; score: number; c: number } | null = null
       for (let y = 0; y < HEIGHT; y++) {
         for (let x = 0; x < WIDTH; x++) {
           for (const dir of ['across', 'down'] as Direction[]) {
             const c = canPlace(grid, cand.answer, x, y, dir)
-            if (c > 0) {
-              const score = c * 10 + rand()
-              if (!best || score > best.score) best = { x, y, dir, score }
-            }
+            if (c <= 0) continue
+            // Mais cruzamentos primeiro; depois, a direção que está em falta.
+            const mine = count[dir]
+            const other = dir === 'across' ? count.down : count.across
+            const score = c * 10 + (mine < other ? 6 : mine > other ? -4 : 0) + rand() * 2
+            if (!best || score > best.score) best = { x, y, dir, score, c }
           }
         }
       }
@@ -341,11 +509,37 @@ export function generateCrossword(candidates: Candidate[], seed: string): Placed
         place(grid, cand.answer, best.x, best.y, best.dir)
         placed.push({ ...cand, x: best.x, y: best.y, direction: best.dir })
         usedTracks.add(cand.trackId)
+        usedAnswers.add(cand.answer)
+        crossings += best.c
+        count[best.dir]++
       }
     }
-    if (placed.length >= MIN_WORDS) return numberWords(placed)
   }
-  return null
+  return { placed, crossings }
+}
+
+/** Nota de uma grade: mais palavras, mais cruzamentos e equilíbrio entre horizontais e verticais. */
+export function gridScore(placed: Placed[], crossings: number): number {
+  const across = placed.filter((w) => w.direction === 'across').length
+  const down = placed.length - across
+  return placed.length * 10 + crossings * 10 - Math.abs(across - down) * 8
+}
+
+/**
+ * Gera a cruzadinha do dia: determinística para a mesma lista de candidatos e semente.
+ * Faz várias tentativas e fica com a grade de melhor nota.
+ */
+export function generateCrossword(candidates: Candidate[], seed: string): PlacedWord[] | null {
+  let best: { placed: Placed[]; crossings: number; score: number } | null = null
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const rand = seededRandom(`${seed}#${attempt}`)
+    const pool = seededShuffle(candidates, `${seed}#${attempt}`).slice(0, 60)
+    const { placed, crossings } = buildGrid(pool, rand)
+    if (placed.length < MIN_WORDS) continue
+    const score = gridScore(placed, crossings)
+    if (!best || score > best.score) best = { placed, crossings, score }
+  }
+  return best ? numberWords(best.placed) : null
 }
 
 function numberWords(words: Omit<PlacedWord, 'number' | 'color'>[]): PlacedWord[] {

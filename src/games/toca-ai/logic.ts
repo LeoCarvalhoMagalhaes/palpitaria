@@ -39,9 +39,12 @@ export interface CategoryState {
 
 export const emptyCategory = (): CategoryState => ({ attempts: [] })
 
-/** Músicas que podem ser a resposta: precisam ter prévia de áudio. */
+/** A resposta do dia sai das 1.000 mais tocadas; as demais músicas da base servem só de palpite. */
+export const ANSWER_TOP = 1000
+
+/** Músicas que podem ser a resposta: entre as mais tocadas e com prévia de áudio. */
 export function songsFor(category: MusicCategory, songs: Song[]): Song[] {
-  return songs.filter((s) => s.appleId !== null && (!category.cat || s.cat === category.cat))
+  return songs.filter((s) => s.rank <= ANSWER_TOP && s.appleId !== null && (!category.cat || s.cat === category.cat))
 }
 
 /** Categorias com músicas suficientes (as de gênero dependem dos dados da Apple). */

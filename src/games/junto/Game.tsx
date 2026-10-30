@@ -37,7 +37,8 @@ function Play({ ctx, puzzles }: { ctx: GameContext; puzzles: Puzzle[] }) {
   const puzzle = useMemo(() => puzzleFor(puzzles, number), [puzzles, number])
   const { state, status, setState, finish } = useDailyGame<State>({
     slug: ctx.stateKey,
-    version: 1,
+    // 2: quebra-cabeças novos, mais difíceis (o progresso salvo era de outro quebra-cabeça).
+    version: 2,
     date,
     isArchive: ctx.isArchive,
     init: () => ({ moves: [], solved: [], hint: [], tried: [] }),

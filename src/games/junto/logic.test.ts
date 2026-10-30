@@ -4,10 +4,11 @@ import { countSolutions, matchGroup, nextHint, puzzleFor, shareText, validatePuz
 
 const data = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../../public/data/junto/puzzles.json'), 'utf8'))
 const puzzles: Puzzle[] = data.puzzles
+const puzzlesEn: Puzzle[] = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../../public/data/junto/puzzles-en.json'), 'utf8')).puzzles
 
 describe('Juntô', () => {
   it('todos os quebra-cabeças são válidos e têm solução única', () => {
-    for (const p of puzzles) expect([p.id, validatePuzzle(p)]).toEqual([p.id, []])
+    for (const p of [...puzzles, ...puzzlesEn]) expect([p.id, validatePuzzle(p)]).toEqual([p.id, []])
   })
 
   it('detecta quebra-cabeça com mais de uma solução', () => {

@@ -17,6 +17,8 @@ export interface PreviewInfo {
 const infoCache = new Map<number, Promise<PreviewInfo>>()
 const bufferCache = new Map<number, Promise<AudioBuffer>>()
 let ctx: AudioContext | null = null
+let master: GainNode | null = null
+let masterLevel = 0.7
 
 async function lookup(appleId: number, country: string): Promise<PreviewInfo | null> {
   const res = await fetch(`https://itunes.apple.com/lookup?id=${appleId}&country=${country}&entity=song`)
@@ -54,6 +56,22 @@ function audioContext(): AudioContext {
     ctx = new Ctor()
   }
   return ctx
+}
+
+/** Saída comum a todos os trechos: o volume passa por aqui. */
+function output(c: AudioContext): GainNode {
+  if (!master) {
+    master = c.createGain()
+    master.gain.value = masterLevel
+    master.connect(c.destination)
+  }
+  return master
+}
+
+/** Volume geral (0 a 100), aplicado na hora, inclusive ao trecho que está tocando. */
+export function setVolume(volume: number): void {
+  masterLevel = Math.max(0, Math.min(1, volume / 100))
+  if (master && ctx) master.gain.setTargetAtTime(masterLevel, ctx.currentTime, 0.02)
 }
 
 /** No iPhone, o modo silencioso cala o Web Audio, a não ser que a sessão seja de reprodução (Safari 17+). */
@@ -116,14 +134,15 @@ export class ClipPlayer {
     const source = c.createBufferSource()
     source.buffer = buffer
     const gain = c.createGain()
-    const level = Math.max(0, Math.min(1, volume / 100))
+    setVolume(volume)
+    const level = 1
     const t0 = c.currentTime + 0.02
     // Rampas curtas evitam o "estalo" no começo e no fim do trecho.
     gain.gain.setValueAtTime(0, t0)
     gain.gain.linearRampToValueAtTime(level, t0 + Math.min(FADE, duration / 4))
     gain.gain.setValueAtTime(level, t0 + Math.max(0, duration - FADE))
     gain.gain.linearRampToValueAtTime(0, t0 + duration)
-    source.connect(gain).connect(c.destination)
+    source.connect(gain).connect(output(c))
     this.source = source
     this.gain = gain
     this.onEnd = onEnd ?? null

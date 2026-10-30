@@ -4,12 +4,13 @@ import { Eye, Headphones, ListChecks, Loader2, Pause, Play as PlayIcon } from 'l
 import { GameShell, type GameContext } from '@/components/GameShell'
 import { ShareButton } from '@/components/ShareButton'
 import { VirtualKeyboard } from '@/components/VirtualKeyboard'
+import { VolumeControl } from '@/components/VolumeControl'
 import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { type Song } from '@/config/music'
 import { fetchData, useData } from '@/core/data'
-import { formatDateLong, seededShuffle } from '@/core/daily'
+import { formatDateLong } from '@/core/daily'
 import { useDailyGame } from '@/core/hooks'
 import { ClipPlayer, loadClip, unlockAudio } from '@/core/preview'
 import { useL, useLang, useSettings } from '@/core/settings'
@@ -19,8 +20,8 @@ import {
   HEIGHT,
   THEMES,
   WIDTH,
-  buildCandidates,
   cellsOf,
+  dailyCandidates,
   dailyTheme,
   formatTime,
   generateCrossword,
@@ -32,6 +33,7 @@ import {
   themeById,
   timeBucket,
   type PlacedWord,
+  type Theme,
   type TrackMeta,
 } from './logic'
 
@@ -54,11 +56,6 @@ interface HolofoteArtist {
   countryName: string
 }
 
-/** Quantas músicas do tema entram no sorteio de palavras de cada dia. */
-const DAILY_POOL = 60
-/** Abaixo disso, o tema não rende uma cruzadinha boa e o dia usa o tema geral. */
-const MIN_THEME_SONGS = 8
-
 const fold = (s: string) =>
   s
     .normalize('NFD')
@@ -72,8 +69,8 @@ function useHelp(): ReactNode {
   return L(
     <>
       <p>É uma cruzadinha, mas toda palavra tem a ver com música! Cada pista tem um <strong>trecho de áudio</strong>: toque na pista (ou no ▶ ao lado dela) para tocar e pausar quantas vezes quiser. <Headphones className="inline size-4" /> ou ESPAÇO tocam a pista atual.</p>
-      <p>As perguntas variam: nome da música, completar o título, quem canta, primeiro nome ou sobrenome, gênero, país, número de integrantes… Quando a resposta está em outro idioma, a pista avisa, por exemplo <strong>(em inglês)</strong>. Respostas sem acentos e sem espaços.</p>
-      <p>Todo dia tem um <strong>tema</strong>: décadas, gêneros, divas do pop, bandas ou o especial de um artista.</p>
+      <p>Todo dia tem um <strong>tema</strong>, e ele está nas respostas: num dia de <em>Cores</em>, todas as respostas são cores escondidas nos títulos ou nos nomes de quem canta; em outros dias, números, corpo humano, natureza, sentimentos, lugares, quem canta, nomes de músicas, bandas… As músicas variam de um dia para o outro, e de vez em quando aparece o especial de um artista.</p>
+      <p>As pistas podem pedir o nome da música, completar o título, quem canta, primeiro nome ou sobrenome, país, número de integrantes… Quando a resposta está em outro idioma, a pista avisa, por exemplo <strong>(em inglês)</strong>. Respostas sem acentos e sem espaços.</p>
       <ul className="list-disc pl-5">
         <li>TAB ou ENTER: próxima palavra</li>
         <li>ESPAÇO: tocar o trecho da palavra atual</li>
@@ -84,8 +81,8 @@ function useHelp(): ReactNode {
     </>,
     <>
       <p>It's a crossword where every word is about music! Each clue has an <strong>audio snippet</strong>: tap the clue (or the ▶ next to it) to play and pause as often as you like. <Headphones className="inline size-4" /> or SPACE plays the current clue.</p>
-      <p>Questions vary: song title, fill in the title, who sings it, first or last name, genre, country, number of band members… When the answer is in another language, the clue says so, for example <strong>(in Spanish)</strong>. Answers have no accents or spaces.</p>
-      <p>Every day has a <strong>theme</strong>: decades, genres, pop divas, bands or a single-artist special.</p>
+      <p>Every day has a <strong>theme</strong>, and it lives in the answers: on a <em>Colors</em> day, every answer is a color hidden in a song title or an artist's name; other days bring numbers, the human body, nature, feelings, places, who sings it, song titles, bands… The songs change from day to day, and every now and then there's a single-artist special.</p>
+      <p>Clues may ask for the song title, a missing word in the title, who sings it, a first or last name, the country, how many band members… When the answer is in another language, the clue says so, for example <strong>(in Spanish)</strong>. Answers have no accents or spaces.</p>
       <ul className="list-disc pl-5">
         <li>TAB or ENTER: next word</li>
         <li>SPACE: play the current word's snippet</li>
@@ -128,14 +125,12 @@ export default function RefraoCruzadoGame(ctx: GameContext) {
         titleLang: s.titleLang,
         info: byName.get(fold(mainArtist(s.artist))) ?? null,
       }))
-    const attempt = (theme: (typeof THEMES)[number]) => {
-      const themed = tracks.filter(theme.filter)
-      if (themed.length < MIN_THEME_SONGS) return null
-      const pool = seededShuffle(themed, `refrao:${date}:pool`).slice(0, DAILY_POOL)
-      const words = generateCrossword(buildCandidates(pool, lang, theme), `refrao:${date}`)
+    const attempt = (theme: Theme, round: number) => {
+      const words = generateCrossword(dailyCandidates(tracks, lang, theme, round), `refrao:${date}`)
       return words ? { words, theme: theme.id } : null
     }
-    return attempt(dailyTheme(number)) ?? attempt(THEMES[0])
+    const today = dailyTheme(number)
+    return attempt(today.theme, today.round) ?? attempt(THEMES[0], number)
   }, [data, state.words, date, number, lang])
 
   useEffect(() => {
@@ -496,6 +491,7 @@ function Board({
             )}
           </div>
 
+          <VolumeControl className="justify-end" />
           <button
             type="button"
             onClick={() => playClue()}

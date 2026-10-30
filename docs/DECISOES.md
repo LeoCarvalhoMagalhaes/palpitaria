@@ -34,7 +34,7 @@ Origem: **regra base** = regra do formato do jogo; **proposta** = escolha nossa,
 | Holofote | Gêneros | Lista fechada de 13 + MPB, Sertanejo e Funk (nenhum artista brasileiro desses estilos está no top 1.000 global) | Proposta |
 | Holofote | Dica | Após o 6º palpite: primeira letra e número de palavras do nome | Proposta |
 | Holofote | Áudio | No fim, prévia da música mais ouvida do artista, se ele estiver no top 1.000 | Regra base |
-| Refrão Cruzado | Grade | 12×10, 5 a 8 palavras, geradas de 60 músicas do top 1.000 sorteadas pela data | Proposta |
+| Refrão Cruzado | Grade | 12×10, 5 a 8 palavras; 60 tentativas por dia e fica a de mais palavras, mais cruzamentos e equilíbrio entre horizontais e verticais; uma música e uma resposta por palavra | Pedido do dono do projeto |
 | Refrão Cruzado | Trecho | 8 s do início da prévia da Apple; ouvir de novo à vontade | Proposta |
 | Mais ou Menos | Rodadas | 5 categorias × 5 duelos (25), sem repetir item dentro da categoria; vitória com 15+; tela de abertura por categoria (fecha sozinha em 2,2 s) | Regra base (5 × 5); limiar proposto |
 | Mais ou Menos | Imagens | Todo item tem imagem: Commons (Wikidata) ou capa da Apple Music para as músicas | Pedido do dono do projeto |
@@ -42,7 +42,7 @@ Origem: **regra base** = regra do formato do jogo; **proposta** = escolha nossa,
 | Holofote | Fotos | Foto do artista em cada palpite e na revelação (Commons via Wikidata); sem foto, a inicial do nome | Pedido do dono do projeto |
 | Na Etiqueta | Fotos | Foto ilustrativa do Commons sem preço visível; sem foto confiável, emoji da categoria | Pedido do dono do projeto |
 | Refrão Cruzado | Pistas | Variadas: título, completar o título, quem canta (banda ou artista), primeiro nome/sobrenome (exceto nomes artísticos), gênero, país (sigla para EUA), integrantes por extenso; avisa "(em inglês)" / "(in Spanish)" pelo idioma do título | Proposta; textos próprios |
-| Refrão Cruzado | Temas | Um por dia, em rodízio: geral, 5 recortes de década, hip hop, rock, latinos, pista de dança, R&B, divas do pop, bandas e especiais de 15 artistas com 10+ músicas; tema sem grade possível cai no geral | Proposta |
+| Refrão Cruzado | Temas | O tema está nas perguntas e respostas, não na escolha das músicas: cores, números, corpo humano, natureza, tempo, sentimentos, gente, dança e movimento (palavras dos títulos e dos nomes de quem canta), pelo mundo (país de origem e lugares), quem canta, nomes de músicas, bandas e miscelânea, em rodízio; especial de um artista só a cada 9 dias. Cada tema anda por blocos de 20+ músicas e só repete música depois de passar pela lista toda; tema sem grade possível cai na miscelânea | Pedido do dono do projeto |
 | Refrão Cruzado | Tocar | Clicar na linha da pista seleciona e toca; o botão colorido e a barra da pista atual tocam/pausam | Pedido do dono do projeto |
 | Geral | Idiomas | Português e inglês (padrão: idioma do navegador); jogos de palavras têm conteúdo próprio em inglês e progresso separado por idioma | Pedido do dono do projeto |
 | Geral | Tema | Claro, escuro ou do sistema, com alto contraste opcional | Pedido do dono do projeto |
@@ -53,4 +53,7 @@ Origem: **regra base** = regra do formato do jogo; **proposta** = escolha nossa,
 | Refrão Cruzado | Grade | Clicar numa casa seleciona a palavra e toca o trecho dela | Pedido do dono do projeto |
 | Mais ou Menos | Lado da resposta | Em cada duelo, uma moeda (semente do dia) decide se a opção nova tem mais ou menos que a que continua; antes, quem continuava vencia 75% das vezes e a resposta ficava previsível | Pedido do dono do projeto |
 | Mais ou Menos | Preços e Curiosidades misturados | Cada dia usa 6 itens de tipos diferentes (mercado, foguetes, obras, roubos, arte...; alturas, distâncias, recordes, populações...); o grupo é sorteado antes do item, para os 1.650 produtos de mercado não dominarem. Fatos em `scripts/data/mais-ou-menos/facts.mjs`, conferidos na Wikipédia | Pedido do dono do projeto |
+| Juntô | Dificuldade | 30 quebra-cabeças por idioma: nível 1 concreto com isca, nível 2 lateral ("Têm asa"), nível 3 expressão ("Olho de ___"), nível 4 jogo de palavras ("Escondem números"); iscas declaradas e solução única conferida | Pedido do dono do projeto |
+| Jogos de música | Volume | Controle visível (silenciar + barra) no Toca Aí, Refrão Cruzado e Holofote; muda na hora, inclusive o trecho que está tocando | Pedido do dono do projeto |
+| Toca Aí | Repertório | Resposta do dia só das 1.000 mais tocadas; as demais músicas da base valem como palpite | Proposta |
 | Mais ou Menos | Números grandes | De um milhão para cima, por extenso ("US$ 25,8 bilhões", "1,2 milhão de habitantes") | Escolha nossa |

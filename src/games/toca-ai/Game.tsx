@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
-import { Pause, Play as PlayIcon, SkipForward, Volume2 } from 'lucide-react'
+import { Pause, Play as PlayIcon, SkipForward } from 'lucide-react'
 import { GameShell, type GameContext } from '@/components/GameShell'
 import { ShareButton } from '@/components/ShareButton'
 import { Autocomplete, type Option } from '@/components/Autocomplete'
 import { ErrorBox, LoadingScreen } from '@/components/LoadingScreen'
 import { Button } from '@/components/ui/button'
-import { Slider } from '@/components/ui/slider'
+import { VolumeControl } from '@/components/VolumeControl'
 import { MUSIC_CATEGORIES, songLabel, type Song } from '@/config/music'
 import { fetchData, useData } from '@/core/data'
 import { useDailyGame } from '@/core/hooks'
@@ -81,7 +81,7 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
   const L = useL()
   const lang = useLang()
   const sec = (ms: number) => formatSeconds(ms, lang)
-  const { settings, update } = useSettings()
+  const { settings } = useSettings()
   const categories = useMemo(
     () => availableCategories(MUSIC_CATEGORIES, songs).map((c) => (lang === 'en' ? { ...c, name: c.nameEn } : c)),
     [songs, lang],
@@ -205,14 +205,6 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
           <p className="text-muted-foreground">Previews provided by Apple Music.</p>
         </>,
       )}
-      gameSettings={
-        <label className="block text-sm">
-          <span className="mb-2 flex items-center gap-2">
-            <Volume2 className="size-4" aria-hidden /> Volume: {settings.volume}%
-          </span>
-          <Slider min={10} max={100} step={5} value={[settings.volume]} onValueChange={([v]) => update({ volume: v })} aria-label="Volume" />
-        </label>
-      }
       result={
         <>
           <p className="text-center">
@@ -278,6 +270,7 @@ function Play({ ctx, songs }: { ctx: GameContext; songs: Song[] }) {
             </Button>
           )}
         </div>
+        <VolumeControl className="justify-center" />
         <p className="text-center text-sm text-muted-foreground" aria-live="polite">
           {clipError
             ? clipError

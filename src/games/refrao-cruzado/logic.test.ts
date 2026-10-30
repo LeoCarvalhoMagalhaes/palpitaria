@@ -1,12 +1,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import {
+  ARTIST_EVERY,
   HEIGHT,
   MIN_WORDS,
   THEMES,
   WIDTH,
   buildCandidates,
   cellsOf,
+  dailyCandidates,
   dailyTheme,
   generateCrossword,
   isCorrect,
@@ -102,13 +104,47 @@ describe('Refrão Cruzado: temas e pistas', () => {
     .filter((s) => s.appleId)
     .map((s) => ({ artist: s.artist, song: s.title, trackId: String(s.appleId), year: s.year, genre: s.genre, titleLang: s.titleLang, info: byName.get(fold(mainArtist(s.artist))) ?? null }))
 
-  it.each(['pt', 'en'] as const)('todo tema rende cruzadinha (%s)', (lang) => {
+  it.each(['pt', 'en'] as const)('todo tema rende cruzadinha, em várias rodadas (%s)', (lang) => {
     for (const theme of THEMES) {
-      const themed = tracks.filter(theme.filter)
-      expect(themed.length, theme.id).toBeGreaterThanOrEqual(8)
-      const words = generateCrossword(buildCandidates(themed.slice(0, 60), lang, theme), `t:${theme.id}`)
-      expect(words, theme.id).not.toBeNull()
+      for (const round of [0, 1, 5]) {
+        const words = generateCrossword(dailyCandidates(tracks, lang, theme, round), `t:${theme.id}:${round}`)
+        expect(words, `${theme.id} rodada ${round}`).not.toBeNull()
+        // Uma música por palavra, sem resposta repetida.
+        expect(new Set(words!.map((w) => w.trackId)).size, theme.id).toBe(words!.length)
+        expect(new Set(words!.map((w) => w.answer)).size, theme.id).toBe(words!.length)
+      }
     }
+  })
+
+  it('nos temas de palavras, toda resposta é do tema', () => {
+    const cores = THEMES.find((t) => t.id === 'cores')!
+    const cands = dailyCandidates(tracks, 'pt', cores, 0)
+    expect(cands.length).toBeGreaterThanOrEqual(10)
+    for (const c of cands) expect(cores.words!.has(c.answer), c.answer).toBe(true)
+  })
+
+  it('grades com cruzamentos e equilíbrio entre horizontais e verticais', () => {
+    let words = 0
+    let crossings = 0
+    for (let n = 1; n <= 40; n++) {
+      const { theme, round } = dailyTheme(n)
+      const grid = generateCrossword(dailyCandidates(tracks, 'pt', theme, round), `d:${n}`)!
+      const across = grid.filter((w) => w.direction === 'across').length
+      expect(Math.min(across, grid.length - across), `dia ${n}`).toBeGreaterThanOrEqual(2)
+      const count = new Map<string, number>()
+      for (const w of grid) for (const [x, y] of cellsOf(w)) count.set(`${x},${y}`, (count.get(`${x},${y}`) ?? 0) + 1)
+      crossings += [...count.values()].filter((v) => v > 1).length
+      words += grid.length
+    }
+    expect(crossings / words).toBeGreaterThanOrEqual(1)
+  })
+
+  it('um tema não repete música nas rodadas seguintes', () => {
+    const theme = THEMES.find((t) => t.id === 'misto')!
+    const ids = (round: number) => new Set(generateCrossword(dailyCandidates(tracks, 'pt', theme, round), `r:${round}`)!.map((w) => w.trackId))
+    const a = ids(0)
+    const later = [1, 2, 3].flatMap((r) => [...ids(r)])
+    expect(later.filter((id) => a.has(id))).toEqual([])
   })
 
   it('avisa o idioma e usa pistas variadas', () => {
@@ -123,9 +159,11 @@ describe('Refrão Cruzado: temas e pistas', () => {
     if (process.env.SHOW_CLUES) for (const c of [...cands.slice(0, 40), ...en.slice(0, 25)]) console.log(c.answer.padEnd(12), c.clue)
   })
 
-  it('tema do dia varia e é determinístico', () => {
-    const ids = new Set(Array.from({ length: THEMES.length }, (_, i) => dailyTheme(i + 1).id))
-    expect(ids.size).toBe(THEMES.length)
-    expect(dailyTheme(5)).toBe(dailyTheme(5))
+  it('tema do dia varia, é determinístico e o especial de artista é só de vez em quando', () => {
+    const days = Array.from({ length: 120 }, (_, i) => dailyTheme(i + 1))
+    expect(new Set(days.map((d) => d.theme.id)).size).toBeGreaterThanOrEqual(THEMES.length - 5)
+    const specials = days.filter((d) => d.theme.kind === 'artist').length
+    expect(specials).toBe(Math.floor(120 / ARTIST_EVERY))
+    expect(dailyTheme(5)).toEqual(dailyTheme(5))
   })
 })
